@@ -74,14 +74,18 @@ public class LocationService {
         locationValidate.validateNotNull(locationId);
         locationValidate.validateNotNull(location);
         if (!locationRepository.existsById(locationId)) {
+            LOGGER.error("No found location = {} with id = {}",locationId, location);
             throw new EntityNotFoundException(
-                    "No found book by id=%s".formatted(locationId)
+                    "No location by id=%s".formatted(locationId)
             );
         }
         Integer foundCapacity = locationRepository.getCapacityById(locationId);
         if (location.capacity() < foundCapacity) {
-            throw new IllegalArgumentException(("Capacity for update %s should be more " +
-                    "than the capacity that already exists %s")
+            LOGGER.error("Capacity for update = {} should be greater than the existing capacity = {} " +
+                            "for location: id = {}, name = {}",
+                    location.capacity(), foundCapacity, locationId, location.name());
+            throw new IllegalArgumentException(("Capacity for update = %s should be more " +
+                    "than the capacity = %s that already exists")
                     .formatted(location.capacity(), foundCapacity));
         }
         LocationEntity updatedLocationEntity = locationRepository.update(

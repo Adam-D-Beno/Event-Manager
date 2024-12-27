@@ -51,11 +51,11 @@ public class LocationService {
         LOGGER.info("Execute method deleteById in LocationService class, got argument locationId = {}",
                 locationId);
         locationValidate.validateNotNull(locationId);
-        LocationEntity locationEntityForDelete = locationRepository.findById(locationId)
+        LocationEntity foundLocationEntityForDelete = locationRepository.findById(locationId)
                 .orElseThrow(() -> new EntityNotFoundException("No such found location with id = %s"
                         .formatted(locationId)));
         locationRepository.deleteById(locationId);
-        return entityConverter.toDomain(locationEntityForDelete);
+        return entityConverter.toDomain(foundLocationEntityForDelete);
     }
 
     public Location findById(@NotNull Long locationId) {
@@ -73,6 +73,17 @@ public class LocationService {
                 locationId, location);
         locationValidate.validateNotNull(locationId);
         locationValidate.validateNotNull(location);
+        if (!locationRepository.existsById(locationId)) {
+            throw new EntityNotFoundException(
+                    "No found book by id=%s".formatted(locationId)
+            );
+        }
+        Integer foundCapacity = locationRepository.getCapacityById(locationId);
+        if (location.capacity() < foundCapacity) {
+            throw new IllegalArgumentException(("Capacity for update %s should be more " +
+                    "than the capacity that already exists %s")
+                    .formatted(location.capacity(), foundCapacity));
+        }
         LocationEntity updatedLocationEntity = locationRepository.update(
                 locationId,
                 location.name(),

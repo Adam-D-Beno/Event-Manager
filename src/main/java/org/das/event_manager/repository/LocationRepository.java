@@ -1,7 +1,6 @@
 package org.das.event_manager.repository;
 
 import org.das.event_manager.entity.LocationEntity;
-import org.hibernate.sql.Update;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,12 +13,15 @@ public interface LocationRepository extends JpaRepository<LocationEntity, Long> 
 
     boolean existsByName(String name);
 
+    boolean existsById(Long id);
+
+    Integer getCapacityById(Long id);
+
     @Transactional
     @Modifying
     @Query("""
             UPDATE LocationEntity l
             SET
-                    l.id = :id,
                     l.name = :name,
                     l.address = :address,
                     l.capacity = :capacity,

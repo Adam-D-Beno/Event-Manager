@@ -1,10 +1,9 @@
 package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.converters.LocationDtoConverter;
 import org.das.event_manager.domain.Location;
-import org.das.event_manager.dto.EventLocation;
+import org.das.event_manager.dto.LocationDto;
 import org.das.event_manager.service.LocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,7 @@ public class LocationController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<EventLocation>> findAll() {
+    public ResponseEntity<List<LocationDto>> findAll() {
         LOGGER.info("Get request for find all locations");
         return ResponseEntity
                 .ok()
@@ -37,11 +36,11 @@ public class LocationController {
     }
 
     @PostMapping
-    public ResponseEntity<EventLocation> create(
-        @RequestBody @Valid EventLocation eventLocationToCreate
+    public ResponseEntity<LocationDto> create(
+        @RequestBody @Valid LocationDto locationDtoToCreate
     ) {
-        LOGGER.info("Post request for create location = {}", eventLocationToCreate);
-        Location locationToUpdate = dtoConverter.toDomain(eventLocationToCreate);
+        LOGGER.info("Post request for create location = {}", locationDtoToCreate);
+        Location locationToUpdate = dtoConverter.toDomain(locationDtoToCreate);
         Location createdLocation = locationService.create(locationToUpdate);
         return ResponseEntity.
                 status(HttpStatus.CREATED)
@@ -49,7 +48,7 @@ public class LocationController {
     }
 
     @DeleteMapping("/{locationId}")
-    public ResponseEntity<EventLocation> deleteById(
+    public ResponseEntity<LocationDto> deleteById(
             @PathVariable("locationId") Long locationId
     ) {
         Location deletedLocation = locationService.deleteById(locationId);
@@ -59,7 +58,7 @@ public class LocationController {
     }
 
     @GetMapping("/{locationId}")
-    public ResponseEntity<EventLocation> findById(
+    public ResponseEntity<LocationDto> findById(
             @PathVariable("locationId") Long locationId
     ) {
        return ResponseEntity
@@ -68,12 +67,12 @@ public class LocationController {
     }
 
     @PutMapping("/{locationId}")
-    public ResponseEntity<EventLocation> updateById(
+    public ResponseEntity<LocationDto> updateById(
             @PathVariable Long locationId,
-            @RequestBody @Valid EventLocation eventLocationToUpdate
+            @RequestBody @Valid LocationDto locationDtoToUpdate
     ) {
         Location updatedLocation = locationService
-                .updateById(locationId, dtoConverter.toDomain(eventLocationToUpdate));
+                .updateById(locationId, dtoConverter.toDomain(locationDtoToUpdate));
         return ResponseEntity.ok().body(dtoConverter.toDto(updatedLocation));
     }
 }

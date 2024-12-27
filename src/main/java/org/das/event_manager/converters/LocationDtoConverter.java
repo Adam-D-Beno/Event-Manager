@@ -3,7 +3,7 @@ package org.das.event_manager.converters;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.Location;
-import org.das.event_manager.dto.EventLocation;
+import org.das.event_manager.dto.LocationDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -17,23 +17,23 @@ public class LocationDtoConverter {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationDtoConverter.class);
 
     //todo check pn NULL
-    public Location toDomain(@NotNull EventLocation eventLocation) {
+    public Location toDomain(@NotNull LocationDto locationDto) {
         LOGGER.info("Execute method toDomain in LocationDtoConverter class, got argument locationDto = {} ",
-                eventLocation);
+                locationDto);
         return new Location(
-                eventLocation.id(),
-                eventLocation.name(),
-                eventLocation.address(),
-                eventLocation.capacity(),
-                eventLocation.description()
+                locationDto.id(),
+                locationDto.name(),
+                locationDto.address(),
+                locationDto.capacity(),
+                locationDto.description()
         );
     }
 
     //todo check pn NULL
-    public EventLocation toDto(@NotNull Location location) {
+    public LocationDto toDto(@NotNull Location location) {
         LOGGER.info("Execute method toDto in LocationDtoConverter class, got argument location = {} ",
                 location);
-        return new EventLocation(
+        return new LocationDto(
                 location.id(),
                 location.name(),
                 location.address(),
@@ -43,7 +43,7 @@ public class LocationDtoConverter {
     }
 
     //todo check pn NULL
-    public List<EventLocation> toDto(@NotNull @NotEmpty List<Location> locations) {
+    public List<LocationDto> toDto(@NotNull @NotEmpty List<Location> locations) {
         if (locations.isEmpty()) {
             return List.of();
         }

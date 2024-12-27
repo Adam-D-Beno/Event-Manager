@@ -2,7 +2,7 @@ package org.das.event_manager.dto;
 
 import jakarta.validation.constraints.*;
 
-public record EventLocation(
+public record LocationDto(
         @Null
         Long id,
         @NotNull

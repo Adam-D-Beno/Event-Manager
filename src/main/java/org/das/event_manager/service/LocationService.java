@@ -81,6 +81,8 @@ public class LocationService {
                     "No location by id=%s".formatted(locationId)
             );
         }
+        existLocationName(location.name());
+        existLocationAddress(location.address());
         Integer foundCapacity = locationRepository.getCapacityById(locationId);
         if (location.capacity() < foundCapacity) {
             LOGGER.error("Capacity for update = {} should be greater than the existing capacity = {} " +

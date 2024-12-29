@@ -8,9 +8,9 @@ public class LocationEntity {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
-   @Column(name = "name", nullable = false)
+   @Column(name = "name", nullable = false, unique = true)
    private String name;
-   @Column(name = "address", nullable = false)
+   @Column(name = "address", nullable = false, unique = true)
    private String address;
    @Column(name = "capacity", nullable = false)
    private Integer capacity;

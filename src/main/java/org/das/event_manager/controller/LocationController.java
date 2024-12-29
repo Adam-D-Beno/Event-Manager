@@ -39,12 +39,11 @@ public class LocationController {
     public ResponseEntity<LocationDto> create(
         @RequestBody @Valid LocationDto locationDtoToCreate
     ) {
-        LOGGER.info("Post request for create location = {}", locationDtoToCreate);
+        LOGGER.info("Post request for create locationDto = {}", locationDtoToCreate);
         Location locationToUpdate = dtoConverter.toDomain(locationDtoToCreate);
-        Location createdLocation = locationService.create(locationToUpdate);
         return ResponseEntity.
                 status(HttpStatus.CREATED)
-               .body(dtoConverter.toDto(createdLocation));
+               .body(dtoConverter.toDto(locationService.create(locationToUpdate)));
     }
 
     @DeleteMapping("/{locationId}")

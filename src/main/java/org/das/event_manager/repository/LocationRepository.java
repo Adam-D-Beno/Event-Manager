@@ -13,6 +13,8 @@ public interface LocationRepository extends JpaRepository<LocationEntity, Long> 
 
     boolean existsByName(String name);
 
+    boolean existsByAddress(String address);
+
     boolean existsById(Long id);
 
     Integer getCapacityById(Long id);

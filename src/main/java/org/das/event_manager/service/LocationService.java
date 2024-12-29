@@ -43,6 +43,8 @@ public class LocationService {
         LOGGER.info("Execute method create in LocationService class, got argument locationToUpdate = {}",
                     locationToUpdate);
         locationValidate.validateNotNull(locationToUpdate);
+        existLocationName(locationToUpdate.name());
+        existLocationAddress(locationToUpdate.address());
         LocationEntity savedLocationEntity = locationRepository.save(entityConverter.toEntity(locationToUpdate));
         return entityConverter.toDomain(savedLocationEntity);
     }
@@ -98,12 +100,19 @@ public class LocationService {
         return entityConverter.toDomain(updatedLocationEntity);
     }
 
-    //todo which argument need check
-    public void isExistLocationAddress(String address) {
-        LOGGER.info("Execute isExistLocationAddress in LocationService class, address = {}", address);
-        if (locationRepository.existsByName(address)) {
-            LOGGER.info("Location address = {} exist", address);
-            throw new IllegalArgumentException("Location address = %s exist".formatted(address));
+    public void existLocationAddress(String locationAddress) {
+        LOGGER.info("Execute isExistLocationAddress in LocationService class, location address = {}", locationAddress);
+        if (locationRepository.existsByAddress(locationAddress)) {
+            LOGGER.info("Location address = {} exist", locationAddress);
+            throw new IllegalArgumentException("Location address = %s exist".formatted(locationAddress));
+        }
+    }
+
+    public void existLocationName(String locationName) {
+        LOGGER.info("Execute isExistLocationName in LocationService class, location name = {}", locationName);
+        if (locationRepository.existsByName(locationName)) {
+            LOGGER.info("Location location name = {} exist", locationName);
+            throw new IllegalArgumentException("Location name = %s exist".formatted(locationName));
         }
     }
 }

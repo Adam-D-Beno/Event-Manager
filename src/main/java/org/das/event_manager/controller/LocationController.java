@@ -50,6 +50,7 @@ public class LocationController {
     public ResponseEntity<LocationDto> deleteById(
             @PathVariable("locationId") Long locationId
     ) {
+        LOGGER.info("Delete request for delete by id = {} location", locationId);
         Location deletedLocation = locationService.deleteById(locationId);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
@@ -60,6 +61,7 @@ public class LocationController {
     public ResponseEntity<LocationDto> findById(
             @PathVariable("locationId") Long locationId
     ) {
+       LOGGER.info("Get request for find by id = {} location", locationId);
        return ResponseEntity
                .status(HttpStatus.FOUND)
                .body(dtoConverter.toDto(locationService.findById(locationId)));
@@ -70,6 +72,7 @@ public class LocationController {
             @PathVariable Long locationId,
             @RequestBody @Valid LocationDto locationDtoToUpdate
     ) {
+        LOGGER.info("Put request for update locationDto = {} with id = {}", locationDtoToUpdate, locationId);
         Location updatedLocation = locationService
                 .updateById(locationId, dtoConverter.toDomain(locationDtoToUpdate));
         return ResponseEntity.ok().body(dtoConverter.toDto(updatedLocation));

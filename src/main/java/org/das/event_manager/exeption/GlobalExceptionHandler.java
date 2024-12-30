@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
                 ).collect(Collectors.joining(", "));
 
         var error = new ErrorMessageResponse(
-                "Request validation error",
+                "Bad request",
                 detailMessage,
                 LocalDateTime.now()
         );
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
                 ).collect(Collectors.joining(", "));
 
         var error = new ErrorMessageResponse(
-                "Argument is NULL",
+                "Bad request. Argument is NULL",
                 detailMessage,
                 LocalDateTime.now()
         );
@@ -76,7 +76,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorMessageResponse> handleIllegalArgumentException(IllegalArgumentException e) {
         LOGGER.error("Handle handleIllegalArgumentException {}", e.getMessage());
         var error = new ErrorMessageResponse(
-                "Argument have error",
+                "Bad request. Argument have error",
                 e.getMessage(),
                 LocalDateTime.now()
         );
@@ -91,7 +91,7 @@ public class GlobalExceptionHandler {
         LOGGER.error("Got validation exception: HttpMessageNotReadableException {}", e.getMessage());
         String detailMessage = "Body must not be is null";
         var errorDto = new ErrorMessageResponse(
-                "Request validation error",
+                "Bad request",
                 detailMessage,
                 LocalDateTime.now()
         );

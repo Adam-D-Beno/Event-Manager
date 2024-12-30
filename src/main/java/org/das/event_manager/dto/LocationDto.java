@@ -5,16 +5,19 @@ import jakarta.validation.constraints.*;
 public record LocationDto(
         @Null
         Long id,
-        @NotNull
-        @NotBlank
+
+        @NotBlank(message = "Location name should be not blank")
         String name,
-        @NotNull
-        @NotBlank
+
+        @NotBlank(message = "Location address should be not blank")
         String address,
-        @Min(5)
+
+        @NotNull
+        @Min(value = 5, message = "Minimum location capacity of is 5 ")
         @Positive()
         @Digits(integer = Integer.MAX_VALUE, fraction = 0)
         Integer capacity,
+
         String description
 ) {
 }

@@ -88,14 +88,13 @@ public class LocationService {
                     "than the capacity = %s that already exists")
                     .formatted(location.capacity(), foundCapacity));
         }
-        LocationEntity updatedLocationEntity = locationRepository.update(
-                locationId,
+        LocationEntity updatedEntity = locationRepository.update(
                 location.name(),
                 location.address(),
                 location.capacity(),
                 location.description()
         );
-        return entityMapper.toDomain(updatedLocationEntity);
+        return entityMapper.toDomain(updatedEntity);
     }
 
     public void existLocationAddress(String locationAddress) {

@@ -70,7 +70,7 @@ public class LocationService {
     public Location updateById(@NotNull Long locationId, @NotNull Location location) {
         LOGGER.info("Execute method updateById in LocationService class, got arguments locationId = {}, location = {}",
                 locationId, location);
-        locationValidate.validateLocationIdNull(locationId);
+        locationValidate.validateLocationIdNull(location.id());
         if (!locationRepository.existsById(locationId)) {
             LOGGER.error("No found location = {} with id = {}",locationId, location);
             throw new EntityNotFoundException(

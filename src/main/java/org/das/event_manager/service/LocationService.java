@@ -20,23 +20,23 @@ public class LocationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationService.class);
     private final LocationRepository locationRepository;
-    private final LocationEntityMapper entityConverter;
+    private final LocationEntityMapper entityMapper;
     private final LocationValidate locationValidate;
 
     @Autowired
     public LocationService(
             LocationRepository locationRepository,
-            LocationEntityMapper entityConverter,
+            LocationEntityMapper entityMapper,
             LocationValidate locationValidate
     ) {
         this.locationRepository = locationRepository;
-        this.entityConverter = entityConverter;
+        this.entityMapper = entityMapper;
         this.locationValidate = locationValidate;
     }
 
     public List<Location> findAll() {
         LOGGER.info("Execute method findAll in LocationService class");
-        return entityConverter.toDomain(locationRepository.findAll());
+        return entityMapper.toDomain(locationRepository.findAll());
     }
 
     public Location create(@NotNull Location locationToUpdate) {
@@ -45,7 +45,7 @@ public class LocationService {
         locationValidate.validateLocationIdNull(locationToUpdate.id());
         existLocationName(locationToUpdate.name());
         existLocationAddress(locationToUpdate.address());
-        return entityConverter.toDomain(locationRepository.save(entityConverter.toEntity(locationToUpdate)));
+        return entityMapper.toDomain(locationRepository.save(entityMapper.toEntity(locationToUpdate)));
     }
 
     public Location deleteById(@NotNull Long locationId) {
@@ -55,14 +55,14 @@ public class LocationService {
                 .orElseThrow(() -> new EntityNotFoundException("No such found location with id = %s"
                         .formatted(locationId)));
         locationRepository.deleteById(locationId);
-        return entityConverter.toDomain(foundLocationEntityForDelete);
+        return entityMapper.toDomain(foundLocationEntityForDelete);
     }
 
     public Location findById(@NotNull Long locationId) {
         LOGGER.info("Execute method findById in LocationService class, got argument locationId = {}",
                 locationId);
         return locationRepository.findById(locationId)
-                .map(entityConverter::toDomain)
+                .map(entityMapper::toDomain)
                 .orElseThrow(() -> new EntityNotFoundException("No such found location with id = %s"
                         .formatted(locationId)));
     }
@@ -95,7 +95,7 @@ public class LocationService {
                 location.capacity(),
                 location.description()
         );
-        return entityConverter.toDomain(updatedLocationEntity);
+        return entityMapper.toDomain(updatedLocationEntity);
     }
 
     public void existLocationAddress(String locationAddress) {

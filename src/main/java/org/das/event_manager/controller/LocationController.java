@@ -1,7 +1,7 @@
 package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
-import org.das.event_manager.converters.LocationDtoConverter;
+import org.das.event_manager.mappers.LocationDtoMapper;
 import org.das.event_manager.domain.Location;
 import org.das.event_manager.dto.LocationDto;
 import org.das.event_manager.service.LocationService;
@@ -19,10 +19,10 @@ public class LocationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationController.class);
     private final LocationService locationService;
-    private final LocationDtoConverter dtoConverter;
+    private final LocationDtoMapper dtoConverter;
 
     @Autowired
-    public LocationController(LocationService locationService, LocationDtoConverter dtoConverter) {
+    public LocationController(LocationService locationService, LocationDtoMapper dtoConverter) {
         this.locationService = locationService;
         this.dtoConverter = dtoConverter;
     }

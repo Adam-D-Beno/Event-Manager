@@ -12,12 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 public interface LocationRepository extends JpaRepository<LocationEntity, Long> {
 
     boolean existsByName(String name);
-
     boolean existsByAddress(String address);
-
     boolean existsById(Long id);
 
-    Integer getCapacityById(Long id);
+    @Query("SELECT l.capacity FROM LocationEntity l WHERE l.id = :id")
+    Integer findCapacityById(@Param("id") Long id);
 
     @Transactional
     @Modifying
@@ -31,7 +30,7 @@ public interface LocationRepository extends JpaRepository<LocationEntity, Long> 
             WHERE
                     l.id = :id
             """)
-    LocationEntity update(
+    void update(
             @Param("name") String name,
             @Param("address") String address,
             @Param("capacity") Integer capacity,

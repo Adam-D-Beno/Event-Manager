@@ -51,11 +51,11 @@ public class LocationService {
     public Location deleteById(@NotNull Long locationId) {
         LOGGER.info("Execute method deleteById in LocationService class, got argument locationId = {}",
                 locationId);
-        LocationEntity foundLocationEntityForDelete = locationRepository.findById(locationId)
+        LocationEntity foundEntityForDelete = locationRepository.findById(locationId)
                 .orElseThrow(() -> new EntityNotFoundException("No such found location with id = %s"
                         .formatted(locationId)));
         locationRepository.deleteById(locationId);
-        return entityMapper.toDomain(foundLocationEntityForDelete);
+        return entityMapper.toDomain(foundEntityForDelete);
     }
 
     public Location findById(@NotNull Long locationId) {

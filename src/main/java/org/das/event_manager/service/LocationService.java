@@ -2,7 +2,7 @@ package org.das.event_manager.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
-import org.das.event_manager.converters.LocationEntityConverter;
+import org.das.event_manager.mappers.LocationEntityMapper;
 import org.das.event_manager.domain.Location;
 import org.das.event_manager.entity.LocationEntity;
 import org.das.event_manager.repository.LocationRepository;
@@ -20,13 +20,13 @@ public class LocationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationService.class);
     private final LocationRepository locationRepository;
-    private final LocationEntityConverter entityConverter;
+    private final LocationEntityMapper entityConverter;
     private final LocationValidate locationValidate;
 
     @Autowired
     public LocationService(
             LocationRepository locationRepository,
-            LocationEntityConverter entityConverter,
+            LocationEntityMapper entityConverter,
             LocationValidate locationValidate
     ) {
         this.locationRepository = locationRepository;

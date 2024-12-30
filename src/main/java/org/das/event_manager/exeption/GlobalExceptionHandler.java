@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessageResponse> handleValidateException(MethodArgumentNotValidException e) {
-        LOGGER.error("Handle MethodArgumentNotValidException {}", e.getBindingResult());
+        LOGGER.error("Handle Bad request exception: MethodArgumentNotValidException = {}", e.getBindingResult());
         String detailMessage = e.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorMessageResponse> handleValidateException(ConstraintViolationException e) {
-        LOGGER.error("Handle ConstraintViolationException {}", e.getConstraintViolations());
+        LOGGER.error("Handle Bad request exception: ConstraintViolationException = {}", e.getConstraintViolations());
         String detailMessage = e.getConstraintViolations()
                 .stream()
                 .map(error -> String.format("%s %s %s Rejected value: %s",
@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorMessageResponse> handleNotFoundException(EntityNotFoundException e) {
-        LOGGER.error("Handle EntityNotFoundException {}", e.getMessage());
+        LOGGER.error("Handle EntityNotFoundException = {}", e.getMessage());
         var error = new ErrorMessageResponse(
                 "No such Element found",
                 e.getMessage(),
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorMessageResponse> handleIllegalArgumentException(IllegalArgumentException e) {
-        LOGGER.error("Handle handleIllegalArgumentException {}", e.getMessage());
+        LOGGER.error("Handle Bad request exception: IllegalArgumentException = {}", e.getMessage());
         var error = new ErrorMessageResponse(
                 "Bad request. Argument have error",
                 e.getMessage(),
@@ -88,7 +88,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorMessageResponse> HandlerHttpMessageNotReadableException(
             HttpMessageNotReadableException e) {
-        LOGGER.error("Got validation exception: HttpMessageNotReadableException {}", e.getMessage());
+        LOGGER.error("Handle Bad request exception: HttpMessageNotReadableException  = {}", e.getMessage());
         String detailMessage = "Body must not be is null";
         var errorDto = new ErrorMessageResponse(
                 "Bad request",
@@ -102,7 +102,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorMessageResponse> handleGenericException(Exception e) {
-        LOGGER.error("Handle generic exception {}", e.getMessage());
+        LOGGER.error("Handle generic exception = {}", e.getMessage());
         var error = new ErrorMessageResponse(
                 "INTERNAL_SERVER_ERROR",
                 e.getMessage(),

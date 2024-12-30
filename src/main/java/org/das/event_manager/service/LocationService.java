@@ -42,7 +42,7 @@ public class LocationService {
     public Location create(@NotNull Location locationToUpdate) {
         LOGGER.info("Execute method create in LocationService class, got argument locationToUpdate = {}",
                     locationToUpdate);
-        locationValidate.validateNotNull(locationToUpdate);
+        locationValidate.validateLocationIdNull(locationToUpdate.id());
         existLocationName(locationToUpdate.name());
         existLocationAddress(locationToUpdate.address());
         return entityConverter.toDomain(locationRepository.save(entityConverter.toEntity(locationToUpdate)));
@@ -51,7 +51,6 @@ public class LocationService {
     public Location deleteById(@NotNull Long locationId) {
         LOGGER.info("Execute method deleteById in LocationService class, got argument locationId = {}",
                 locationId);
-        locationValidate.validateNotNull(locationId);
         LocationEntity foundLocationEntityForDelete = locationRepository.findById(locationId)
                 .orElseThrow(() -> new EntityNotFoundException("No such found location with id = %s"
                         .formatted(locationId)));
@@ -62,7 +61,6 @@ public class LocationService {
     public Location findById(@NotNull Long locationId) {
         LOGGER.info("Execute method findById in LocationService class, got argument locationId = {}",
                 locationId);
-        locationValidate.validateNotNull(locationId);
         return locationRepository.findById(locationId)
                 .map(entityConverter::toDomain)
                 .orElseThrow(() -> new EntityNotFoundException("No such found location with id = %s"
@@ -72,8 +70,7 @@ public class LocationService {
     public Location updateById(@NotNull Long locationId, @NotNull Location location) {
         LOGGER.info("Execute method updateById in LocationService class, got arguments locationId = {}, location = {}",
                 locationId, location);
-        locationValidate.validateNotNull(locationId);
-        locationValidate.validateNotNull(location);
+        locationValidate.validateLocationIdNull(locationId);
         if (!locationRepository.existsById(locationId)) {
             LOGGER.error("No found location = {} with id = {}",locationId, location);
             throw new EntityNotFoundException(

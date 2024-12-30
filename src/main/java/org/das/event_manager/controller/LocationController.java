@@ -19,12 +19,12 @@ public class LocationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationController.class);
     private final LocationService locationService;
-    private final LocationDtoMapper dtoConverter;
+    private final LocationDtoMapper dtoMapper;
 
     @Autowired
-    public LocationController(LocationService locationService, LocationDtoMapper dtoConverter) {
+    public LocationController(LocationService locationService, LocationDtoMapper dtoMapper) {
         this.locationService = locationService;
-        this.dtoConverter = dtoConverter;
+        this.dtoMapper = dtoMapper;
     }
 
     @GetMapping()
@@ -32,7 +32,7 @@ public class LocationController {
         LOGGER.info("Get request for find all locations");
         return ResponseEntity
                 .ok()
-                .body(dtoConverter.toDto(locationService.findAll()));
+                .body(dtoMapper.toDto(locationService.findAll()));
     }
 
     @PostMapping
@@ -40,10 +40,10 @@ public class LocationController {
         @RequestBody @Valid LocationDto locationDtoToCreate
     ) {
         LOGGER.info("Post request for create locationDto = {}", locationDtoToCreate);
-        Location locationToUpdate = dtoConverter.toDomain(locationDtoToCreate);
+        Location locationToUpdate = dtoMapper.toDomain(locationDtoToCreate);
         return ResponseEntity.
                 status(HttpStatus.CREATED)
-               .body(dtoConverter.toDto(locationService.create(locationToUpdate)));
+               .body(dtoMapper.toDto(locationService.create(locationToUpdate)));
     }
 
     @DeleteMapping("/{locationId}")
@@ -54,7 +54,7 @@ public class LocationController {
         Location deletedLocation = locationService.deleteById(locationId);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
-                .body(dtoConverter.toDto(deletedLocation));
+                .body(dtoMapper.toDto(deletedLocation));
     }
 
     @GetMapping("/{locationId}")
@@ -64,7 +64,7 @@ public class LocationController {
        LOGGER.info("Get request for find by id = {} location", locationId);
        return ResponseEntity
                .status(HttpStatus.FOUND)
-               .body(dtoConverter.toDto(locationService.findById(locationId)));
+               .body(dtoMapper.toDto(locationService.findById(locationId)));
     }
 
     @PutMapping("/{locationId}")
@@ -74,7 +74,7 @@ public class LocationController {
     ) {
         LOGGER.info("Put request for update locationDto = {} with id = {}", locationDtoToUpdate, locationId);
         Location updatedLocation = locationService
-                .updateById(locationId, dtoConverter.toDomain(locationDtoToUpdate));
-        return ResponseEntity.ok().body(dtoConverter.toDto(updatedLocation));
+                .updateById(locationId, dtoMapper.toDomain(locationDtoToUpdate));
+        return ResponseEntity.ok().body(dtoMapper.toDto(updatedLocation));
     }
 }

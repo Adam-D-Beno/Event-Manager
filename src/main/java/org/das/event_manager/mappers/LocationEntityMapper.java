@@ -1,4 +1,4 @@
-package org.das.event_manager.converters;
+package org.das.event_manager.mappers;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -12,11 +12,11 @@ import java.util.List;
 
 @Validated
 @Component
-public class LocationEntityConverter {
+public class LocationEntityMapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationEntityConverter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocationEntityMapper.class);
 
-    //todo check pn NULL
+
     public LocationEntity toEntity(@NotNull Location location) {
         LOGGER.info("Execute method toEntity in LocationEntityConverter class, got argument location = {} ",
                 location);
@@ -29,7 +29,6 @@ public class LocationEntityConverter {
         );
     }
 
-    //todo check pn NULL
     public Location toDomain(@NotNull LocationEntity locationEntity) {
         LOGGER.info("Execute method toDomain in LocationEntityConverter class, got argument locationEntity = {} ",
                 locationEntity);
@@ -42,7 +41,6 @@ public class LocationEntityConverter {
         );
     }
 
-    //todo check pn NULL
     public List<Location> toDomain(@NotNull @NotEmpty List<LocationEntity> locationEntities) {
         LOGGER.info("Execute method toDto in LocationDtoConverter class, got argument locationEntities = {} ",
                 locationEntities);

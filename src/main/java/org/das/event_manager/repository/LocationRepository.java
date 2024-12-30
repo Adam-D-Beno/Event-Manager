@@ -32,7 +32,6 @@ public interface LocationRepository extends JpaRepository<LocationEntity, Long> 
                     l.id = :id
             """)
     LocationEntity update(
-            @Param("id") Long id,
             @Param("name") String name,
             @Param("address") String address,
             @Param("capacity") Integer capacity,

@@ -65,7 +65,7 @@ public class LocationService {
         locationValidate.validateNotNull(locationId);
         return locationRepository.findById(locationId)
                 .map(entityConverter::toDomain)
-                .orElseThrow(() -> new EntityNotFoundException("No such found location woth id = %s"
+                .orElseThrow(() -> new EntityNotFoundException("No such found location with id = %s"
                         .formatted(locationId)));
     }
 

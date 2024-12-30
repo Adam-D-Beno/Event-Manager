@@ -45,8 +45,7 @@ public class LocationService {
         locationValidate.validateNotNull(locationToUpdate);
         existLocationName(locationToUpdate.name());
         existLocationAddress(locationToUpdate.address());
-        LocationEntity savedLocationEntity = locationRepository.save(entityConverter.toEntity(locationToUpdate));
-        return entityConverter.toDomain(savedLocationEntity);
+        return entityConverter.toDomain(locationRepository.save(entityConverter.toEntity(locationToUpdate)));
     }
 
     public Location deleteById(@NotNull Long locationId) {

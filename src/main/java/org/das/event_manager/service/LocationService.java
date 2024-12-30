@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import java.util.List;
 
@@ -67,19 +68,18 @@ public class LocationService {
                         .formatted(locationId)));
     }
 
+    @Transactional
     public Location updateById(@NotNull Long locationId, @NotNull Location location) {
         LOGGER.info("Execute method updateById in LocationService class, got arguments locationId = {}, location = {}",
                 locationId, location);
         locationValidate.validateLocationIdNull(location.id());
-        if (!locationRepository.existsById(locationId)) {
-            LOGGER.error("No found location = {} with id = {}",locationId, location);
-            throw new EntityNotFoundException(
-                    "No location by id=%s".formatted(locationId)
-            );
-        }
-        existLocationName(location.name());
-        existLocationAddress(location.address());
-        Integer foundCapacity = locationRepository.getCapacityById(locationId);
+        LocationEntity foundEntityForUpdate = locationRepository.findById(locationId)
+                .orElseThrow(() -> {
+                    LOGGER.error("No found location = {} with id = {}",locationId, location);
+                    return new EntityNotFoundException("LocationEntity not found by id=%s".formatted(locationId)
+                    );
+                });
+        Integer foundCapacity = locationRepository.findCapacityById(locationId);
         if (location.capacity() < foundCapacity) {
             LOGGER.error("Capacity for update = {} should be greater than the existing capacity = {} " +
                             "for location: id = {}, name = {}",
@@ -88,13 +88,12 @@ public class LocationService {
                     "than the capacity = %s that already exists")
                     .formatted(location.capacity(), foundCapacity));
         }
-        LocationEntity updatedEntity = locationRepository.update(
-                location.name(),
-                location.address(),
-                location.capacity(),
-                location.description()
-        );
-        return entityMapper.toDomain(updatedEntity);
+        foundEntityForUpdate.setName(location.name());
+        foundEntityForUpdate.setAddress(location.address());
+        foundEntityForUpdate.setCapacity(location.capacity());
+        foundEntityForUpdate.setDescription(location.description());
+
+        return entityMapper.toDomain(foundEntityForUpdate);
     }
 
     public void existLocationAddress(String locationAddress) {
@@ -108,8 +107,8 @@ public class LocationService {
     public void existLocationName(String locationName) {
         LOGGER.info("Execute isExistLocationName in LocationService class, location name = {}", locationName);
         if (locationRepository.existsByName(locationName)) {
-            LOGGER.info("Location location name = {} exist", locationName);
-            throw new IllegalArgumentException("Location name = %s exist".formatted(locationName));
+            LOGGER.info("Location location name = {} already exists in data base", locationName);
+            throw new IllegalArgumentException("Location: name = %s exists in data base".formatted(locationName));
         }
     }
 }

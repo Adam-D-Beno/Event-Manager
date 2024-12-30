@@ -10,19 +10,27 @@ public class LocationValidate {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationValidate.class);
 
-    public void validateNotNull(Long locationId) {
-        LOGGER.info("Execute method validateNotNull in LocationValidate class, check locationId");
-        if (locationId == null) {
-            LOGGER.info("Execute method validateNotNull in LocationValidate class, locationId is NULL");
-            throw new IllegalArgumentException("Location id must be not NULL");
-        }
-    }
+//    public void validateLocationIdNotNull(Long locationId) {
+//        LOGGER.info("Execute method validateNotNull in LocationValidate class, checking locationId");
+//        if (locationId == null) {
+//            LOGGER.info("Cannot creation Location with id. id must be not empty");
+//            throw new IllegalArgumentException("Cannot creation Location with id. id must be not empty");
+//        }
+//    }
+//
+//    public void validateLocationNotNull(Location location) {
+//        LOGGER.info("Execute method validateNotNull in LocationValidate class. checking location");
+//        if (location == null) {
+//            LOGGER.info("Execute method validateNotNull in LocationValidate class, location is NULL");
+//            throw new IllegalArgumentException("Location must be not NULL");
+//        }
+//    }
 
-    public void validateNotNull(Location location) {
-        LOGGER.info("Execute method validateNotNull in LocationValidate class. check location");
-        if (location == null) {
-            LOGGER.info("Execute method validateNotNull in LocationValidate class, location is NULL");
-            throw new IllegalArgumentException("Location must be not NULL");
+    public void validateLocationIdNull(Long locationId) {
+        LOGGER.info("Execute method isLocationIdNull in LocationValidate class, checking locationId");
+        if (locationId == null) {
+            LOGGER.info("Cannot creation Location with provided id. id must be empty");
+            throw new IllegalArgumentException("Cannot creation Location with provided id. id must be empty");
         }
     }
 }

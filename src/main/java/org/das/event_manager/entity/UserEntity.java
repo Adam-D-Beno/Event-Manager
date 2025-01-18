@@ -1,6 +1,8 @@
 package org.das.event_manager.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.Objects;
 

@@ -17,7 +17,7 @@ public class LocationDtoMapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationDtoMapper.class);
 
     public Location toDomain(@NotNull LocationDto locationDto) {
-        LOGGER.info("Execute method toDomain in LocationDtoConverter class, got argument locationDto = {} ",
+        LOGGER.info("Execute method toDomain in LocationDtoMapper class, locationDto = {} ",
                 locationDto);
         return new Location(
                 locationDto.id(),
@@ -29,7 +29,7 @@ public class LocationDtoMapper {
     }
 
     public LocationDto toDto(@NotNull Location location) {
-        LOGGER.info("Execute method toDto in LocationDtoConverter class, got argument location = {} ",
+        LOGGER.info("Execute method toDto in LocationDtoMapper class, location = {} ",
                 location);
         return new LocationDto(
                 location.id(),
@@ -44,7 +44,7 @@ public class LocationDtoMapper {
         if (locations.isEmpty()) {
             return List.of();
         }
-        LOGGER.info("Execute method toDto in LocationDtoConverter class, got argument locations = {} ",
+        LOGGER.info("Execute method toDto in LocationDtoMapper class, locations = {} ",
                 locations);
         return locations.stream()
                 .map(this::toDto)

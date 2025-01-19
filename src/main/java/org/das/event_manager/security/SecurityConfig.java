@@ -1,6 +1,8 @@
 package org.das.event_manager.security;
 
 
+import org.das.event_manager.exeption.CustomAccessDeniedHandler;
+import org.das.event_manager.exeption.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,9 +24,17 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
-    public SecurityConfig(UserDetailsService userDetailsService) {
+    public SecurityConfig(
+            UserDetailsService userDetailsService,
+            CustomAuthenticationEntryPoint authenticationEntryPoint,
+            CustomAccessDeniedHandler customAccessDeniedHandler
+    ) {
         this.userDetailsService = userDetailsService;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
 
     @Bean
@@ -55,7 +65,11 @@ public class SecurityConfig {
                             .anyRequest()
                             .authenticated();
                 })
-//                .httpBasic(Customizer.withDefaults())
+                .exceptionHandling(exception -> {
+                                exception.authenticationEntryPoint(authenticationEntryPoint);
+                                exception.accessDeniedHandler(customAccessDeniedHandler);
+                })
+                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 

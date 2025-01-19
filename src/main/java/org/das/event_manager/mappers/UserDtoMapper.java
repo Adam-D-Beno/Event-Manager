@@ -28,7 +28,8 @@ public class UserDtoMapper {
         );
     }
 
-    public User toDomain(SignUpRequest signUpRequest) {
+    public User toDomain(@NotNull SignUpRequest signUpRequest) {
+        LOGGER.info("Execute method toDomain in UserDtoMapper, user login: {}", signUpRequest.login());
         return new User(
                 null,
                 signUpRequest.login(),

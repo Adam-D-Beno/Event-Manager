@@ -69,7 +69,7 @@ public class SecurityConfig {
                                 exception.authenticationEntryPoint(authenticationEntryPoint);
                                 exception.accessDeniedHandler(customAccessDeniedHandler);
                 })
-                .httpBasic(Customizer.withDefaults())
+//                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 

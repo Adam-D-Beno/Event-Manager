@@ -2,6 +2,7 @@ package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
 import org.das.event_manager.domain.User;
+import org.das.event_manager.dto.JwtResponse;
 import org.das.event_manager.dto.SignInRequest;
 import org.das.event_manager.dto.SignUpRequest;
 import org.das.event_manager.dto.UserDto;
@@ -45,9 +46,8 @@ public class UserController {
     }
 
     @PostMapping("/auth")
-    public ResponseEntity<Void> authentication(@Valid @RequestBody SignInRequest signInRequest) {
+    public ResponseEntity<JwtResponse> authentication(@Valid @RequestBody SignInRequest signInRequest) {
         LOGGER.info("Post request for SignIn: login = {}", signInRequest.login());
-        authenticationService.authenticateUser(signInRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(new JwtResponse(authenticationService.authenticateUser(signInRequest)));
     }
 }

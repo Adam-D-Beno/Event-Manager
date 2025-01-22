@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.das.event_manager.security.CustomUserDetailService;
+import org.das.event_manager.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -17,16 +18,16 @@ import java.io.IOException;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    private final CustomUserDetailService customUserDetailService;
+    private final UserService userService;
     private final JwtTokenManager jwtTokenManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtFilter.class);
 
     public JwtFilter(
-            CustomUserDetailService customUserDetailService,
+            UserService userService,
             JwtTokenManager jwtTokenManager
     ) {
-        this.customUserDetailService = customUserDetailService;
+        this.userService = userService;
         this.jwtTokenManager = jwtTokenManager;
     }
 
@@ -45,7 +46,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String jwt = authorizationHeader.substring(7);
         String userLogin = jwtTokenManager.getLoginFromToken(jwt);
         if (userLogin != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = customUserDetailService.loadUserByUsername(userLogin);
+
         }
     }
 }

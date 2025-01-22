@@ -6,8 +6,11 @@ import org.das.event_manager.mappers.UserEntityMapper;
 import org.das.event_manager.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -40,5 +43,10 @@ public class UserService {
         return userEntityMapper.toDomain(userSaved);
     }
 
-
+    public User findByLogin(String login) {
+        LOGGER.info("Execute method getUserByLogin user: login = {} in UserService class", login);
+        return userRepository.findByLogin(login)
+                .map(userEntityMapper::toDomain)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
 }

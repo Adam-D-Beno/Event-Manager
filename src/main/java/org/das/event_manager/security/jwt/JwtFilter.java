@@ -45,8 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         String jwt = authorizationHeader.substring(7);
         String userLogin = jwtTokenManager.getLoginFromToken(jwt);
-        if (userLogin != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-        }
+
     }
 }

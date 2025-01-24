@@ -4,27 +4,30 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.das.event_manager.security.CustomUserDetailService;
+import org.das.event_manager.domain.User;
 import org.das.event_manager.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
-public class JwtFilter extends OncePerRequestFilter {
+public class JwtTokenFilter extends OncePerRequestFilter {
     private final UserService userService;
     private final JwtTokenManager jwtTokenManager;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JwtFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenFilter.class);
 
-    public JwtFilter(
-            UserService userService,
+    public JwtTokenFilter(
+            @Lazy UserService userService,
             JwtTokenManager jwtTokenManager
     ) {
         this.userService = userService;
@@ -37,15 +40,32 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        LOGGER.info("Execute JwtFilter");
+        LOGGER.info("Execute JwtTokenFilter");
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
         String jwt = authorizationHeader.substring(7);
-        String userLogin = jwtTokenManager.getLoginFromToken(jwt);
+        String userLoginFromToken;
+        try {
+            userLoginFromToken = jwtTokenManager.getLoginFromToken(jwt);
+        } catch (Exception e) {
+            LOGGER.error("Error while reading jwt", e);
+            filterChain.doFilter(request,response);
+            return;
+        }
+        addSecurityContextHolder(userService.findByLogin(userLoginFromToken));
+        filterChain.doFilter(request, response);
+    }
 
-
+    private void addSecurityContextHolder(User foundUser) {
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                        foundUser,
+                        null,
+                        List.of(new SimpleGrantedAuthority(foundUser.role()))
+                )
+        );
     }
 }

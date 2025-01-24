@@ -11,8 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class UserService {
 
@@ -36,7 +34,7 @@ public class UserService {
         if (userRepository.existsByLogin(signUpRequest.login())) {
             throw new IllegalArgumentException("User already taken");
         }
-        var hashedPass = passwordEncoder.encode(signUpRequest.password());
+        var hashedPass = passwordEncoder.encode(signUpRequest.passwordHash());
         UserEntity userToSave = userEntityMapper.toEntity(signUpRequest);
         userToSave.setPassword(hashedPass);
         userToSave.setRole(Role.USER);

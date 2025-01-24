@@ -20,7 +20,6 @@ public class DefaultUserListener {
         this.userRepository = userRepository;
     }
 
-
     @EventListener
     public void initialiseDefaultUsers(ApplicationStartedEvent applicationStartedEvent) {
         if (!userRepository.existsByLogin(defaultAdmin)) {

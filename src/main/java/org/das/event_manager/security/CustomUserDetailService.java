@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import java.util.Collections;
+import java.util.List;
 
 @Component
 public class CustomUserDetailService implements UserDetailsService {
@@ -28,7 +29,7 @@ public class CustomUserDetailService implements UserDetailsService {
                 .map(user -> new User(
                         user.getLogin(),
                         user.getPassword(),
-                        Collections.singleton(new SimpleGrantedAuthority(user.getRole()))
+                        List.of(new SimpleGrantedAuthority(user.getRole()))
                 ))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with user login: = %s"
                         .formatted(login)));

@@ -30,16 +30,12 @@ public class AuthenticationService {
     public String authenticateUser(SignInRequest signInRequest) {
         LOGGER.info("Execute method authenticateUser user: login = {} in AuthenticationService class",
                 signInRequest.login());
-
-        Authentication authenticated = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 signInRequest.login(),
                 signInRequest.password()
         ));
-        addSecurityContextHolder(authenticated);
         return jwtTokenManager.generateJwtToken(signInRequest.login());
     }
 
-    private void addSecurityContextHolder(Authentication authenticated) {
-        SecurityContextHolder.getContext().setAuthentication(authenticated);
-    }
+
 }

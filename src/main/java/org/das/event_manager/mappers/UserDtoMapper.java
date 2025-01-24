@@ -35,7 +35,7 @@ public class UserDtoMapper {
                 signUpRequest.login(),
                 signUpRequest.password(),
                 signUpRequest.age(),
-                ""
+                null
         );
     }
 }

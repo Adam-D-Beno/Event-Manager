@@ -19,7 +19,7 @@ public class UserEntityMapper {
         return new UserEntity(
                 null,
                 user.login(),
-                user.password(),
+                user.passwordHash(),
                 user.age(),
                 user.role()
         );

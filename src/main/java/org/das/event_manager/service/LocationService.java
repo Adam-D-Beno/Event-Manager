@@ -79,20 +79,21 @@ public class LocationService {
                     return new EntityNotFoundException("LocationEntity not found by id=%s".formatted(locationId)
                     );
                 });
-        Integer foundCapacity = locationRepository.findCapacityById(locationId);
-        if (location.capacity() < foundCapacity) {
+        Integer currentLocationCapacity = foundEntityForUpdate.getCapacity();
+        if (location.capacity() < currentLocationCapacity) {
             LOGGER.error("Capacity for update = {} should be greater than the existing capacity = {} " +
                             "for location: id = {}, name = {}",
-                    location.capacity(), foundCapacity, locationId, location.name());
+                    location.capacity(), currentLocationCapacity, locationId, location.name());
             throw new IllegalArgumentException(("Capacity for update = %s should be more " +
                     "than the capacity = %s that already exists")
-                    .formatted(location.capacity(), foundCapacity));
+                    .formatted(location.capacity(), currentLocationCapacity));
         }
-        foundEntityForUpdate.setName(location.name());
-        foundEntityForUpdate.setAddress(location.address());
-        foundEntityForUpdate.setCapacity(location.capacity());
-        foundEntityForUpdate.setDescription(location.description());
-
+        locationRepository.update(
+                location.name(),
+                location.address(),
+                location.capacity(),
+                location.description()
+        );
         return entityMapper.toDomain(foundEntityForUpdate);
     }
 

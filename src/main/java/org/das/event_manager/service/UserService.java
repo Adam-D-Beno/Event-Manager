@@ -36,11 +36,9 @@ public class UserService {
         return userEntityMapper.toDomain(saved);
     }
 
-    public void userExistByLogin(String login) {
+    public boolean isUserExistsByLogin(String login) {
         LOGGER.info("Execute method userExistByLogin user: login = {} in UserService class", login);
-        if (userRepository.existsByLogin(login)) {
-            throw new IllegalArgumentException("User already taken");
-        }
+       return userRepository.existsByLogin(login);
     }
 
     public User findByLogin(String login) {

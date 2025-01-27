@@ -31,15 +31,15 @@ public class UserService {
         return userEntityMapper.toDomain(saved);
     }
 
-    public boolean isUserExistsByLogin(String login) {
-        LOGGER.info("Execute method userExistByLogin user: login = {} in UserService class", login);
-       return userRepository.existsByLogin(login);
-    }
-
     public User findByLogin(String login) {
         LOGGER.info("Execute method getUserByLogin user: login = {} in UserService class", login);
         return userRepository.findByLogin(login)
                 .map(userEntityMapper::toDomain)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    public boolean isUserExistsByLogin(String login) {
+        LOGGER.info("Execute method userExistByLogin user: login = {} in UserService class", login);
+        return userRepository.existsByLogin(login);
     }
 }

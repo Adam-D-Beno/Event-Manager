@@ -15,24 +15,19 @@ public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final UserEntityMapper userEntityMapper;
-    private final UserRegistrationService userRegistrationService;
 
     public UserService(
             UserRepository userRepository,
-            UserEntityMapper userEntityMapper,
-            UserRegistrationService userRegistrationService
+            UserEntityMapper userEntityMapper
     ) {
         this.userRepository = userRepository;
         this.userEntityMapper = userEntityMapper;
-        this.userRegistrationService = userRegistrationService;
     }
 
-
-    public User save(User signUpRequest) {
-        LOGGER.info("Execute method register user: login = {} in UserService class", signUpRequest.login());
-        User registered = userRegistrationService.register(signUpRequest);
-        UserEntity userToSave = userEntityMapper.toEntity(registered);
-        UserEntity saved = userRepository.save(userToSave);
+    public User save(User userToSave) {
+        LOGGER.info("Execute method save user: login = {} in UserService class", userToSave.login());
+        UserEntity entityForSave = userEntityMapper.toEntity(userToSave);
+        UserEntity saved = userRepository.save(entityForSave);
         return userEntityMapper.toDomain(saved);
     }
 

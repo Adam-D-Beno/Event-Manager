@@ -7,6 +7,7 @@ import org.das.event_manager.dto.SignUpRequest;
 import org.das.event_manager.dto.UserDto;
 import org.das.event_manager.mappers.UserDtoMapper;
 import org.das.event_manager.service.AuthenticationService;
+import org.das.event_manager.service.UserRegistrationService;
 import org.das.event_manager.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,17 +24,16 @@ public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     private final AuthenticationService authenticationService;
-    private final UserService userService;
     private final UserDtoMapper userDtoMapper;
+    private final UserRegistrationService userRegistrationService;
 
     public UserController(
             AuthenticationService authenticationService,
-            UserService userService,
-            UserDtoMapper userDtoMapper
-    ) {
+            UserDtoMapper userDtoMapper,
+            UserRegistrationService userRegistrationService) {
         this.authenticationService = authenticationService;
-        this.userService = userService;
         this.userDtoMapper = userDtoMapper;
+        this.userRegistrationService = userRegistrationService;
     }
 
     @PostMapping
@@ -41,7 +41,7 @@ public class UserController {
         LOGGER.info("Post request for SignUp: login = {}", signUpRequest.login());
         return ResponseEntity.
                 status(HttpStatus.CREATED)
-                .body(userDtoMapper.toDto(userService.save(userDtoMapper.toDomain(signUpRequest))));
+                .body(userDtoMapper.toDto(userRegistrationService.register(userDtoMapper.toDomain(signUpRequest))));
     }
 
     @PostMapping("/auth")

@@ -41,7 +41,7 @@ public class UserController {
         LOGGER.info("Post request for SignUp: login = {}", signUpRequest.login());
         return ResponseEntity.
                 status(HttpStatus.CREATED)
-                .body(userDtoMapper.toDto(userService.register(userDtoMapper.toDomain(signUpRequest))));
+                .body(userDtoMapper.toDto(userService.save(userDtoMapper.toDomain(signUpRequest))));
     }
 
     @PostMapping("/auth")

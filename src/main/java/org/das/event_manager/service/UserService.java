@@ -37,6 +37,7 @@ public class UserService {
     }
 
     public void userExistByLogin(String login) {
+        LOGGER.info("Execute method userExistByLogin user: login = {} in UserService class", login);
         if (userRepository.existsByLogin(login)) {
             throw new IllegalArgumentException("User already taken");
         }

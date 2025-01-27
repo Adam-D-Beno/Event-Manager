@@ -18,7 +18,7 @@ public class UserRegistrationService {
     private final PasswordEncoder passwordEncoder;
 
     public UserRegistrationService(
-            @Lazy UserService userService,
+            UserService userService,
             PasswordEncoder passwordEncoder
     ) {
         this.userService = userService;
@@ -27,16 +27,17 @@ public class UserRegistrationService {
 
     public User register(User signUpRequest) {
         LOGGER.info("Execute method register user: login = {} in UserRegistrationService class", signUpRequest.login());
-       if (userService.isUserExistsByLogin(signUpRequest.login())) {
-           throw new IllegalArgumentException("User with such login = %s already exist"
-                   .formatted(signUpRequest.login()));
-       }
-        return new User(
+        if (userService.isUserExistsByLogin(signUpRequest.login())) {
+            throw new IllegalArgumentException("User with such login = %s already exist"
+                    .formatted(signUpRequest.login()));
+        }
+        var userToSave = new User(
                 null,
                 signUpRequest.login(),
                 passwordEncoder.encode(signUpRequest.passwordHash()),
                 signUpRequest.age(),
                 UserRole.USER
         );
+        return userService.save(userToSave);
     }
 }

@@ -1,8 +1,8 @@
 package org.das.event_manager.listeners;
 
-import org.das.event_manager.entity.UserEntity;
+import org.das.event_manager.domain.entity.UserEntity;
 import org.das.event_manager.repository.UserRepository;
-import org.das.event_manager.utils.Role;
+import org.das.event_manager.domain.UserRole;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,14 +23,14 @@ public class DefaultUserListener {
     @EventListener
     public void initialiseDefaultUsers(ApplicationStartedEvent applicationStartedEvent) {
         if (!userRepository.existsByLogin(defaultAdmin)) {
-            userRepository.save(createDefaultUser(defaultAdmin, Role.ADMIN));
+            userRepository.save(createDefaultUser(defaultAdmin, UserRole.ADMIN));
         }
         if (!userRepository.existsByLogin(defaultUser)) {
-            userRepository.save(createDefaultUser(defaultUser, Role.USER));
+            userRepository.save(createDefaultUser(defaultUser, UserRole.USER));
         }
     }
 
-    private UserEntity createDefaultUser(String login, Role role) {
-        return new UserEntity(null, login, passwordEncoder.encode(login), 1988, role);
+    private UserEntity createDefaultUser(String login, UserRole userRole) {
+        return new UserEntity(null, login, passwordEncoder.encode(login), 1988, userRole);
     }
 }

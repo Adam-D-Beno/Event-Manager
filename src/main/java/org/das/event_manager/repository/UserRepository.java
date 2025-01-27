@@ -1,7 +1,6 @@
 package org.das.event_manager.repository;
 
-import org.das.event_manager.entity.LocationEntity;
-import org.das.event_manager.entity.UserEntity;
+import org.das.event_manager.domain.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

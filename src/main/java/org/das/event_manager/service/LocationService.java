@@ -4,7 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.mappers.LocationEntityMapper;
 import org.das.event_manager.domain.Location;
-import org.das.event_manager.entity.LocationEntity;
+import org.das.event_manager.domain.entity.LocationEntity;
 import org.das.event_manager.repository.LocationRepository;
 import org.das.event_manager.validation.LocationValidate;
 import org.slf4j.Logger;

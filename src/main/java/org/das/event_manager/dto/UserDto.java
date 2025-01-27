@@ -1,11 +1,11 @@
 package org.das.event_manager.dto;
 
-import org.das.event_manager.utils.Role;
+import org.das.event_manager.domain.UserRole;
 
 public record UserDto(
         Long id,
         String login,
         Integer age,
-        Role role
+        UserRole userRole
 ) {
 }

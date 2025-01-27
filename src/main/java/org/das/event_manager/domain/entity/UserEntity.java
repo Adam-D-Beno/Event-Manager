@@ -1,9 +1,7 @@
-package org.das.event_manager.entity;
+package org.das.event_manager.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import org.das.event_manager.utils.Role;
-import org.hibernate.annotations.ColumnDefault;
+import org.das.event_manager.domain.UserRole;
 
 import java.util.Objects;
 
@@ -26,7 +24,7 @@ public class UserEntity {
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private UserRole userRole;
 
     public UserEntity() {
     }
@@ -36,13 +34,13 @@ public class UserEntity {
             String login,
             String password,
             Integer age,
-            Role role
+            UserRole userRole
     ) {
         this.id = id;
         this.login = login;
         this.password = password;
         this.age = age;
-        this.role = role;
+        this.userRole = userRole;
     }
 
     public Long getId() {
@@ -77,12 +75,12 @@ public class UserEntity {
         this.age = age;
     }
 
-    public Role getRole() {
-        return role;
+    public UserRole getRole() {
+        return userRole;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 
     @Override

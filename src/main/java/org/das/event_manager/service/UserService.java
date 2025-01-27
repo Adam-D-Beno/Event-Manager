@@ -1,10 +1,10 @@
 package org.das.event_manager.service;
 
 import org.das.event_manager.domain.User;
-import org.das.event_manager.entity.UserEntity;
+import org.das.event_manager.domain.entity.UserEntity;
 import org.das.event_manager.mappers.UserEntityMapper;
 import org.das.event_manager.repository.UserRepository;
-import org.das.event_manager.utils.Role;
+import org.das.event_manager.domain.UserRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,7 +37,7 @@ public class UserService {
         var hashedPass = passwordEncoder.encode(signUpRequest.passwordHash());
         UserEntity userToSave = userEntityMapper.toEntity(signUpRequest);
         userToSave.setPassword(hashedPass);
-        userToSave.setRole(Role.USER);
+        userToSave.setRole(UserRole.USER);
         UserEntity userSaved = userRepository.save(userToSave);
         return userEntityMapper.toDomain(userSaved);
     }

@@ -1,4 +1,4 @@
-package org.das.event_manager.entity;
+package org.das.event_manager.domain.entity;
 
 import jakarta.persistence.*;
 

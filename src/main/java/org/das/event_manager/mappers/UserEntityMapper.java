@@ -2,7 +2,7 @@ package org.das.event_manager.mappers;
 
 import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.User;
-import org.das.event_manager.entity.UserEntity;
+import org.das.event_manager.domain.entity.UserEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ public class UserEntityMapper {
                 user.login(),
                 user.passwordHash(),
                 user.age(),
-                user.role()
+                user.userRole()
         );
     }
 

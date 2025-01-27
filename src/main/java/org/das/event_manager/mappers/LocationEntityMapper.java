@@ -3,7 +3,7 @@ package org.das.event_manager.mappers;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.Location;
-import org.das.event_manager.entity.LocationEntity;
+import org.das.event_manager.domain.entity.LocationEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

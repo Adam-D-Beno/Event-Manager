@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
-import javax.management.relation.Role;
-
 @Validated
 @Component
 public class UserDtoMapper {
@@ -24,7 +22,7 @@ public class UserDtoMapper {
                 user.id(),
                 user.login(),
                 user.age(),
-                user.role()
+                user.userRole()
         );
     }
 

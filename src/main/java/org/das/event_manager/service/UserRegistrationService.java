@@ -28,7 +28,8 @@ public class UserRegistrationService {
     public User register(User signUpRequest) {
         LOGGER.info("Execute method register user: login = {} in UserRegistrationService class", signUpRequest.login());
        if (userService.isUserExistsByLogin(signUpRequest.login())) {
-           throw new IllegalArgumentException("User already taken");
+           throw new IllegalArgumentException("User with such login = %s already exist"
+                   .formatted(signUpRequest.login()));
        }
         return new User(
                 null,

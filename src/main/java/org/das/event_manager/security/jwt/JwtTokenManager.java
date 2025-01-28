@@ -1,9 +1,7 @@
 package org.das.event_manager.security.jwt;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.das.event_manager.domain.User;
 import org.das.event_manager.service.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,36 +9,29 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class JwtTokenManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenManager.class);
-    private final SecretKey secretKey;
-    public final long expirationTime;
+    private final SecretKey SECRET_KEY;
+    public final long EXPIRATION_TIME;
 
     public JwtTokenManager(
-           @Value("${jwt.sign_key}") String secretKey,
-           @Value("${jwt.live_time}") long expirationTime) {
-        this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
-        this.expirationTime = expirationTime;
+            @Value("${JWT-SECRET_KEY}") String secretKey,
+            @Value("${EXPIRATION-LIVE-TIME}") long expirationTime) {
+        SECRET_KEY = Keys.hmacShaKeyFor(secretKey.getBytes());
+        EXPIRATION_TIME = expirationTime;
     }
 
-    public String generateJwtToken(User user) {
-        LOGGER.info("Generate jwt token for login = {}", user.login());
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", user.userRole().name());
+    public String generateJwtToken(String login) {
+        LOGGER.info("Generate jwt token for login = {}", login);
         return Jwts
                 .builder()
-                .claims(claims)
-                .subject(user.login())
-                .signWith(secretKey)
+                .subject(login)
+                .signWith(SECRET_KEY)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expirationTime))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .compact();
     }
 
@@ -48,25 +39,10 @@ public class JwtTokenManager {
         LOGGER.info("Get login from jwt token = {} ", jwt);
         return Jwts
                 .parser()
-                .verifyWith(secretKey)
+                .verifyWith(SECRET_KEY)
                 .build()
                 .parseSignedClaims(jwt)
                 .getPayload()
                 .getSubject();
-    }
-
-
-    public boolean isTokenValid(String jwt) {
-        return false;
-    }
-
-    public String getRoleFromToken(String jwt) {
-         LOGGER.info("Get role from jwt token = {} ", jwt);
-        return Jwts
-                .parser()
-                .build()
-                .parseSignedClaims(jwt)
-                .getPayload()
-                .get("role", String.class);
     }
 }

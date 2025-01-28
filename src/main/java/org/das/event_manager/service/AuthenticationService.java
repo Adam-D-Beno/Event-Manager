@@ -39,7 +39,7 @@ public class AuthenticationService {
                 signInRequest.password()
         ));
         User foundUser = userService.findByLogin(signInRequest.login());
-        return jwtTokenManager.generateJwtToken(foundUser);
+        return jwtTokenManager.generateJwtToken(signInRequest.login());
     }
 
 

@@ -75,18 +75,18 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
                     authorizationManagerRequestMatcherRegistry
                             .requestMatchers(HttpMethod.GET, "/locations/**")
-                            .hasAnyRole("ADMIN", "USER")
+                            .hasAnyAuthority("ADMIN", "USER")
                             .requestMatchers(HttpMethod.POST, "/locations")
-                            .hasRole("ADMIN")
+                            .hasAuthority("ADMIN")
                             .requestMatchers(HttpMethod.DELETE, "/locations/**")
-                            .hasRole("ADMIN")
+                            .hasAuthority("ADMIN")
                             .requestMatchers(HttpMethod.PUT, "/locations/**")
-                            .hasRole("ADMIN")
+                            .hasAuthority("ADMIN")
 
                             .requestMatchers(HttpMethod.POST, "/users")
                             .permitAll()
                             .requestMatchers(HttpMethod.GET, "/users/**")
-                            .hasRole("ADMIN")
+                            .hasAuthority("ADMIN")
                             .requestMatchers(HttpMethod.POST, "/users/auth")
                             .permitAll()
                             .anyRequest()

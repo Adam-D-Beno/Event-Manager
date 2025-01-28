@@ -1,6 +1,7 @@
 package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
+import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.JwtResponse;
 import org.das.event_manager.dto.SignInRequest;
 import org.das.event_manager.dto.SignUpRequest;
@@ -13,10 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -26,14 +24,18 @@ public class UserController {
     private final AuthenticationService authenticationService;
     private final UserDtoMapper userDtoMapper;
     private final UserRegistrationService userRegistrationService;
+    private final UserService userService;
 
     public UserController(
             AuthenticationService authenticationService,
             UserDtoMapper userDtoMapper,
-            UserRegistrationService userRegistrationService) {
+            UserRegistrationService userRegistrationService,
+            UserService userService
+    ) {
         this.authenticationService = authenticationService;
         this.userDtoMapper = userDtoMapper;
         this.userRegistrationService = userRegistrationService;
+        this.userService = userService;
     }
 
     @PostMapping
@@ -42,6 +44,13 @@ public class UserController {
         return ResponseEntity.
                 status(HttpStatus.CREATED)
                 .body(userDtoMapper.toDto(userRegistrationService.register(userDtoMapper.toDomain(signUpRequest))));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> findById(@Valid @PathVariable(name = "id") Long id) {
+        return ResponseEntity.
+                status(HttpStatus.FOUND)
+                .body(userDtoMapper.toDto(userService.findById(id)));
     }
 
     @PostMapping("/auth")

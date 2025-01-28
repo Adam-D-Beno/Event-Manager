@@ -1,5 +1,6 @@
 package org.das.event_manager.service;
 
+import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.SignInRequest;
 import org.das.event_manager.security.CustomUserDetailService;
 import org.das.event_manager.security.jwt.JwtTokenManager;
@@ -17,14 +18,17 @@ public class AuthenticationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationService.class);
     private final AuthenticationManager authenticationManager;
     private final JwtTokenManager jwtTokenManager;
+    private final UserService userService;
 
 
     public AuthenticationService(
             AuthenticationManager authenticationManager,
-            JwtTokenManager jwtTokenManager
+            JwtTokenManager jwtTokenManager,
+            UserService userService
     ) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenManager = jwtTokenManager;
+        this.userService = userService;
     }
 
     public String authenticateUser(SignInRequest signInRequest) {
@@ -34,7 +38,8 @@ public class AuthenticationService {
                 signInRequest.login(),
                 signInRequest.password()
         ));
-        return jwtTokenManager.generateJwtToken(signInRequest.login());
+        User foundUser = userService.findByLogin(signInRequest.login());
+        return jwtTokenManager.generateJwtToken(foundUser);
     }
 
 

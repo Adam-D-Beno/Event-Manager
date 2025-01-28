@@ -18,8 +18,8 @@ public class JwtTokenManager {
     public final long EXPIRATION_TIME;
 
     public JwtTokenManager(
-            @Value("${JWT-SECRET_KEY}") String secretKey,
-            @Value("${EXPIRATION-LIVE-TIME}") long expirationTime) {
+            @Value("${jwt.sign_key}") String secretKey,
+            @Value("${jwt.live_time}") long expirationTime) {
         SECRET_KEY = Keys.hmacShaKeyFor(secretKey.getBytes());
         EXPIRATION_TIME = expirationTime;
     }

@@ -51,18 +51,16 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String userRoleFromToken;
         try {
             userLoginFromToken = jwtTokenManager.getLoginFromToken(jwt);
-//            userRoleFromToken = jwtTokenManager.getRoleFromToken(jwt);
+            userRoleFromToken = jwtTokenManager.getRoleFromToken(jwt);
         } catch (Exception e) {
             LOGGER.error("Error while reading jwt", e);
             filterChain.doFilter(request,response);
             return;
         }
-        //todo get role from jwt token
-        // what keep in UsernamePasswordAuthenticationToken on parameter Object principal
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 userLoginFromToken,
                 null,
-                List.of(new SimpleGrantedAuthority("user"))
+                List.of(new SimpleGrantedAuthority(userRoleFromToken))
         );
         addSecurityContextHolder(authenticationToken);
         filterChain.doFilter(request, response);

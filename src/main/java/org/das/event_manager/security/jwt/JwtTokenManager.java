@@ -20,16 +20,13 @@ import java.util.Map;
 @Component
 public class JwtTokenManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenManager.class);
-    private final SecretKeySpec secretKey;
+    private final SecretKey secretKey;
     public final long expirationTime;
 
     public JwtTokenManager(
            @Value("${jwt.sign_key}") String secretKey,
            @Value("${jwt.live_time}") long expirationTime) {
-        this.secretKey = new SecretKeySpec(
-                secretKey.getBytes(StandardCharsets.UTF_8),
-                SignatureAlgorithm.HS256.getJcaName()
-        );
+        this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
         this.expirationTime = expirationTime;
     }
 

@@ -9,7 +9,7 @@ public record SignInRequest(
         String login,
 
         @NotBlank(message = "Password should be not blank")
-        @Size(min = 6, message = "password length should be min 8")
+        @Size(min = 5, message = "password length should be min 8")
         String password
 ) {
 }

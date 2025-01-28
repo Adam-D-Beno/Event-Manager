@@ -57,4 +57,19 @@ public class JwtTokenManager {
                 .getPayload()
                 .getSubject();
     }
+
+
+    public boolean isTokenValid(String jwt) {
+        return false;
+    }
+
+    public String getRoleFromToken(String jwt) {
+         LOGGER.info("Get role from jwt token = {} ", jwt);
+        return Jwts
+                .parser()
+                .build()
+                .parseSignedClaims(jwt)
+                .getPayload()
+                .get("role", String.class);
+    }
 }

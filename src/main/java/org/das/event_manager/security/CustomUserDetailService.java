@@ -26,10 +26,10 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         LOGGER.info("Execute method loadUserByUsername user: login = {} in CustomUserDetailService class", login);
         return userRepository.findByLogin(login)
-                .map(user -> new User(
-                        user.getLogin(),
-                        user.getPasswordHash(),
-                        List.of(new SimpleGrantedAuthority(user.getRole().name()))
+                .map(userEntity -> new User(
+                        userEntity.getLogin(),
+                        userEntity.getPasswordHash(),
+                        List.of(new SimpleGrantedAuthority(userEntity.getRole().name()))
                 ))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with user login: = %s"
                         .formatted(login)));

@@ -68,7 +68,7 @@ public class LocationController {
 
     @PutMapping("/{locationId}")
     public ResponseEntity<LocationDto> updateById(
-            @PathVariable Long locationId,
+            @PathVariable("locationId") Long locationId,
             @RequestBody @Valid LocationDto locationDtoToUpdate
     ) {
         LOGGER.info("Put request for update locationDto = {} with id = {}", locationDtoToUpdate, locationId);

@@ -22,7 +22,7 @@ public class EventEntity {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "owner_id")
+    @JoinColumn(name = "owner_id", nullable = false)
     private UserEntity owner;
 
     @Column(name = "max_Places", nullable = false)
@@ -41,7 +41,7 @@ public class EventEntity {
     private Integer duration;
 
     @OneToOne
-    @JoinColumn(name = "location_id")
+    @JoinColumn(name = "location_id", nullable = false)
     private LocationEntity location;
 
     @Column(name = "status", nullable = false)

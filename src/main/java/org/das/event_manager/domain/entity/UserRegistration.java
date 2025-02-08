@@ -16,13 +16,23 @@ public class UserRegistration {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
     @ManyToOne
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", nullable = false)
     private EventEntity event;
 
     public UserRegistration() {
+    }
+
+    public UserRegistration(
+            Long id,
+            UserEntity user,
+            EventEntity event
+    ) {
+        this.id = id;
+        this.user = user;
+        this.event = event;
     }
 }

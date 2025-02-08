@@ -1,4 +1,4 @@
-package org.das.event_manager.mappers;
+package org.das.event_manager.dto.mappers;
 
 import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.User;

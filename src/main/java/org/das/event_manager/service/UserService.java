@@ -2,7 +2,7 @@ package org.das.event_manager.service;
 
 import org.das.event_manager.domain.User;
 import org.das.event_manager.domain.entity.UserEntity;
-import org.das.event_manager.mappers.UserEntityMapper;
+import org.das.event_manager.dto.mappers.UserEntityMapper;
 import org.das.event_manager.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

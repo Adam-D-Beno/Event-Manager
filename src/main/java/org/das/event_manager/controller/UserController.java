@@ -1,12 +1,11 @@
 package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
-import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.JwtResponse;
 import org.das.event_manager.dto.SignInRequest;
 import org.das.event_manager.dto.SignUpRequest;
 import org.das.event_manager.dto.UserDto;
-import org.das.event_manager.mappers.UserDtoMapper;
+import org.das.event_manager.dto.mappers.UserDtoMapper;
 import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.UserRegistrationService;
 import org.das.event_manager.service.UserService;

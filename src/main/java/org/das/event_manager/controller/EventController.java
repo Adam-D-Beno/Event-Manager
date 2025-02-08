@@ -4,6 +4,10 @@ import org.das.event_manager.domain.Event;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventDto;
 import org.das.event_manager.dto.EventUpdateRequestDto;
+import org.das.event_manager.dto.mappers.EventDtoMapper;
+import org.das.event_manager.service.EventService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,13 +18,29 @@ import java.util.List;
 @RequestMapping("/events")
 public class EventController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventController.class);
+    private final EventService eventService;
+    private final EventDtoMapper eventDtoMapper;
+
+    public EventController(
+            EventService eventService,
+            EventDtoMapper eventDtoMapper
+    ) {
+        this.eventService = eventService;
+        this.eventDtoMapper = eventDtoMapper;
+    }
+
     @PostMapping
     public ResponseEntity<EventDto> create(@RequestBody EventCreateRequestDto eventCreateRequestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        LOGGER.info("Post request for create EventCreateRequestDto {}", eventCreateRequestDto);
+        Event event = eventDtoMapper.toDomain(eventCreateRequestDto);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(eventDtoMapper.toDto(eventService.create(event)));
     }
 
     @DeleteMapping("/{eventId}")
-    public ResponseEntity<Void> delete(@PathVariable("eventId") Long eventId) {
+    public ResponseEntity<Void> deleteById(@PathVariable("eventId") Long eventId) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

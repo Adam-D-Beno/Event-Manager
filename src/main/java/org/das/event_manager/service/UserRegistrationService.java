@@ -2,11 +2,8 @@ package org.das.event_manager.service;
 
 import org.das.event_manager.domain.User;
 import org.das.event_manager.domain.UserRole;
-import org.das.event_manager.domain.entity.UserEntity;
-import org.das.event_manager.mappers.UserEntityMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

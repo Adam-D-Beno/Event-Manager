@@ -3,6 +3,7 @@ package org.das.event_manager.domain.entity;
 import jakarta.persistence.*;
 import org.das.event_manager.domain.UserRole;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -25,6 +26,9 @@ public class UserEntity {
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<UserRegistration> userRegistrations;
 
     public UserEntity() {
     }

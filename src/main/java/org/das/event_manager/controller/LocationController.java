@@ -1,7 +1,7 @@
 package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
-import org.das.event_manager.mappers.LocationDtoMapper;
+import org.das.event_manager.dto.mappers.LocationDtoMapper;
 import org.das.event_manager.domain.Location;
 import org.das.event_manager.dto.LocationDto;
 import org.das.event_manager.service.LocationService;

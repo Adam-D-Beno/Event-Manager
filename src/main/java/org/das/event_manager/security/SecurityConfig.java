@@ -1,6 +1,7 @@
 package org.das.event_manager.security;
 
 
+import org.das.event_manager.domain.UserRole;
 import org.das.event_manager.exeption.CustomAccessDeniedHandler;
 import org.das.event_manager.exeption.CustomAuthenticationEntryPoint;
 import org.das.event_manager.security.jwt.JwtTokenFilter;
@@ -75,20 +76,40 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
                     authorizationManagerRequestMatcherRegistry
                             .requestMatchers(HttpMethod.GET, "/locations/**")
-                            .hasAnyAuthority("ADMIN", "USER")
+                            .hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
                             .requestMatchers(HttpMethod.POST, "/locations")
-                            .hasAuthority("ADMIN")
+                            .hasAuthority(UserRole.ADMIN.name())
                             .requestMatchers(HttpMethod.DELETE, "/locations/**")
-                            .hasAuthority("ADMIN")
+                            .hasAuthority(UserRole.ADMIN.name())
                             .requestMatchers(HttpMethod.PUT, "/locations/**")
-                            .hasAuthority("ADMIN")
+                            .hasAuthority(UserRole.ADMIN.name())
 
                             .requestMatchers(HttpMethod.POST, "/users")
                             .permitAll()
                             .requestMatchers(HttpMethod.GET, "/users/**")
-                            .hasAuthority("ADMIN")
+                            .hasAuthority(UserRole.ADMIN.name())
                             .requestMatchers(HttpMethod.POST, "/users/auth")
                             .permitAll()
+
+                            .requestMatchers(HttpMethod.POST, "/events")
+                            .hasAnyAuthority(UserRole.USER.name())
+                            .requestMatchers(HttpMethod.DELETE, "/events/**")
+                            .hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
+                            .requestMatchers(HttpMethod.GET, "/events/**")
+                            .hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
+                            .requestMatchers(HttpMethod.PUT, "/events/**")
+                            .hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
+                            .requestMatchers(HttpMethod.POST, "/events/search")
+                            .hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
+                            .requestMatchers(HttpMethod.GET, "/events/my")
+                            .hasAnyAuthority(UserRole.USER.name())
+                            .requestMatchers(HttpMethod.POST, "/events/registrations/**")
+                            .hasAnyAuthority(UserRole.USER.name())
+                            .requestMatchers(HttpMethod.DELETE, "/events/registrations/cancel/**")
+                            .hasAnyAuthority(UserRole.USER.name())
+                            .requestMatchers(HttpMethod.GET, "/events/registrations/my")
+                            .hasAnyAuthority(UserRole.USER.name())
+
                             .anyRequest()
                             .authenticated();
                 })

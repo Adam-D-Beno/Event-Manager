@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.das.event_manager.domain.EventStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -48,7 +49,7 @@ public class EventEntity {
     private EventStatus status;
 
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
-    private List<UserRegistration> members;
+    private List<UserRegistration> members = new ArrayList<>();
 
 
     public EventEntity() {

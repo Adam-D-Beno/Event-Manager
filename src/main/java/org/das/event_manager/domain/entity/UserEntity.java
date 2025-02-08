@@ -3,6 +3,7 @@ package org.das.event_manager.domain.entity;
 import jakarta.persistence.*;
 import org.das.event_manager.domain.UserRole;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +29,7 @@ public class UserEntity {
     private UserRole userRole;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<UserRegistration> userRegistrations;
+    private List<UserRegistration> userRegistrations = new ArrayList<>();
 
     public UserEntity() {
     }

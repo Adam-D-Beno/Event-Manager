@@ -8,23 +8,28 @@ public class LocationEntity {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
+
    @Column(name = "name", nullable = false, unique = true)
    private String name;
+
    @Column(name = "address", nullable = false, unique = true)
    private String address;
+
    @Column(name = "capacity", nullable = false)
    private Integer capacity;
+
    @Column(name = "description")
    private String description;
 
     public LocationEntity() {
     }
 
-    public LocationEntity(Long id,
-                          String name,
-                          String address,
-                          Integer capacity,
-                          String description
+    public LocationEntity(
+            Long id,
+            String name,
+            String address,
+            Integer capacity,
+            String description
     ) {
         this.id = id;
         this.name = name;

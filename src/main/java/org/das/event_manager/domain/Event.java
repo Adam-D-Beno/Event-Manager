@@ -4,14 +4,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record Event(
-        Integer id,
+        Long id,
         String name,
-        String ownerId,
+        Long ownerId,
         Integer maxPlaces,
         Integer occupiedPlaces,
         LocalDateTime date,
         BigDecimal cost,
         Integer duration,
-        Integer locationId,
+        Long locationId,
         EventStatus status
 ) {}

@@ -32,7 +32,7 @@ public class UserEntityMapper {
                 userEntity.getLogin(),
                 "",
                 userEntity.getAge(),
-                userEntity.getRole()
+                userEntity.getUserRole()
         );
     }
 }

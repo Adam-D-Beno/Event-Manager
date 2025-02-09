@@ -8,15 +8,15 @@ import java.security.Timestamp;
 import java.time.LocalDateTime;
 
 public record EventDto(
-     Integer id,
+     Long id,
      String name,
-     String ownerId,
+     Long ownerId,
      Integer maxPlaces,
      Integer occupiedPlaces,
      @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
      LocalDateTime date,
      BigDecimal cost,
      Integer duration,
-     Integer locationId,
+     Long locationId,
      EventStatus status
 ) {}

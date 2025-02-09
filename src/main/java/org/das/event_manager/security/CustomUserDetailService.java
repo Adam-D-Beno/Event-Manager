@@ -29,7 +29,7 @@ public class CustomUserDetailService implements UserDetailsService {
                 .map(userEntity -> new User(
                         userEntity.getLogin(),
                         userEntity.getPasswordHash(),
-                        List.of(new SimpleGrantedAuthority(userEntity.getRole().name()))
+                        List.of(new SimpleGrantedAuthority(userEntity.getUserRole().name()))
                 ))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with user login: = %s"
                         .formatted(login)));

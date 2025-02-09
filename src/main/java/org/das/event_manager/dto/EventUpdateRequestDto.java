@@ -9,6 +9,6 @@ public record EventUpdateRequestDto(
         LocalDateTime date,
         BigDecimal cost,
         Integer duration,
-        Integer locationId
+        Long locationId
 ) {
 }

@@ -32,8 +32,8 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<UserRegistration> userRegistrations = new ArrayList<>();
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    private List<UserRegistration> userRegistrations = new ArrayList<>();
 
     public UserEntity() {
     }
@@ -50,6 +50,10 @@ public class UserEntity {
         this.passwordHash = passwordHash;
         this.age = age;
         this.userRole = userRole;
+    }
+
+    public UserEntity(Long id) {
+        this.id = id;
     }
 
     @Override

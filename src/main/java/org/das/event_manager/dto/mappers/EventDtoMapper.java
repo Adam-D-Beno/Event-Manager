@@ -19,6 +19,7 @@ public class EventDtoMapper {
     public Event toDomain(EventCreateRequestDto eventCreateRequestDto) {
         LOGGER.info("Execute method to toDomain in EventDtoMapper class eventCreateRequestDto = {}",
                 eventCreateRequestDto);
+        //todo replace ownerId
         return new Event(
                 null,
                 eventCreateRequestDto.name(),

@@ -25,7 +25,8 @@ public class LocationEntity {
    @Column(name = "description")
    private String description;
 
-    public LocationEntity() {
+    public LocationEntity(Long id) {
+        this.id = id;
     }
 
     public LocationEntity(
@@ -40,5 +41,9 @@ public class LocationEntity {
         this.address = address;
         this.capacity = capacity;
         this.description = description;
+    }
+
+    public LocationEntity() {
+
     }
 }

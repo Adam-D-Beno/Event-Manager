@@ -44,12 +44,12 @@ public class AuthenticationService {
         return jwtTokenManager.generateJwtToken(foundUser);
     }
 
-    public Optional<User> getCurrentAuthenticatedUser() {
+    public User getCurrentAuthenticatedUser() {
+        LOGGER.info("Execute method getCurrentAuthenticatedUser");
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .map(Authentication::getPrincipal)
                 .filter(User.class::isInstance)
-                .map(User.class::cast);
+                .map(User.class::cast).orElseThrow(() -> new IllegalArgumentException("Authenticated user not exist"));
     }
-
 
 }

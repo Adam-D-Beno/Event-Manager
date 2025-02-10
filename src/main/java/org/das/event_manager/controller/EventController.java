@@ -1,10 +1,12 @@
 package org.das.event_manager.controller;
 
 import org.das.event_manager.domain.Event;
+import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventDto;
 import org.das.event_manager.dto.EventUpdateRequestDto;
 import org.das.event_manager.dto.mappers.EventDtoMapper;
+import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/events")

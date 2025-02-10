@@ -3,27 +3,38 @@ package org.das.event_manager.dto.mappers;
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.Location;
+import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventDto;
 import org.das.event_manager.dto.LocationDto;
+import org.das.event_manager.service.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class EventDtoMapper {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EventDtoMapper.class);
+    private final AuthenticationService authenticationService;
+
+    public EventDtoMapper(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
+
 
     public Event toDomain(EventCreateRequestDto eventCreateRequestDto) {
         LOGGER.info("Execute method to toDomain in EventDtoMapper class eventCreateRequestDto = {}",
                 eventCreateRequestDto);
+        User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUser();
         //todo replace ownerId
         return new Event(
                 null,
                 eventCreateRequestDto.name(),
-                null,
+                currentAuthenticatedUser.id(),
                 eventCreateRequestDto.maxPlaces(),
                 null,
                 eventCreateRequestDto.date(),
@@ -57,4 +68,6 @@ public class EventDtoMapper {
                 .map(this::toDto)
                 .toList();
     }
+
+
 }

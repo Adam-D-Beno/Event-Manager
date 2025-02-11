@@ -25,12 +25,10 @@ public class EventDtoMapper {
         this.authenticationService = authenticationService;
     }
 
-
     public Event toDomain(EventCreateRequestDto eventCreateRequestDto) {
         LOGGER.info("Execute method to toDomain in EventDtoMapper class eventCreateRequestDto = {}",
                 eventCreateRequestDto);
         User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUser();
-        //todo replace ownerId
         return new Event(
                 null,
                 eventCreateRequestDto.name(),
@@ -42,7 +40,6 @@ public class EventDtoMapper {
                 eventCreateRequestDto.duration(),
                 eventCreateRequestDto.locationId(),
                 EventStatus.WAIT_START
-
         );
     }
 
@@ -68,6 +65,5 @@ public class EventDtoMapper {
                 .map(this::toDto)
                 .toList();
     }
-
 
 }

@@ -26,6 +26,7 @@ public class EventService {
     public Event create(Event event) {
         LOGGER.info("Execute method create in EventService, event = {}", event);
         EventEntity eventEntity = eventEntityMapper.toEntity(event);
-        return eventEntityMapper.toDomain(eventRepository.save(eventEntity));
+        EventEntity saved = eventRepository.save(eventEntity);
+        return eventEntityMapper.toDomain(saved);
     }
 }

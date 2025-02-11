@@ -2,6 +2,7 @@ package org.das.event_manager.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record Event(
         Long id,
@@ -9,7 +10,7 @@ public record Event(
         Long ownerId,
         Integer maxPlaces,
         Integer occupiedPlaces,
-        LocalDateTime date,
+        ZonedDateTime date,
         BigDecimal cost,
         Integer duration,
         Long locationId,

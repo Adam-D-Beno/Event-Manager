@@ -26,7 +26,7 @@ public class EventEntity {
     @Column(name = "max_Places", nullable = false)
     private Integer maxPlaces;
 
-    @Column(name = "occupied_Places", nullable = false)
+    @Column(name = "occupied_Places")
     private Integer occupiedPlaces;
 
     @Column(name = "date", nullable = false)

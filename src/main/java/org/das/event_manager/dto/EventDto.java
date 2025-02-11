@@ -13,7 +13,7 @@ public record EventDto(
      Long ownerId,
      Integer maxPlaces,
      Integer occupiedPlaces,
-     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
      LocalDateTime date,
      BigDecimal cost,
      Integer duration,

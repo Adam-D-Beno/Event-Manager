@@ -6,6 +6,7 @@ import org.das.event_manager.domain.EventStatus;
 import java.math.BigDecimal;
 import java.security.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record EventDto(
      Long id,
@@ -14,7 +15,7 @@ public record EventDto(
      Integer maxPlaces,
      Integer occupiedPlaces,
      @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-     LocalDateTime date,
+     ZonedDateTime date,
      BigDecimal cost,
      Integer duration,
      Long locationId,

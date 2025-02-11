@@ -49,7 +49,8 @@ public class AuthenticationService {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .map(Authentication::getPrincipal)
                 .filter(User.class::isInstance)
-                .map(User.class::cast).orElseThrow(() -> new IllegalArgumentException("Authenticated user not exist"));
+                .map(User.class::cast)
+                .orElseThrow(() -> new IllegalArgumentException("Authenticated user not exist in context security"));
     }
 
 }

@@ -8,7 +8,7 @@ public record SignUpRequest(
         String login,
 
         @NotBlank(message = "Password should be not blank")
-        @Size(min = 5, message = "Login length should be min 3")
+        @Size(min = 3, message = "Login length should be min 3")
         String password,
 
         @NotNull(message = "Age should be not NULL")

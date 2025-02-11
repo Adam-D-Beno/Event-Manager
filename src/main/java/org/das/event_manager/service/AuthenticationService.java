@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -48,9 +49,8 @@ public class AuthenticationService {
         LOGGER.info("Execute method getCurrentAuthenticatedUser");
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .map(Authentication::getPrincipal)
-                .filter(User.class::isInstance)
-                .map(User.class::cast)
+                .filter(String.class::isInstance)
+                .map(login -> userService.findByLogin((String) login))
                 .orElseThrow(() -> new IllegalArgumentException("Authenticated user not exist in context security"));
     }
-
 }

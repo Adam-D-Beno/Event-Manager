@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import org.das.event_manager.dto.JwtResponse;
 import org.das.event_manager.dto.SignInRequest;
 import org.das.event_manager.dto.SignUpRequest;
-import org.das.event_manager.dto.UserDto;
+import org.das.event_manager.dto.UserResponseDto;
 import org.das.event_manager.dto.mappers.UserDtoMapper;
 import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.UserRegistrationService;
@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> register(@Valid @RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<UserResponseDto> register(@Valid @RequestBody SignUpRequest signUpRequest) {
         LOGGER.info("Post request for SignUp: login = {}", signUpRequest.login());
         return ResponseEntity.
                 status(HttpStatus.CREATED)
@@ -46,7 +46,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> findById(@Valid @PathVariable(name = "id") Long id) {
+    public ResponseEntity<UserResponseDto> findById(@Valid @PathVariable(name = "id") Long id) {
         return ResponseEntity.
                 status(HttpStatus.FOUND)
                 .body(userDtoMapper.toDto(userService.findById(id)));

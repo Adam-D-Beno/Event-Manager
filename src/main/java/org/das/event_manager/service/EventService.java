@@ -44,7 +44,7 @@ public class EventService {
         if (event.maxPlaces() > locationCapacity) {
             LOGGER.error("Error, Maximum number = {} of places at the event more then location capacity = {} ",
                     event.maxPlaces(), locationCapacity);
-            throw new IllegalArgumentException("maxPlaces more then location maxPlaces");
+            throw new IllegalArgumentException("maxPlaces cannot be more then location maxPlaces");
         }
     }
 

@@ -30,7 +30,7 @@ public record EventUpdateRequestDto(
 
         @NotNull
         @Positive(message = "duration should be positive")
-        @Min(value = 1, message = "Minimum duration is 1")
+        @Min(value = 30, message = "Minimum duration is 30")
         @Digits(integer = Integer.MAX_VALUE, fraction = 0, message = "duration should be digits")
         Integer duration,
 

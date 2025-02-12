@@ -7,6 +7,7 @@ import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.domain.UserRole;
 import org.das.event_manager.domain.entity.EventEntity;
+import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.mappers.EventEntityMapper;
 import org.das.event_manager.repository.EventRepository;
 import org.slf4j.Logger;
@@ -62,7 +63,8 @@ public class EventService {
         }
     }
 
-    public void deleteById(@NotNull Long eventId) {
+    public void deleteById(Long eventId) {
+        LOGGER.info("Execute method create in EventService, event id = {}", eventId);
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
 
         eventRepository.findById(eventId)
@@ -73,5 +75,12 @@ public class EventService {
                     eventEntity.setStatus(EventStatus.CANCELLED);
                    return eventRepository.save(eventEntity);
                 }).orElseThrow(() -> new EntityNotFoundException("Event not found or status is not WAIT_START"));
+    }
+
+    public Event findById(Long eventId) {
+       return eventRepository.findById(eventId)
+                .map(eventEntityMapper::toDomain)
+                .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not find"
+                        .formatted(eventId)));
     }
 }

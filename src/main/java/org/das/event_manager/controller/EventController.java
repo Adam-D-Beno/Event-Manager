@@ -55,7 +55,7 @@ public class EventController {
     public ResponseEntity<EventResponseDto> findById(
             @NotNull @PathVariable("eventId") Long eventId
     ) {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(eventDtoMapper.toDto(eventService.findById(eventId)));
     }
 
     @PutMapping("/{eventId}")

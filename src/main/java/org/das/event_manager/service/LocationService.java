@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Validated
@@ -115,6 +116,11 @@ public class LocationService {
     }
 
     public Integer getCapacity(@NotNull Long locationId) {
-       return locationRepository.findCapacityById(locationId);
+        LOGGER.info("Execute getCapacity in LocationService class, location id = {}", locationId);
+        return locationRepository.getCapacityById(locationId)
+                .orElseThrow(() -> {
+                    LOGGER.error("Location capacity is null for locationId: {}", locationId);
+                    return new IllegalArgumentException("Location capacity cannot be null");
+                });
     }
 }

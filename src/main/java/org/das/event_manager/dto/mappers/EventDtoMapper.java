@@ -2,18 +2,15 @@ package org.das.event_manager.dto.mappers;
 
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
-import org.das.event_manager.domain.Location;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.EventCreateRequestDto;
-import org.das.event_manager.dto.EventDto;
-import org.das.event_manager.dto.LocationDto;
+import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.service.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class EventDtoMapper {
@@ -43,9 +40,9 @@ public class EventDtoMapper {
         );
     }
 
-    public EventDto toDto(Event event) {
+    public EventResponseDto toDto(Event event) {
         LOGGER.info("Execute method to toDto in EventDtoMapper class,  event = {}", event);
-        return new EventDto(
+        return new EventResponseDto(
                 event.id(),
                 event.name(),
                 event.ownerId(),
@@ -59,7 +56,7 @@ public class EventDtoMapper {
         );
     }
 
-    public List<EventDto> toDto(List<Event> events) {
+    public List<EventResponseDto> toDto(List<Event> events) {
         LOGGER.info("Execute method to toDto in EventDtoMapper class, events ={}", events);
         return events.stream()
                 .map(this::toDto)

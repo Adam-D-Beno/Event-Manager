@@ -41,7 +41,7 @@ public class LocationEntityMapper {
         );
     }
 
-    public List<Location> toDomain(@NotNull @NotEmpty List<LocationEntity> locationEntities) {
+    public List<Location> toDomain(@NotNull List<LocationEntity> locationEntities) {
         LOGGER.info("Execute method toDto in LocationEntityMapper class, locationEntities = {} ",
                 locationEntities);
         return locationEntities.stream()

@@ -1,6 +1,7 @@
 package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.dto.mappers.LocationDtoMapper;
 import org.das.event_manager.domain.Location;
 import org.das.event_manager.dto.LocationDto;
@@ -47,7 +48,7 @@ public class LocationController {
 
     @DeleteMapping("/{locationId}")
     public ResponseEntity<LocationDto> deleteById(
-            @PathVariable("locationId") Long locationId
+            @NotNull @PathVariable("locationId") Long locationId
     ) {
         LOGGER.info("Delete request for delete by id = {} location", locationId);
         Location deletedLocation = locationService.deleteById(locationId);
@@ -58,7 +59,7 @@ public class LocationController {
 
     @GetMapping("/{locationId}")
     public ResponseEntity<LocationDto> findById(
-            @PathVariable("locationId") Long locationId
+            @NotNull @PathVariable("locationId") Long locationId
     ) {
        LOGGER.info("Get request for find by id = {} location", locationId);
        return ResponseEntity
@@ -68,7 +69,7 @@ public class LocationController {
 
     @PutMapping("/{locationId}")
     public ResponseEntity<LocationDto> updateById(
-            @PathVariable("locationId") Long locationId,
+            @NotNull @PathVariable("locationId") Long locationId,
             @RequestBody @Valid LocationDto locationDtoToUpdate
     ) {
         LOGGER.info("Put request for update locationDto = {} with id = {}", locationDtoToUpdate, locationId);

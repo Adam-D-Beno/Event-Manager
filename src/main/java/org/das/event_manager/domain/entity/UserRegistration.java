@@ -35,4 +35,5 @@ public class UserRegistration {
         this.user = user;
         this.event = event;
     }
+
 }

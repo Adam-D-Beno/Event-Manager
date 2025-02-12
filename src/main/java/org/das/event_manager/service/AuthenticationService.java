@@ -1,5 +1,6 @@
 package org.das.event_manager.service;
 
+import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.SignInRequest;
 import org.das.event_manager.security.CustomUserDetailService;

@@ -1,12 +1,11 @@
 package org.das.event_manager.controller;
 
+import jakarta.validation.Valid;
 import org.das.event_manager.domain.Event;
-import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.EventCreateRequestDto;
-import org.das.event_manager.dto.EventDto;
+import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.EventUpdateRequestDto;
 import org.das.event_manager.dto.mappers.EventDtoMapper;
-import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/events")
@@ -34,7 +32,7 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity<EventDto> create(@RequestBody EventCreateRequestDto eventCreateRequestDto) {
+    public ResponseEntity<EventResponseDto> create(@Valid @RequestBody EventCreateRequestDto eventCreateRequestDto) {
         LOGGER.info("Post request for create EventCreateRequestDto {}", eventCreateRequestDto);
         Event event = eventDtoMapper.toDomain(eventCreateRequestDto);
         return ResponseEntity
@@ -48,12 +46,12 @@ public class EventController {
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<EventDto> findById(@PathVariable("eventId") Long eventId) {
+    public ResponseEntity<EventResponseDto> findById(@PathVariable("eventId") Long eventId) {
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{eventId}")
-    public ResponseEntity<EventDto> updateById(
+    public ResponseEntity<EventResponseDto> updateById(
             @PathVariable("eventId") Long eventId,
             @RequestBody EventUpdateRequestDto eventUpdateRequestDto
             ) {
@@ -61,14 +59,14 @@ public class EventController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<EventDto>> findEventsByFilter(
+    public ResponseEntity<List<EventResponseDto>> findEventsByFilter(
             @RequestBody EventUpdateRequestDto eventUpdateRequestDto
     ) {
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/my")
-    public ResponseEntity<List<EventDto>> findEventsByUserCreate() {
+    public ResponseEntity<List<EventResponseDto>> findEventsByUserCreate() {
         return ResponseEntity.ok().build();
     }
 
@@ -87,7 +85,7 @@ public class EventController {
     }
 
     @GetMapping("/registrations/my")
-    public ResponseEntity<EventDto> findEventsByUserRegistration() {
+    public ResponseEntity<EventResponseDto> findEventsByUserRegistration() {
         return ResponseEntity.ok().build();
     }
 }

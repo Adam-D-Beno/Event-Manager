@@ -1,6 +1,7 @@
 package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventResponseDto;
@@ -43,26 +44,31 @@ public class EventController {
     }
 
     @DeleteMapping("/{eventId}")
-    public ResponseEntity<Void> deleteById(@PathVariable("eventId") Long eventId) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<Void> deleteById(
+            @NotNull @PathVariable("eventId") Long eventId
+    ) {
+        eventService.deleteById(eventId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<EventResponseDto> findById(@PathVariable("eventId") Long eventId) {
+    public ResponseEntity<EventResponseDto> findById(
+            @NotNull @PathVariable("eventId") Long eventId
+    ) {
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{eventId}")
     public ResponseEntity<EventResponseDto> updateById(
-            @PathVariable("eventId") Long eventId,
-            @RequestBody EventUpdateRequestDto eventUpdateRequestDto
+            @NotNull @PathVariable("eventId") Long eventId,
+            @Valid @RequestBody EventUpdateRequestDto eventUpdateRequestDto
             ) {
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/search")
     public ResponseEntity<List<EventResponseDto>> findEventsByFilter(
-            @RequestBody EventUpdateRequestDto eventUpdateRequestDto
+            @Valid @RequestBody EventUpdateRequestDto eventUpdateRequestDto
     ) {
         return ResponseEntity.ok().build();
     }
@@ -74,14 +80,14 @@ public class EventController {
 
     @PostMapping("/registrations/{eventId}")
     public ResponseEntity<Void> registrationUserOnEvent(
-            @PathVariable("eventId") Long eventId
+            @NotNull @PathVariable("eventId") Long eventId
     ) {
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/registrations/cancel/{eventId}")
     public ResponseEntity<Void> registrationUserCancelEvent(
-            @PathVariable("eventId") Long eventId
+            @NotNull @PathVariable("eventId") Long eventId
     ) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -1,6 +1,7 @@
 package org.das.event_manager.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.dto.mappers.LocationEntityMapper;
 import org.das.event_manager.domain.Location;
@@ -97,7 +98,7 @@ public class LocationService {
         return entityMapper.toDomain(foundEntityForUpdate);
     }
 
-    public void existLocationAddress(String locationAddress) {
+    public void existLocationAddress(@NotBlank String locationAddress) {
         LOGGER.info("Execute isExistLocationAddress in LocationService class, location address = {}", locationAddress);
         if (locationRepository.existsByAddress(locationAddress)) {
             LOGGER.info("Location address = {} exist", locationAddress);
@@ -105,11 +106,15 @@ public class LocationService {
         }
     }
 
-    public void existLocationName(String locationName) {
+    public void existLocationName(@NotBlank String locationName) {
         LOGGER.info("Execute isExistLocationName in LocationService class, location name = {}", locationName);
         if (locationRepository.existsByName(locationName)) {
             LOGGER.info("Location location name = {} already exists in data base", locationName);
             throw new IllegalArgumentException("Location: name = %s exists in data base".formatted(locationName));
         }
+    }
+
+    public Integer getCapacity(@NotNull Long locationId) {
+       return locationRepository.findCapacityById(locationId);
     }
 }

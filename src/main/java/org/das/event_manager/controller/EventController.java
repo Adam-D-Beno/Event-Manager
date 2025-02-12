@@ -32,7 +32,9 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity<EventResponseDto> create(@Valid @RequestBody EventCreateRequestDto eventCreateRequestDto) {
+    public ResponseEntity<EventResponseDto> create(
+            @Valid @RequestBody EventCreateRequestDto eventCreateRequestDto
+    ) {
         LOGGER.info("Post request for create EventCreateRequestDto {}", eventCreateRequestDto);
         Event event = eventDtoMapper.toDomain(eventCreateRequestDto);
         return ResponseEntity

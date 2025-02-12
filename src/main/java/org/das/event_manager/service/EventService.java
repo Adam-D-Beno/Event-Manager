@@ -29,4 +29,6 @@ public class EventService {
         EventEntity saved = eventRepository.save(eventEntity);
         return eventEntityMapper.toDomain(saved);
     }
+
+
 }

@@ -15,6 +15,7 @@ import java.util.List;
 @Component
 public class EventDtoMapper {
 
+    private final Integer defaultOccupiedPlaces = 0;
     private static final Logger LOGGER = LoggerFactory.getLogger(EventDtoMapper.class);
     private final AuthenticationService authenticationService;
 
@@ -31,7 +32,7 @@ public class EventDtoMapper {
                 eventCreateRequestDto.name(),
                 currentAuthenticatedUser.id(),
                 eventCreateRequestDto.maxPlaces(),
-                null,
+                defaultOccupiedPlaces,
                 eventCreateRequestDto.date(),
                 eventCreateRequestDto.cost(),
                 eventCreateRequestDto.duration(),

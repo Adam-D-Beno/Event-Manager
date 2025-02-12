@@ -40,7 +40,7 @@ public class LocationDtoMapper {
         );
     }
 
-    public List<LocationDto> toDto(@NotNull @NotEmpty List<Location> locations) {
+    public List<LocationDto> toDto(@NotNull List<Location> locations) {
         if (locations.isEmpty()) {
             return List.of();
         }

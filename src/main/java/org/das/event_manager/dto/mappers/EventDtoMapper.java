@@ -1,5 +1,6 @@
 package org.das.event_manager.dto.mappers;
 
+import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.User;
@@ -9,9 +10,11 @@ import org.das.event_manager.service.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
+@Validated
 @Component
 public class EventDtoMapper {
 
@@ -23,7 +26,7 @@ public class EventDtoMapper {
         this.authenticationService = authenticationService;
     }
 
-    public Event toDomain(EventCreateRequestDto eventCreateRequestDto) {
+    public Event toDomain(@NotNull EventCreateRequestDto eventCreateRequestDto) {
         LOGGER.info("Execute method to toDomain in EventDtoMapper class eventCreateRequestDto = {}",
                 eventCreateRequestDto);
         User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUser();
@@ -41,7 +44,7 @@ public class EventDtoMapper {
         );
     }
 
-    public EventResponseDto toDto(Event event) {
+    public EventResponseDto toDto(@NotNull Event event) {
         LOGGER.info("Execute method to toDto in EventDtoMapper class,  event = {}", event);
         return new EventResponseDto(
                 event.id(),
@@ -57,7 +60,7 @@ public class EventDtoMapper {
         );
     }
 
-    public List<EventResponseDto> toDto(List<Event> events) {
+    public List<EventResponseDto> toDto(@NotNull List<Event> events) {
         LOGGER.info("Execute method to toDto in EventDtoMapper class, events ={}", events);
         return events.stream()
                 .map(this::toDto)

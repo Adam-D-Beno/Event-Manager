@@ -1,6 +1,7 @@
 package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.dto.JwtResponse;
 import org.das.event_manager.dto.SignInRequest;
 import org.das.event_manager.dto.SignUpRequest;
@@ -46,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDto> findById(@Valid @PathVariable(name = "id") Long id) {
+    public ResponseEntity<UserResponseDto> findById(@NotNull @PathVariable(name = "id") Long id) {
         return ResponseEntity.
                 status(HttpStatus.FOUND)
                 .body(userDtoMapper.toDto(userService.findById(id)));

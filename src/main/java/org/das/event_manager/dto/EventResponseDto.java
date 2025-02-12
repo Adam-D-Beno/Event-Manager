@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.das.event_manager.domain.EventStatus;
 
 import java.math.BigDecimal;
-import java.security.Timestamp;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
-public record EventDto(
+public record EventResponseDto(
      Long id,
      String name,
      Long ownerId,

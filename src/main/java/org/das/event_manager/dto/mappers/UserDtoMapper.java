@@ -3,7 +3,7 @@ package org.das.event_manager.dto.mappers;
 import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.SignUpRequest;
-import org.das.event_manager.dto.UserDto;
+import org.das.event_manager.dto.UserResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,9 +16,9 @@ public class UserDtoMapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDtoMapper.class);
 
 
-    public UserDto toDto(@NotNull User user) {
+    public UserResponseDto toDto(@NotNull User user) {
         LOGGER.info("Execute method toDto in UserDtoMapper, user login: {}", user.login());
-        return new UserDto(
+        return new UserResponseDto(
                 user.id(),
                 user.login(),
                 user.age(),

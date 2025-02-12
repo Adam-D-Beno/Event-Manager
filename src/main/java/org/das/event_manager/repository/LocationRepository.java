@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Repository
 public interface LocationRepository extends JpaRepository<LocationEntity, Long> {
 
@@ -16,7 +18,7 @@ public interface LocationRepository extends JpaRepository<LocationEntity, Long> 
     boolean existsById(Long id);
 
     @Query("SELECT l.capacity FROM LocationEntity l WHERE l.id = :id")
-    Integer findCapacityById(@Param("id") Long id);
+    Optional<Integer> getCapacityById(@Param("id") Long id);
 
     @Transactional
     @Modifying

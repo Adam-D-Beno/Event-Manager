@@ -23,22 +23,28 @@ public class EventService {
     private final EventEntityMapper eventEntityMapper;
     private final LocationService locationService;
     private final AuthenticationService authenticationService;
+    private final UserService userService;
 
     public EventService(
             EventRepository eventRepository,
             EventEntityMapper eventEntityMapper,
             LocationService locationService,
-            AuthenticationService authenticationService
+            AuthenticationService authenticationService,
+            UserService userService
     ) {
         this.eventRepository = eventRepository;
         this.eventEntityMapper = eventEntityMapper;
         this.locationService = locationService;
         this.authenticationService = authenticationService;
+        this.userService = userService;
     }
 
 
     public Event create(Event event) {
         LOGGER.info("Execute method create in EventService, event = {}", event);
+
+        userService.findById(event.id());
+        locationService.findById(event.locationId());
         checkMaxPlaces(event);
         EventEntity eventEntity = eventEntityMapper.toEntity(event);
         EventEntity saved = eventRepository.save(eventEntity);
@@ -47,11 +53,8 @@ public class EventService {
 
     public void checkMaxPlaces(Event event) {
         LOGGER.info("Checking max places for event: {}", event);
+
         Integer locationCapacity = locationService.getCapacity(event.locationId());
-        if (locationCapacity == null) {
-            LOGGER.error("Location capacity is null for locationId: {}", event.locationId());
-            throw new IllegalArgumentException("Location capacity cannot be null");
-        }
         if (event.maxPlaces() > locationCapacity) {
             LOGGER.error("Error, Maximum number = {} of places at the event more then location capacity = {} ",
                     event.maxPlaces(), locationCapacity);

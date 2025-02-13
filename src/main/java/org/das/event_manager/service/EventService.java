@@ -44,7 +44,7 @@ public class EventService {
     public Event create(Event event) {
         LOGGER.info("Execute method create in EventService, event = {}", event);
 
-        userService.findById(event.id());
+        userService.findById(event.ownerId()); //todo check
         locationService.findById(event.locationId());
         checkMaxPlaces(event);
         EventEntity eventEntity = eventEntityMapper.toEntity(event);

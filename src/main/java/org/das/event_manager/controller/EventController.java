@@ -63,7 +63,8 @@ public class EventController {
             @NotNull @PathVariable("eventId") Long eventId,
             @Valid @RequestBody EventUpdateRequestDto eventUpdateRequestDto
             ) {
-        return ResponseEntity.ok().build();
+        Event eventToUpdate = eventDtoMapper.toDomain(eventUpdateRequestDto);
+        return ResponseEntity.ok().body(eventDtoMapper.toDto(eventService.update(eventId, eventToUpdate)));
     }
 
     @PostMapping("/search")

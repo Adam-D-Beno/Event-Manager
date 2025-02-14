@@ -4,13 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
-@Table(name = "user_registration")
+@Table(name = "registrations")
 @Setter
 @Getter
-public class UserRegistration {
+public class RegistrationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,10 +21,10 @@ public class UserRegistration {
     @JoinColumn(name = "event_id", nullable = false)
     private EventEntity event;
 
-    public UserRegistration() {
+    public RegistrationEntity() {
     }
 
-    public UserRegistration(
+    public RegistrationEntity(
             Long id,
             UserEntity user,
             EventEntity event

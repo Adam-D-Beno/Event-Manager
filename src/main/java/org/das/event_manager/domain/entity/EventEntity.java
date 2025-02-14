@@ -1,13 +1,9 @@
 package org.das.event_manager.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import org.das.event_manager.domain.EventStatus;
-import org.das.event_manager.domain.Location;
+
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +46,7 @@ public class EventEntity {
     private EventStatus status;
 
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
-    private List<UserRegistration> members = new ArrayList<>();
+    private List<RegistrationEntity> members = new ArrayList<>();
 
 
     public EventEntity() {
@@ -160,11 +156,11 @@ public class EventEntity {
         this.status = status;
     }
 
-    public List<UserRegistration> getMembers() {
+    public List<RegistrationEntity> getMembers() {
         return members;
     }
 
-    public void setMembers(List<UserRegistration> members) {
+    public void setMembers(List<RegistrationEntity> members) {
         this.members = members;
     }
 }

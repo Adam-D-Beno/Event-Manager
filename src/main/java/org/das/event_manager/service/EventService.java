@@ -2,18 +2,18 @@ package org.das.event_manager.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
-import org.das.event_manager.domain.Event;
-import org.das.event_manager.domain.EventStatus;
-import org.das.event_manager.domain.User;
-import org.das.event_manager.domain.UserRole;
+import org.das.event_manager.domain.*;
 import org.das.event_manager.domain.entity.EventEntity;
 import org.das.event_manager.domain.entity.UserEntity;
 import org.das.event_manager.dto.mappers.EventEntityMapper;
+import org.das.event_manager.dto.mappers.LocationEntityMapper;
 import org.das.event_manager.dto.mappers.UserEntityMapper;
 import org.das.event_manager.repository.EventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class EventService {
@@ -21,6 +21,7 @@ public class EventService {
     private final EventRepository eventRepository;
     private final EventEntityMapper eventEntityMapper;
     private final UserEntityMapper userEntityMapper;
+    private final LocationEntityMapper locationEntityMapper;
     private final LocationService locationService;
     private final AuthenticationService authenticationService;
     private final UserService userService;
@@ -29,6 +30,7 @@ public class EventService {
             EventRepository eventRepository,
             EventEntityMapper eventEntityMapper,
             UserEntityMapper userEntityMapper,
+            LocationEntityMapper locationEntityMapper,
             LocationService locationService,
             AuthenticationService authenticationService,
             UserService userService
@@ -36,6 +38,7 @@ public class EventService {
         this.eventRepository = eventRepository;
         this.eventEntityMapper = eventEntityMapper;
         this.userEntityMapper = userEntityMapper;
+        this.locationEntityMapper = locationEntityMapper;
         this.locationService = locationService;
         this.authenticationService = authenticationService;
         this.userService = userService;
@@ -76,9 +79,21 @@ public class EventService {
                         .formatted(eventId)));
     }
 
-    public Event update(@NotNull Long eventId, Event eventToUpdate) {
-        findById(eventId);
-        return null;
+    public Event update(Long eventId, Event eventToUpdate) {
+        Location location = locationService.findById(eventToUpdate.locationId());
+        EventEntity updated = eventRepository.findById(eventId)
+                .map(eventEntity -> {
+                    eventEntity.setName(eventToUpdate.name());
+                    eventEntity.setMaxPlaces(eventToUpdate.maxPlaces());
+                    eventEntity.setDate(eventToUpdate.date());
+                    eventEntity.setCost(eventToUpdate.cost());
+                    eventEntity.setDuration(eventToUpdate.duration());
+                    eventEntity.setLocation(locationEntityMapper.toEntity(location));
+                    return eventRepository.save(eventEntity);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not find"
+                        .formatted(eventId)));
+        return eventEntityMapper.toDomain(updated);
     }
 
 

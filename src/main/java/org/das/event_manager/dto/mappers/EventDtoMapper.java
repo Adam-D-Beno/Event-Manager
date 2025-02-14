@@ -6,6 +6,7 @@ import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventResponseDto;
+import org.das.event_manager.dto.EventUpdateRequestDto;
 import org.das.event_manager.service.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ import java.util.List;
 @Component
 public class EventDtoMapper {
 
-    private final Integer defaultOccupiedPlaces = 0;
+    private final Integer initDefaultOccupiedPlaces = 0;
     private static final Logger LOGGER = LoggerFactory.getLogger(EventDtoMapper.class);
     private final AuthenticationService authenticationService;
 
@@ -26,20 +27,36 @@ public class EventDtoMapper {
         this.authenticationService = authenticationService;
     }
 
-    public Event toDomain(@NotNull EventCreateRequestDto eventCreateRequestDto) {
-        LOGGER.info("Execute method to toDomain in EventDtoMapper class eventCreateRequestDto = {}",
-                eventCreateRequestDto);
-        User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUser();
+    public Event toDomain(@NotNull EventCreateRequestDto eventUpdateRequestDto) {
+        LOGGER.info("Execute method to toDomain in EventDtoMapper class eventUpdateRequestDto = {}",
+                eventUpdateRequestDto);
         return new Event(
                 null,
-                eventCreateRequestDto.name(),
-                currentAuthenticatedUser.id(),
-                eventCreateRequestDto.maxPlaces(),
-                defaultOccupiedPlaces,
-                eventCreateRequestDto.date(),
-                eventCreateRequestDto.cost(),
-                eventCreateRequestDto.duration(),
-                eventCreateRequestDto.locationId(),
+                eventUpdateRequestDto.name(),
+                authenticationService.getCurrentAuthenticatedUser().id(),
+                eventUpdateRequestDto.maxPlaces(),
+                initDefaultOccupiedPlaces,
+                eventUpdateRequestDto.date(),
+                eventUpdateRequestDto.cost(),
+                eventUpdateRequestDto.duration(),
+                eventUpdateRequestDto.locationId(),
+                EventStatus.WAIT_START
+        );
+    }
+
+    public Event toDomain(@NotNull EventUpdateRequestDto eventUpdateRequestDto) {
+        LOGGER.info("Execute method to toDomain in EventDtoMapper class EventUpdateRequestDto = {}",
+                eventUpdateRequestDto);
+        return new Event(
+                null,
+                eventUpdateRequestDto.name(),
+                authenticationService.getCurrentAuthenticatedUser().id(),
+                eventUpdateRequestDto.maxPlaces(),
+                initDefaultOccupiedPlaces,
+                eventUpdateRequestDto.date(),
+                eventUpdateRequestDto.cost(),
+                eventUpdateRequestDto.duration(),
+                eventUpdateRequestDto.locationId(),
                 EventStatus.WAIT_START
         );
     }
@@ -49,7 +66,7 @@ public class EventDtoMapper {
         return new EventResponseDto(
                 event.id(),
                 event.name(),
-                event.ownerId(),
+                authenticationService.getCurrentAuthenticatedUser().id(),
                 event.maxPlaces(),
                 event.occupiedPlaces(),
                 event.date(),

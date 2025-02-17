@@ -1,10 +1,10 @@
 package org.das.event_manager.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.*;
 import org.das.event_manager.domain.entity.EventEntity;
 import org.das.event_manager.domain.entity.UserEntity;
+import org.das.event_manager.dto.EventSearchRequestDto;
 import org.das.event_manager.dto.mappers.EventEntityMapper;
 import org.das.event_manager.dto.mappers.LocationEntityMapper;
 import org.das.event_manager.dto.mappers.UserEntityMapper;
@@ -13,7 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 
 @Service
 public class EventService {
@@ -50,7 +54,7 @@ public class EventService {
         User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUser();
         checkExistCurrentUser(currentAuthenticatedUser);
         checkExistLocation(event);
-        checkMaxPlacesOnLocation(event);
+        checkMaxPlacesMoreOnLocation(event);
         UserEntity userEntity = userEntityMapper.toEntity(currentAuthenticatedUser);
         EventEntity eventEntity = eventEntityMapper.toEntity(event);
         eventEntity.setOwner(userEntity);
@@ -80,8 +84,18 @@ public class EventService {
     }
 
     public Event update(Long eventId, Event eventToUpdate) {
+        checkDurationLessThen(eventToUpdate);
+        checkMaxPlacesMoreCurrent(eventId, eventToUpdate);
+        checkDateForUpdate(eventId, eventToUpdate);
+        checkCostMoreThenZero(eventToUpdate);
+
         Location location = locationService.findById(eventToUpdate.locationId());
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
+
         EventEntity updated = eventRepository.findById(eventId)
+                .filter(eventEntity -> eventEntity.getStatus() == EventStatus.WAIT_START)
+                .filter(eventEntity -> currentAuthUser.userRole() == UserRole.ADMIN
+                        || eventEntity.getOwner().getId().equals(currentAuthUser.id()))
                 .map(eventEntity -> {
                     eventEntity.setName(eventToUpdate.name());
                     eventEntity.setMaxPlaces(eventToUpdate.maxPlaces());
@@ -96,8 +110,38 @@ public class EventService {
         return eventEntityMapper.toDomain(updated);
     }
 
+    public Event findAllEvents(EventSearchRequestDto eventSearchRequestDto) {
 
-    private void checkMaxPlacesOnLocation(Event event) {
+    }
+
+
+    private void checkDateForUpdate(Long eventId, Event event) {
+        if (event.date().isAfter(ZonedDateTime.now())) {
+            throw new IllegalArgumentException("Data for update must be after current date event");
+        }
+    }
+
+    private void checkCostMoreThenZero(Event event) {
+        if (event.cost().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Cost for update must be more then zero");
+        }
+    }
+
+    private void checkMaxPlacesMoreCurrent(Long eventId, Event event) {
+        Integer maxPlacesToUpdate = event.maxPlaces();
+         int currentMaxPlaces =  findById(eventId).maxPlaces();
+         if (maxPlacesToUpdate < currentMaxPlaces) {
+             throw new IllegalArgumentException("Max places for update must be more then current max places");
+         }
+    }
+
+    private void checkDurationLessThen(Event event) {
+        if (event.duration() < 30 ) {
+            throw new IllegalArgumentException("Duration for update must be more 30");
+        }
+    }
+
+    private void checkMaxPlacesMoreOnLocation(Event event) {
         LOGGER.info("Checking max places for event: {}", event);
         Integer locationCapacity = locationService.getCapacity(event.locationId());
         if (event.maxPlaces() > locationCapacity) {
@@ -116,5 +160,6 @@ public class EventService {
     private void checkExistLocation(Event event) {
         locationService.findById(event.locationId());
     }
+
 
 }

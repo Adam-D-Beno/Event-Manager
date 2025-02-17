@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventResponseDto;
+import org.das.event_manager.dto.EventSearchRequestDto;
 import org.das.event_manager.dto.EventUpdateRequestDto;
 import org.das.event_manager.dto.mappers.EventDtoMapper;
 import org.das.event_manager.service.EventService;
@@ -68,9 +69,10 @@ public class EventController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<EventResponseDto>> findEventsByFilter(
-            @Valid @RequestBody EventUpdateRequestDto eventUpdateRequestDto
-    ) {
+    public ResponseEntity<List<EventResponseDto>> findAllEvents(
+            @RequestBody EventSearchRequestDto eventSearchRequestDto
+            ) {
+        eventService.findAll(eventSearchRequestDto);
         return ResponseEntity.ok().build();
     }
 

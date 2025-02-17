@@ -14,10 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
 
 @Service
 public class EventService {
@@ -97,6 +94,7 @@ public class EventService {
                 .filter(eventEntity -> currentAuthUser.userRole() == UserRole.ADMIN
                         || eventEntity.getOwner().getId().equals(currentAuthUser.id()))
                 .map(eventEntity -> {
+                    eventEntity.setId(eventId);
                     eventEntity.setName(eventToUpdate.name());
                     eventEntity.setMaxPlaces(eventToUpdate.maxPlaces());
                     eventEntity.setDate(eventToUpdate.date());
@@ -110,8 +108,9 @@ public class EventService {
         return eventEntityMapper.toDomain(updated);
     }
 
-    public Event findAllEvents(EventSearchRequestDto eventSearchRequestDto) {
+    public Event search(EventSearchRequestDto eventSearchRequestDto) {
 
+        return null;
     }
 
 

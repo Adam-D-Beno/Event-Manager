@@ -38,7 +38,7 @@ public class LocationService {
     }
 
     public List<Location> findAll() {
-        LOGGER.info("Execute method findAll in LocationService class");
+        LOGGER.info("Execute method search in LocationService class");
         return entityMapper.toDomain(locationRepository.findAll());
     }
 

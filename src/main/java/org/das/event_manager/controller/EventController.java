@@ -72,7 +72,7 @@ public class EventController {
     public ResponseEntity<List<EventResponseDto>> findAllEvents(
             @RequestBody EventSearchRequestDto eventSearchRequestDto
             ) {
-        eventService.findAll(eventSearchRequestDto);
+        eventService.search(eventSearchRequestDto);
         return ResponseEntity.ok().build();
     }
 

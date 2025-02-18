@@ -111,7 +111,7 @@ public class EventService {
     }
 
     public Event search(EventSearchRequestDto eventSearchRequestDto) {
-
+            eventRepository.search(eventSearchRequestDto);
         return null;
     }
 

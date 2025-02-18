@@ -1,6 +1,7 @@
 package org.das.event_manager.repository;
 
 import org.das.event_manager.domain.entity.EventEntity;
+import org.das.event_manager.dto.EventSearchRequestDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,5 @@ import java.util.List;
 public  interface EventRepository extends JpaRepository<EventEntity, Long> {
 
     @Query
-    List<EventEntity> search(
-
-    );
+    List<EventEntity> search(EventSearchRequestDto eventSearchRequestDto);
 }

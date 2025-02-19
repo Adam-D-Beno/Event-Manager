@@ -45,6 +45,7 @@ public class AuthenticationService {
         LOGGER.info("Execute method getCurrentAuthenticatedUserOrThrow");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getPrincipal() == null) {
+            LOGGER.error("Authenticated user not found");
             throw  new IllegalStateException("Authenticated user not exist in context security");
         }
         return (User) authentication.getPrincipal();

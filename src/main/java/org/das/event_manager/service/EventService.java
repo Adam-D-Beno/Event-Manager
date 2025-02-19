@@ -3,6 +3,7 @@ package org.das.event_manager.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.das.event_manager.domain.*;
 import org.das.event_manager.domain.entity.EventEntity;
+import org.das.event_manager.domain.entity.RegistrationEntity;
 import org.das.event_manager.domain.entity.UserEntity;
 import org.das.event_manager.dto.EventSearchRequestDto;
 import org.das.event_manager.dto.mappers.EventEntityMapper;
@@ -150,8 +151,12 @@ public class EventService {
 
     public List<Event> findAllEventByUserRegistration() {
         LOGGER.info("Execute method findAllEventByUserRegistration in EventService");
-//        registrationOnEventService.findAllByUserRegistration();
-        return null;
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        List<Registration> userRegistration = registrationOnEventService.findAllByUserRegistration(currentAuthUser);
+        return userRegistration.stream()
+                .map(Registration::event)
+                .toList();
+
     }
 
     private void checkStatusEvent(Event event) {

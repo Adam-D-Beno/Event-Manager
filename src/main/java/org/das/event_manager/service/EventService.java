@@ -27,6 +27,7 @@ public class EventService {
     private final LocationService locationService;
     private final AuthenticationService authenticationService;
     private final UserService userService;
+    private final RegistrationOnEventService registrationOnEventService;
 
     public EventService(
             EventRepository eventRepository,
@@ -35,7 +36,8 @@ public class EventService {
             LocationEntityMapper locationEntityMapper,
             LocationService locationService,
             AuthenticationService authenticationService,
-            UserService userService
+            UserService userService,
+            RegistrationOnEventService registrationOnEventService
     ) {
         this.eventRepository = eventRepository;
         this.eventEntityMapper = eventEntityMapper;
@@ -44,6 +46,7 @@ public class EventService {
         this.locationService = locationService;
         this.authenticationService = authenticationService;
         this.userService = userService;
+        this.registrationOnEventService = registrationOnEventService;
     }
 
 
@@ -130,25 +133,44 @@ public class EventService {
     }
 
     public List<Event> findAllByOwner() {
+        LOGGER.info("Execute method findAllByOwner in EventService, eventSearchRequestDto");
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
         return eventEntityMapper.toDomain(eventRepository.findByOwner_Id(currentAuthUser.id()));
     }
 
+    public void registrationOnEvent(Long eventId) {
+        LOGGER.info("Execute method search in EventService, event Id = {}", eventId);
+        Event eventFound = findById(eventId);
+        checkStatusEvent(eventFound);
+        //todo need check exist user or not
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        registrationOnEventService.registerUserOnEvent(eventFound, currentAuthUser);
+    }
 
+    private void checkStatusEvent(Event event) {
+        LOGGER.info("Execute method checkStatusEvent in EventService, event = {}", event);
+        if (event.status() == EventStatus.CANCELLED || event.status() == EventStatus.FINISHED) {
+            LOGGER.error("Cannot registration event has status = {}",
+                    event.status());
+            throw new IllegalArgumentException("Event has status %s".formatted(event.status()));
+        }
+    }
 
     private void checkDatePastTime(Event event) {
         LOGGER.info("Execute method checkDatePastTime in EventService, event date = {}", event.date());
         if (event.date().isAfter(ZonedDateTime.now())) {
             LOGGER.error("Date cannot be a past time = {}", event.date());
-            throw new IllegalArgumentException("Data for update must be after current date event");
+            throw new IllegalArgumentException("Data for update = %s must be after current date event"
+                    .formatted(event.date()));
         }
     }
 
     private void checkCostMoreThenZero(Event event) {
         LOGGER.info("Execute method checkCostMoreThenZero in EventService, cost = {}", event.cost());
         if (event.cost().compareTo(BigDecimal.ZERO) <= 0) {
-            LOGGER.error("Cost more then zero = {}", event.cost());
-            throw new IllegalArgumentException("Cost for update must be more then zero");
+            LOGGER.error("Cost must be more then zero or negative= {}", event.cost());
+            throw new IllegalArgumentException("Cost = %s for update must be more then zero"
+                    .formatted(event.cost()));
         }
     }
 
@@ -158,9 +180,10 @@ public class EventService {
         Integer maxPlacesToUpdate = event.maxPlaces();
          int currentMaxPlaces =  findById(eventId).maxPlaces();
          if (maxPlacesToUpdate < currentMaxPlaces) {
-             LOGGER.error("Max places for update = {}, more Then max places already exist = {}",
+             LOGGER.error("Max places for update = {}, cannot be then max places already exist = {}",
                      maxPlacesToUpdate, currentMaxPlaces);
-             throw new IllegalArgumentException("Max places for update must be more then current max places");
+             throw new IllegalArgumentException("Max places for update = %s must be more then current max places = %s"
+                     .formatted(maxPlacesToUpdate, currentMaxPlaces));
          }
     }
 
@@ -169,7 +192,7 @@ public class EventService {
                 event.duration());
         if (event.duration() < 30 ) {
             LOGGER.error("Duration Less Then Thirty = {}", event.duration());
-            throw new IllegalArgumentException("Duration for update must be more 30");
+            throw new IllegalArgumentException("Duration = %s for update must be more 30".formatted(event.duration()));
         }
     }
 
@@ -178,9 +201,10 @@ public class EventService {
                 event.maxPlaces());
         Integer locationCapacity = locationService.getCapacity(event.locationId());
         if (event.maxPlaces() > locationCapacity) {
-            LOGGER.error("Error, Maximum number = {} of places at the event more then location capacity = {} ",
+            LOGGER.error("Max places = {} at the event more then location capacity = {} ",
                     event.maxPlaces(), locationCapacity);
-            throw new IllegalArgumentException("maxPlaces cannot be more then location maxPlaces");
+            throw new IllegalArgumentException("maxPlaces =%s cannot be more then location maxPlaces =%s"
+                    .formatted(event.maxPlaces(), locationCapacity));
         }
     }
 
@@ -193,4 +217,5 @@ public class EventService {
         LOGGER.info("Execute method checkExistLocation in EventService, user = {}", event.locationId());
         locationService.findById(event.locationId());
     }
+
 }

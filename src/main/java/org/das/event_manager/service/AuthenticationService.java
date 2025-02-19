@@ -1,9 +1,7 @@
 package org.das.event_manager.service;
 
-import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.SignInRequest;
-import org.das.event_manager.security.CustomUserDetailService;
 import org.das.event_manager.security.jwt.JwtTokenManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class AuthenticationService {
@@ -46,12 +41,12 @@ public class AuthenticationService {
         return jwtTokenManager.generateJwtToken(foundUser);
     }
 
-    public User getCurrentAuthenticatedUser() {
-        LOGGER.info("Execute method getCurrentAuthenticatedUser");
-        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                .map(Authentication::getPrincipal)
-                .filter(String.class::isInstance)
-                .map(login -> userService.findByLogin((String) login))
-                .orElseThrow(() -> new IllegalArgumentException("Authenticated user not exist in context security"));
+    public User getCurrentAuthenticatedUserOrThrow() {
+        LOGGER.info("Execute method getCurrentAuthenticatedUserOrThrow");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw  new IllegalStateException("Authenticated user not exist in context security");
+        }
+        return (User) authentication.getPrincipal();
     }
 }

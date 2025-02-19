@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "registrations")
 @Setter
@@ -20,6 +22,9 @@ public class RegistrationEntity {
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     private EventEntity event;
+
+    @Column(name = "date")
+    private LocalDateTime dateRegistration;
 
     public RegistrationEntity(Long id, UserEntity userEntity, EventEntity eventEntity) {
     }

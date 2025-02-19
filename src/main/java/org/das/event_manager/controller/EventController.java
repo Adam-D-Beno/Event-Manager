@@ -77,7 +77,7 @@ public class EventController {
 
     @GetMapping("/my")
     public ResponseEntity<List<EventResponseDto>> findEventsByUserCreation() {
-        return ResponseEntity.ok().body(eventDtoMapper.toDto(eventService.findAllByOwner()));
+        return ResponseEntity.ok().body(eventDtoMapper.toDto(eventService.findAllEventsCreationByOwner()));
     }
 
     @PostMapping("/registrations/{eventId}")
@@ -96,7 +96,8 @@ public class EventController {
     }
 
     @GetMapping("/registrations/my")
-    public ResponseEntity<EventResponseDto> findEventsByUserRegistration() {
+    public ResponseEntity<EventResponseDto> findAllEventsByUserRegistration() {
+        eventService.findAllEventByUserRegistration();
         return ResponseEntity.ok().build();
     }
 }

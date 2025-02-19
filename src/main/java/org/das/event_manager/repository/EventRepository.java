@@ -26,7 +26,6 @@ public  interface EventRepository extends JpaRepository<EventEntity, Long> {
                 AND (:durationMax is null or ev.duration >= :durationMax)
                 AND (:locationId is null or ev.location.id = :locationId)
                 AND (:status is null or ev.status = :status)
-                
     """)
     List<EventEntity> search(
             @Param("name") String name,

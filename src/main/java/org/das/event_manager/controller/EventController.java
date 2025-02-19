@@ -84,6 +84,7 @@ public class EventController {
     public ResponseEntity<Void> registrationUserOnEvent(
             @NotNull @PathVariable("eventId") Long eventId
     ) {
+        eventService.registrationOnEvent(eventId);
         return ResponseEntity.ok().build();
     }
 

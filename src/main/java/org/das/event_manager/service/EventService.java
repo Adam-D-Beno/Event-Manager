@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Service
 public class EventService {
@@ -48,7 +49,7 @@ public class EventService {
 
     public Event create(Event event) {
         LOGGER.info("Execute method create in EventService, event = {}", event);
-        User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUser();
+        User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
         checkExistUser(currentAuthenticatedUser);
         checkExistLocation(event);
         checkMaxPlacesMoreThenOnLocation(event);
@@ -61,7 +62,7 @@ public class EventService {
 
     public void deleteById(Long eventId) {
         LOGGER.info("Execute method create in EventService, event id = {}", eventId);
-        User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
 
         //todo need replace
         eventRepository.findById(eventId)
@@ -89,7 +90,7 @@ public class EventService {
         checkCostMoreThenZero(eventToUpdate);
 
         Location location = locationService.findById(eventToUpdate.locationId());
-        User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
 
         EventEntity updated = eventRepository.findById(eventId)
                 .filter(eventEntity -> eventEntity.getStatus() == EventStatus.WAIT_START)
@@ -110,9 +111,22 @@ public class EventService {
         return eventEntityMapper.toDomain(updated);
     }
 
-    public Event search(EventSearchRequestDto eventSearchRequestDto) {
-            eventRepository.search(eventSearchRequestDto);
-        return null;
+    public List<Event> search(EventSearchRequestDto eventSearchRequestDto) {
+        LOGGER.info("Execute method search in EventService, eventSearchRequestDto = {}", eventSearchRequestDto);
+        List<EventEntity> searched = eventRepository.search(
+                eventSearchRequestDto.name(),
+                eventSearchRequestDto.placesMin(),
+                eventSearchRequestDto.placesMax(),
+                eventSearchRequestDto.dateStartAfter(),
+                eventSearchRequestDto.dateStartBefore(),
+                eventSearchRequestDto.costMin(),
+                eventSearchRequestDto.costMax(),
+                eventSearchRequestDto.durationMin(),
+                eventSearchRequestDto.durationMax(),
+                eventSearchRequestDto.locationId(),
+                eventSearchRequestDto.status()
+        );
+        return eventEntityMapper.toDomain(searched);
     }
 
     private void checkDatePastTime(Event event) {

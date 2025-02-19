@@ -3,7 +3,6 @@ package org.das.event_manager.dto.mappers;
 import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
-import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.EventUpdateRequestDto;
@@ -33,7 +32,7 @@ public class EventDtoMapper {
         return new Event(
                 null,
                 eventUpdateRequestDto.name(),
-                authenticationService.getCurrentAuthenticatedUser().id(),
+                authenticationService.getCurrentAuthenticatedUserOrThrow().id(),
                 eventUpdateRequestDto.maxPlaces(),
                 initDefaultOccupiedPlaces,
                 eventUpdateRequestDto.date(),
@@ -50,7 +49,7 @@ public class EventDtoMapper {
         return new Event(
                 null,
                 eventUpdateRequestDto.name(),
-                authenticationService.getCurrentAuthenticatedUser().id(),
+                authenticationService.getCurrentAuthenticatedUserOrThrow().id(),
                 eventUpdateRequestDto.maxPlaces(),
                 initDefaultOccupiedPlaces,
                 eventUpdateRequestDto.date(),
@@ -66,7 +65,7 @@ public class EventDtoMapper {
         return new EventResponseDto(
                 event.id(),
                 event.name(),
-                authenticationService.getCurrentAuthenticatedUser().id(),
+                authenticationService.getCurrentAuthenticatedUserOrThrow().id(),
                 event.maxPlaces(),
                 event.occupiedPlaces(),
                 event.date(),

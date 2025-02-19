@@ -35,14 +35,20 @@ public class UserService {
         LOGGER.info("Execute method getUserByLogin user: login = {} in UserService class", login);
         return userRepository.findByLogin(login)
                 .map(userEntityMapper::toDomain)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    LOGGER.error("User with login={} not found", login);
+                    return new UsernameNotFoundException("User not found");
+                });
     }
 
     public User findById(Long userId) {
         LOGGER.info("Execute method getUserById user: id = {} in UserService class", userId);
         return userRepository.findById(userId)
                 .map(userEntityMapper::toDomain)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                   LOGGER.error("User with id={} not found", userId);
+                   return new UsernameNotFoundException("User not found");
+                });
     }
 
     public boolean isUserExistsByLogin(String login) {

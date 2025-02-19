@@ -96,8 +96,8 @@ public class EventController {
     }
 
     @GetMapping("/registrations/my")
-    public ResponseEntity<EventResponseDto> findAllEventsByUserRegistration() {
-        eventService.findAllEventByUserRegistration();
-        return ResponseEntity.ok().build();
+    public ResponseEntity<List<EventResponseDto>> findAllEventsByUserRegistration() {
+        return ResponseEntity.ok()
+                .body(eventDtoMapper.toDto(eventService.findAllEventByUserRegistration()));
     }
 }

@@ -132,10 +132,10 @@ public class EventService {
         return eventEntityMapper.toDomain(searched);
     }
 
-    public List<Event> findAllByOwner() {
-        LOGGER.info("Execute method findAllByOwner in EventService, eventSearchRequestDto");
+    public List<Event> findAllEventsCreationByOwner() {
+        LOGGER.info("Execute method findAllEventsCreationByOwner in EventService, eventSearchRequestDto");
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
-        return eventEntityMapper.toDomain(eventRepository.findByOwner_Id(currentAuthUser.id()));
+        return eventEntityMapper.toDomain(eventRepository.findEventsByOwner_Id((currentAuthUser.id())));
     }
 
     public void registrationOnEvent(Long eventId) {
@@ -145,6 +145,13 @@ public class EventService {
         //todo need check exist user or not
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
         registrationOnEventService.registerUserOnEvent(eventFound, currentAuthUser);
+    }
+
+
+    public List<Event> findAllEventByUserRegistration() {
+        LOGGER.info("Execute method findAllEventByUserRegistration in EventService");
+//        registrationOnEventService.findAllByUserRegistration();
+        return null;
     }
 
     private void checkStatusEvent(Event event) {

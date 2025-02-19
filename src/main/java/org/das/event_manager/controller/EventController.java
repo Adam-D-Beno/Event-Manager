@@ -72,8 +72,7 @@ public class EventController {
     public ResponseEntity<List<EventResponseDto>> findAllEvents(
             @RequestBody EventSearchRequestDto eventSearchRequestDto
             ) {
-        eventService.search(eventSearchRequestDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(eventDtoMapper.toDto(eventService.search(eventSearchRequestDto)));
     }
 
     @GetMapping("/my")

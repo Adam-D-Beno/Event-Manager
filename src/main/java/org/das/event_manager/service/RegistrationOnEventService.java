@@ -1,11 +1,13 @@
 package org.das.event_manager.service;
 
 import org.das.event_manager.domain.Event;
+import org.das.event_manager.domain.Registration;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.domain.entity.EventEntity;
 import org.das.event_manager.domain.entity.RegistrationEntity;
 import org.das.event_manager.domain.entity.UserEntity;
 import org.das.event_manager.dto.mappers.EventEntityMapper;
+import org.das.event_manager.dto.mappers.RegistrationEntityMapper;
 import org.das.event_manager.dto.mappers.UserEntityMapper;
 import org.das.event_manager.repository.RegistrationRepository;
 import org.slf4j.Logger;
@@ -21,11 +23,18 @@ public class RegistrationOnEventService {
     private final RegistrationRepository registrationRepository;
     private final EventEntityMapper eventEntityMapper;
     private final UserEntityMapper userEntityMapper;
+    private final RegistrationEntityMapper registrationEntityMapper;
 
-    public RegistrationOnEventService(RegistrationRepository registrationRepository, EventEntityMapper eventEntityMapper, UserEntityMapper userEntityMapper) {
+    public RegistrationOnEventService(
+            RegistrationRepository registrationRepository,
+            EventEntityMapper eventEntityMapper,
+            UserEntityMapper userEntityMapper,
+            RegistrationEntityMapper registrationEntityMapper
+    ) {
         this.registrationRepository = registrationRepository;
         this.eventEntityMapper = eventEntityMapper;
         this.userEntityMapper = userEntityMapper;
+        this.registrationEntityMapper = registrationEntityMapper;
     }
 
     public void registerUserOnEvent(Event event, User currentAuthUser) {
@@ -39,5 +48,11 @@ public class RegistrationOnEventService {
                 eventEntity
         );
         registrationRepository.save(newRegistrationOnEvent);
+    }
+
+    public List<Registration> findAllByUserRegistration(User currentAuthUser) {
+        LOGGER.info("Execute method findAllByUserRegistration in RegistrationOnEventService,user = {}"
+                , currentAuthUser);
+        return registrationEntityMapper.toDomain(registrationRepository.findAllByUser_Id(currentAuthUser.id()));
     }
 }

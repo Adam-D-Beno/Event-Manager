@@ -129,6 +129,13 @@ public class EventService {
         return eventEntityMapper.toDomain(searched);
     }
 
+    public List<Event> findAllByOwner() {
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        return eventEntityMapper.toDomain(eventRepository.findByOwner_Id(currentAuthUser.id()));
+    }
+
+
+
     private void checkDatePastTime(Event event) {
         LOGGER.info("Execute method checkDatePastTime in EventService, event date = {}", event.date());
         if (event.date().isAfter(ZonedDateTime.now())) {

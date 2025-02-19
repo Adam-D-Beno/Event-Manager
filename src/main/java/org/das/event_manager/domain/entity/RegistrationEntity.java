@@ -21,17 +21,10 @@ public class RegistrationEntity {
     @JoinColumn(name = "event_id", nullable = false)
     private EventEntity event;
 
+    public RegistrationEntity(Long id, UserEntity userEntity, EventEntity eventEntity) {
+    }
+
     public RegistrationEntity() {
-    }
 
-    public RegistrationEntity(
-            Long id,
-            UserEntity user,
-            EventEntity event
-    ) {
-        this.id = id;
-        this.user = user;
-        this.event = event;
     }
-
 }

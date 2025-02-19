@@ -1,5 +1,6 @@
 package org.das.event_manager.repository;
 
+import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.entity.EventEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -41,5 +42,6 @@ public  interface EventRepository extends JpaRepository<EventEntity, Long> {
             @Param("status") EventStatus status
     );
 
-    List<EventEntity> findByOwner_Id(Long ownerId);
+
+    List<EventEntity> findEventsByOwner_Id(Long ownerId);
 }

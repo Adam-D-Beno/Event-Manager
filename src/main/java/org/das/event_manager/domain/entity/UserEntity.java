@@ -30,9 +30,6 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-//    private List<UserRegistration> userRegistrations = new ArrayList<>();
-
     public UserEntity() {
     }
 

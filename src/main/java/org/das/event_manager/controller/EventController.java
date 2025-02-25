@@ -92,6 +92,7 @@ public class EventController {
     public ResponseEntity<Void> registrationUserCancelEvent(
             @NotNull @PathVariable("eventId") Long eventId
     ) {
+        eventService.registrationCancelByEventId(eventId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

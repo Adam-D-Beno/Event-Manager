@@ -1,8 +1,6 @@
 package org.das.event_manager.dto;
 
-import jakarta.validation.constraints.*;
 import org.das.event_manager.domain.EventStatus;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 

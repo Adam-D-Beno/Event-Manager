@@ -1,6 +1,7 @@
 package org.das.event_manager.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.*;
 import org.das.event_manager.domain.entity.EventEntity;
 import org.das.event_manager.domain.entity.RegistrationEntity;
@@ -68,7 +69,7 @@ public class EventService {
         LOGGER.info("Execute method create in EventService, event id = {}", eventId);
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
 
-        //todo need replace
+        //todo need replace check What a role
         eventRepository.findById(eventId)
            .filter(eventEntity -> eventEntity.getStatus() == EventStatus.WAIT_START)
            .filter(eventEntity -> currentAuthUser.userRole() == UserRole.ADMIN
@@ -143,7 +144,6 @@ public class EventService {
         LOGGER.info("Execute method search in EventService, event Id = {}", eventId);
         Event eventFound = findById(eventId);
         checkStatusEvent(eventFound);
-        //todo need check exist user or not
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
         registrationOnEventService.registerUserOnEvent(eventFound, currentAuthUser);
     }
@@ -152,11 +152,17 @@ public class EventService {
     public List<Event> findAllEventByUserRegistration() {
         LOGGER.info("Execute method findAllEventByUserRegistration in EventService");
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
-        List<Registration> userRegistration = registrationOnEventService.findAllByUserRegistration(currentAuthUser);
-        return userRegistration.stream()
-                .map(Registration::event)
+        List<EventEntity> eventsByUserCreation = eventRepository.findEventsByOwner_Id(currentAuthUser.id());
+        return eventsByUserCreation.stream()
+                .map(eventEntityMapper::toDomain)
                 .toList();
 
+    }
+
+    public void registrationCancelByEventId(Long eventId) {
+        LOGGER.info("Execute method registrationCancelByEventId in EventService, event id = {}", eventId);
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        registrationOnEventService.cancelOnRegistration(eventId, currentAuthUser);
     }
 
     private void checkStatusEvent(Event event) {

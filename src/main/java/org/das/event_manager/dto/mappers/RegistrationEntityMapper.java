@@ -12,7 +12,7 @@ public class RegistrationEntityMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationEntityMapper.class);
 
-
+    //todo завершить маппер
    public Registration toDomain(RegistrationEntity registrationEntity) {
        LOGGER.info("Execute method toDomain in RegistrationEntityMapper,registrationEntity = {}"
                , registrationEntity);

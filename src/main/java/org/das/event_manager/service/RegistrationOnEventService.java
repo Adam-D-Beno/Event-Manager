@@ -1,6 +1,8 @@
 package org.das.event_manager.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.das.event_manager.domain.Event;
+import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.Registration;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.domain.entity.EventEntity;
@@ -14,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,37 +25,42 @@ public class RegistrationOnEventService {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationOnEventService.class);
     private final RegistrationRepository registrationRepository;
     private final EventEntityMapper eventEntityMapper;
-    private final UserEntityMapper userEntityMapper;
     private final RegistrationEntityMapper registrationEntityMapper;
 
     public RegistrationOnEventService(
             RegistrationRepository registrationRepository,
             EventEntityMapper eventEntityMapper,
-            UserEntityMapper userEntityMapper,
             RegistrationEntityMapper registrationEntityMapper
     ) {
         this.registrationRepository = registrationRepository;
         this.eventEntityMapper = eventEntityMapper;
-        this.userEntityMapper = userEntityMapper;
         this.registrationEntityMapper = registrationEntityMapper;
     }
 
     public void registerUserOnEvent(Event event, User currentAuthUser) {
         LOGGER.info("Execute method registerUserOnEvent in RegistrationOnEventService, event = {}, user = {}",
                 event, currentAuthUser);
-        UserEntity userEntity = userEntityMapper.toEntity(currentAuthUser);
         EventEntity eventEntity = eventEntityMapper.toEntity(event);
         RegistrationEntity newRegistrationOnEvent = new RegistrationEntity(
                 null,
-                userEntity,
-                eventEntity
+                eventEntity,
+                LocalDateTime.now()
         );
         registrationRepository.save(newRegistrationOnEvent);
     }
 
-    public List<Registration> findAllByUserRegistration(User currentAuthUser) {
-        LOGGER.info("Execute method findAllByUserRegistration in RegistrationOnEventService,user = {}"
-                , currentAuthUser);
-        return registrationEntityMapper.toDomain(registrationRepository.findAllByUser_Id(currentAuthUser.id()));
+    public void cancelOnRegistration(Long eventId, User currentAuthUser) {
+        LOGGER.info("Execute method cancelOnRegistration event id = {},user = {}", eventId, currentAuthUser);
+        RegistrationEntity registrationEntity = registrationRepository
+                .findByEventId(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("Registration not found or status is not WAIT_START"));
+
+        if (registrationEntity.getEvent().getStatus() != EventStatus.STARTED) {
+            LOGGER.error("Cannot cancel registration on event = {} has status = {}",
+                    registrationEntity.getEvent(), registrationEntity.getEvent());
+            throw new IllegalStateException("Cancellation of registration is impossible: " +
+                    "the status of an event is not wait_start");
+        }
+        registrationRepository.delete(registrationEntity);
     }
 }

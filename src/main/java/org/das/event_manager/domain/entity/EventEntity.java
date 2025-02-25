@@ -45,8 +45,8 @@ public class EventEntity {
     @Enumerated(value = EnumType.STRING)
     private EventStatus status;
 
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
-    private List<RegistrationEntity> members = new ArrayList<>();
+    @OneToMany(mappedBy = "event")
+    private List<RegistrationEntity> registrations = new ArrayList<>();
 
 
     public EventEntity() {
@@ -156,11 +156,11 @@ public class EventEntity {
         this.status = status;
     }
 
-    public List<RegistrationEntity> getMembers() {
-        return members;
+    public List<RegistrationEntity> getRegistrations() {
+        return registrations;
     }
 
-    public void setMembers(List<RegistrationEntity> members) {
-        this.members = members;
+    public void setRegistrations(List<RegistrationEntity> registrations) {
+        this.registrations = registrations;
     }
 }

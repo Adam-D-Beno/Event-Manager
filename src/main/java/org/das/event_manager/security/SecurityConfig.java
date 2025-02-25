@@ -102,6 +102,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.POST, "/events/search")
                             .hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
                             .requestMatchers(HttpMethod.GET, "/events/my")
+
                             .hasAnyAuthority(UserRole.USER.name())
                             .requestMatchers(HttpMethod.POST, "/events/registrations/**")
                             .hasAnyAuthority(UserRole.USER.name())

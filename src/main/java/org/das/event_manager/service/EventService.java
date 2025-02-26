@@ -90,7 +90,7 @@ public class EventService {
         checkDatePastTime(eventToUpdate);
         checkCostMoreThenZero(eventToUpdate);
         checkCurrentUserCanModify(eventId);
-        checkStatusEvent(findById(eventId));
+        checkStatusEvent(eventId);
 
         Location location = locationService.findById(eventToUpdate.locationId());
         EventEntity updated = eventRepository.findById(eventId)
@@ -206,8 +206,9 @@ public class EventService {
         locationService.findById(event.locationId());
     }
 
-    private void checkStatusEvent(Event event) {
-        LOGGER.info("Execute method checkStatusEvent in EventService, event = {}", event);
+    private void checkStatusEvent(Long eventId) {
+        LOGGER.info("Execute method checkStatusEvent in EventService, event id= {}", eventId);
+        Event event = findById(eventId);
         if (event.status() == EventStatus.STARTED) {
             LOGGER.error("Cannot event has status = {}", event.status());
             throw new IllegalArgumentException("Event has status %s".formatted(event.status()));

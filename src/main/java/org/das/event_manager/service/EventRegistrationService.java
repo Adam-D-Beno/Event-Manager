@@ -46,7 +46,7 @@ public class EventRegistrationService {
 
         EventEntity eventFound = registrationRepository.findEventById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not find"
-                        .formatted(eventId)));;
+                        .formatted(eventId)));
 
         checkStatusEvent(eventFound);
 
@@ -73,6 +73,7 @@ public class EventRegistrationService {
         if (registrationEntity.getEvent().getStatus() != EventStatus.STARTED) {
             LOGGER.error("Cannot cancel registration on event = {} has status = {}",
                     registrationEntity.getEvent(), registrationEntity.getEvent());
+
             throw new IllegalStateException("Cancellation of registration is impossible: " +
                     "the status of an event is not wait_start");
         }
@@ -98,9 +99,11 @@ public class EventRegistrationService {
 
     private void checkStatusEvent(EventEntity eventEntity) {
         LOGGER.info("Execute method checkStatusEvent in EventService, event = {}", eventEntity);
-        if (eventEntity.getStatus() == EventStatus.CANCELLED || eventEntity.getStatus() == EventStatus.FINISHED) {
+        if (eventEntity.getStatus() != null && eventEntity.getStatus() == EventStatus.CANCELLED
+                || eventEntity.getStatus() == EventStatus.FINISHED) {
             LOGGER.error("Cannot registration event has status = {}",
                     eventEntity.getStatus());
+
             throw new IllegalArgumentException("Event has status %s".formatted(eventEntity.getStatus()));
         }
     }

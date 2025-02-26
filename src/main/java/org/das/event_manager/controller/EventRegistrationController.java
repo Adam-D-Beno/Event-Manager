@@ -35,6 +35,7 @@ public class EventRegistrationController {
             @NotNull @PathVariable("eventId") Long eventId
     ) {
         LOGGER.info("Http post request for registration user on event id = {}", eventId);
+
         eventRegistrationService.registerUserOnEvent(eventId);
         return ResponseEntity.ok().build();
     }
@@ -44,6 +45,7 @@ public class EventRegistrationController {
             @NotNull @PathVariable("eventId") Long eventId
     ) {
         LOGGER.info("Http delete request for cancel on registration user on event id = {}", eventId);
+
         eventRegistrationService.cancelOnRegistration(eventId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -51,6 +53,7 @@ public class EventRegistrationController {
     @GetMapping("/my")
     public ResponseEntity<List<EventResponseDto>> findAllEventsByUserRegistration() {
         LOGGER.info("Http get request for find all registration by user on event");
+
         return ResponseEntity.ok()
                 .body(eventMapper.toDto(eventRegistrationService.findAllEventByUserRegistration()));
     }

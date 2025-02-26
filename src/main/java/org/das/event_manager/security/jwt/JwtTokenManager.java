@@ -2,18 +2,12 @@ package org.das.event_manager.security.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.das.event_manager.domain.User;
-import org.das.event_manager.domain.UserRole;
-import org.das.event_manager.service.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import javax.management.relation.Role;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
@@ -38,6 +32,7 @@ public class JwtTokenManager {
 
     public String generateJwtToken(User user) {
         LOGGER.info("Generate jwt token for login = {}", user.login());
+
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", user.userRole().name());
         return Jwts
@@ -52,6 +47,7 @@ public class JwtTokenManager {
 
     public String getLoginFromToken(String jwt) {
         LOGGER.info("Get login from jwt token = {} ", jwt);
+
         return Jwts
                 .parser()
                 .setSigningKey(secretKey)
@@ -63,6 +59,7 @@ public class JwtTokenManager {
 
     public String getRoleFromToken(String jwt) {
         LOGGER.info("Get role from jwt token = {} ", jwt);
+
         return Jwts
                 .parser()
                 .setSigningKey(secretKey)

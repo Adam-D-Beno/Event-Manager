@@ -11,9 +11,12 @@ public class LocationValidate {
 
 
     public void validateLocationIdNull(Long locationId) {
-        LOGGER.info("Execute method isLocationIdNull in LocationValidate class, checking locationId = {}", locationId);
+        LOGGER.info("Execute method isLocationIdNull in LocationValidate class, checking locationId = {}"
+                , locationId);
+
         if (locationId != null) {
             LOGGER.info("Cannot creation Location with provided id. id = {} must be empty", locationId);
+
             throw new IllegalArgumentException("Cannot creation Location with provided id. id must be empty");
         }
     }

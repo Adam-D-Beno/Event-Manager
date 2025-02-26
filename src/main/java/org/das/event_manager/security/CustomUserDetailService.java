@@ -25,6 +25,7 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         LOGGER.info("Execute method loadUserByUsername user: login = {} in CustomUserDetailService class", login);
+
         return userRepository.findByLogin(login)
                 .map(userEntity -> new User(
                         userEntity.getLogin(),

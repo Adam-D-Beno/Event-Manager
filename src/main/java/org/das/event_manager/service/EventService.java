@@ -112,6 +112,7 @@ public class EventService {
 
     public List<Event> search(EventSearchRequestDto eventSearchRequestDto) {
         LOGGER.info("Execute method search in EventService, eventSearchRequestDto = {}", eventSearchRequestDto);
+
         List<EventEntity> searched = eventRepository.search(
                 eventSearchRequestDto.name(),
                 eventSearchRequestDto.placesMin(),
@@ -130,6 +131,7 @@ public class EventService {
 
     public List<Event> findAllEventsCreationByOwner() {
         LOGGER.info("Execute method findAllEventsCreationByOwner in EventService, eventSearchRequestDto");
+
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
         return eventMapper.toDomain(eventRepository.findEventsByOwner_Id((currentAuthUser.id())));
     }
@@ -137,8 +139,10 @@ public class EventService {
 
     private void checkDatePastTime(Event event) {
         LOGGER.info("Execute method checkDatePastTime in EventService, event date = {}", event.date());
-        if (event.date().isAfter(ZonedDateTime.now())) {
+
+        if (event.date() != null && event.date().isAfter(ZonedDateTime.now())) {
             LOGGER.error("Date cannot be a past time = {}", event.date());
+
             throw new IllegalArgumentException("Data for update = %s must be after current date event"
                     .formatted(event.date()));
         }
@@ -146,18 +150,24 @@ public class EventService {
 
     private void checkCostMoreThenZero(Event event) {
         LOGGER.info("Execute method checkCostMoreThenZero in EventService, cost = {}", event.cost());
-        if (event.cost().compareTo(BigDecimal.ZERO) <= 0) {
+
+        if (event.cost() != null && event.cost().compareTo(BigDecimal.ZERO) <= 0) {
             LOGGER.error("Cost must be more then zero or negative= {}", event.cost());
+
             throw new IllegalArgumentException("Cost = %s for update must be more then zero"
                     .formatted(event.cost()));
         }
     }
 
-
     private void checkCurrentUserCanModify(Long eventId) {
+        LOGGER.info("Execute method checkCurrentUserCanModify in EventService,event id = {}",
+                eventId);
+
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
         Event event = findById(eventId);
         if (!event.ownerId().equals(currentAuthUser.id()) && !(currentAuthUser.userRole() == UserRole.ADMIN)) {
+            LOGGER.error("User with login = {} cant modify this event", currentAuthUser.login());
+
             throw new IllegalArgumentException("User cant modify this event");
         }
     }
@@ -165,11 +175,16 @@ public class EventService {
     private void checkMaxPlacesMoreCurrentMaxPlaces(Long eventId, Event event) {
         LOGGER.info("Execute method checkMaxPlacesMoreCurrentMaxPlaces in EventService,event id = {}, cost = {}",
                  eventId, event.cost());
+
         Integer maxPlacesToUpdate = event.maxPlaces();
-         int currentMaxPlaces =  findById(eventId).maxPlaces();
+        Integer currentMaxPlaces =  findById(eventId).maxPlaces();
+         if (maxPlacesToUpdate == null || currentMaxPlaces == null) {
+             return;
+         }
          if (maxPlacesToUpdate < currentMaxPlaces) {
              LOGGER.error("Max places for update = {}, cannot be then max places already exist = {}",
                      maxPlacesToUpdate, currentMaxPlaces);
+
              throw new IllegalArgumentException("Max places for update = %s must be more then current max places = %s"
                      .formatted(maxPlacesToUpdate, currentMaxPlaces));
          }
@@ -178,19 +193,28 @@ public class EventService {
     private void checkDurationLessThenThirtyThrow(Event event) {
         LOGGER.info("Execute method checkDurationLessThenThirtyThrow in EventService, duration = {}",
                 event.duration());
-        if (event.duration() < 30 ) {
+
+        if (event.duration() != null && event.duration() < 30 ) {
             LOGGER.error("Duration Less Then Thirty = {}", event.duration());
-            throw new IllegalArgumentException("Duration = %s for update must be more 30".formatted(event.duration()));
+
+            throw new IllegalArgumentException("Duration = %s for update must be more 30"
+                    .formatted(event.duration()));
         }
     }
 
     private void checkMaxPlacesMoreThenOnLocation(Event event) {
         LOGGER.info("Execute method checkMaxPlacesMoreThenOnLocation in EventService, max places = {}",
                 event.maxPlaces());
+
         Integer locationCapacity = locationService.getCapacity(event.locationId());
+
+        if (event.maxPlaces() == null || locationCapacity == null) {
+            return;
+        }
         if (event.maxPlaces() > locationCapacity) {
             LOGGER.error("Max places = {} at the event more then location capacity = {} ",
                     event.maxPlaces(), locationCapacity);
+
             throw new IllegalArgumentException("maxPlaces =%s cannot be more then location maxPlaces =%s"
                     .formatted(event.maxPlaces(), locationCapacity));
         }
@@ -198,19 +222,23 @@ public class EventService {
 
     private void checkExistUser(User currentAuthenticatedUser) {
         LOGGER.info("Execute method checkExistUser in EventService, user = {}", currentAuthenticatedUser);
+
         userService.findById(currentAuthenticatedUser.id());
     }
 
     private void checkExistLocation(Event event) {
         LOGGER.info("Execute method checkExistLocation in EventService, user = {}", event.locationId());
+
         locationService.findById(event.locationId());
     }
 
     private void checkStatusEvent(Long eventId) {
         LOGGER.info("Execute method checkStatusEvent in EventService, event id= {}", eventId);
+
         Event event = findById(eventId);
-        if (event.status() == EventStatus.STARTED) {
+        if (event.status() != null && event.status() == EventStatus.STARTED) {
             LOGGER.error("Cannot event has status = {}", event.status());
+
             throw new IllegalArgumentException("Event has status %s".formatted(event.status()));
         }
     }

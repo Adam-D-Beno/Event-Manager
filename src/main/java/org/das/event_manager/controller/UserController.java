@@ -41,6 +41,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserResponseDto> register(@Valid @RequestBody SignUpRequest signUpRequest) {
         LOGGER.info("Post request for SignUp: login = {}", signUpRequest.login());
+
         return ResponseEntity.
                 status(HttpStatus.CREATED)
                 .body(userMapper.toDto(userRegistrationService.register(userMapper.toDomain(signUpRequest))));
@@ -48,6 +49,8 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> findById(@NotNull @PathVariable(name = "id") Long id) {
+        LOGGER.info("Get request for find By Id = {}", id);
+
         return ResponseEntity.
                 status(HttpStatus.FOUND)
                 .body(userMapper.toDto(userService.findById(id)));
@@ -56,6 +59,7 @@ public class UserController {
     @PostMapping("/auth")
     public ResponseEntity<JwtResponse> authentication(@Valid @RequestBody SignInRequest signInRequest) {
         LOGGER.info("Post request for SignIn: login = {}", signInRequest.login());
+
         return ResponseEntity.ok().body(new JwtResponse(authenticationService.authenticateUser(signInRequest)));
     }
 }

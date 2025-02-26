@@ -38,6 +38,7 @@ public class EventController {
             @Valid @RequestBody EventCreateRequestDto eventCreateRequestDto
     ) {
         LOGGER.info("Post request for create EventCreateRequestDto {}", eventCreateRequestDto);
+
         Event event = eventMapper.toDomain(eventCreateRequestDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -48,6 +49,8 @@ public class EventController {
     public ResponseEntity<Void> deleteById(
             @NotNull @PathVariable("eventId") Long eventId
     ) {
+        LOGGER.info("Delete request by event with id = {}", eventId);
+
         eventService.deleteById(eventId);
         return ResponseEntity.noContent().build();
     }
@@ -56,6 +59,8 @@ public class EventController {
     public ResponseEntity<EventResponseDto> findById(
             @NotNull @PathVariable("eventId") Long eventId
     ) {
+        LOGGER.info("Get request find By id = {}", eventId);
+
         return ResponseEntity.ok().body(eventMapper.toDto(eventService.findById(eventId)));
     }
 
@@ -64,6 +69,9 @@ public class EventController {
             @NotNull @PathVariable("eventId") Long eventId,
             @Valid @RequestBody EventUpdateRequestDto eventUpdateRequestDto
             ) {
+        LOGGER.info("Put request for update event By Id = {}, eventUpdateRequestDto = {}"
+                , eventId, eventUpdateRequestDto);
+
         Event eventToUpdate = eventMapper.toDomain(eventUpdateRequestDto);
         return ResponseEntity.ok().body(eventMapper.toDto(eventService.update(eventId, eventToUpdate)));
     }
@@ -72,11 +80,15 @@ public class EventController {
     public ResponseEntity<List<EventResponseDto>> findAllEvents(
             @RequestBody EventSearchRequestDto eventSearchRequestDto
             ) {
+        LOGGER.info("Get request for search events by filter = {}" , eventSearchRequestDto);
+
         return ResponseEntity.ok().body(eventMapper.toDto(eventService.search(eventSearchRequestDto)));
     }
 
     @GetMapping("/my")
     public ResponseEntity<List<EventResponseDto>> findEventsByUserCreation() {
+        LOGGER.info("Get request for find events creation by user");
+
         return ResponseEntity.ok().body(eventMapper.toDto(eventService.findAllEventsCreationByOwner()));
     }
 }

@@ -26,6 +26,7 @@ public class UserService {
 
     public User save(User userToSave) {
         LOGGER.info("Execute method save user: login = {} in UserService class", userToSave.login());
+
         UserEntity entityForSave = userMapper.toEntity(userToSave);
         UserEntity saved = userRepository.save(entityForSave);
         return userMapper.toDomain(saved);
@@ -33,6 +34,7 @@ public class UserService {
 
     public User findByLogin(String login) {
         LOGGER.info("Execute method getUserByLogin user: login = {} in UserService class", login);
+
         return userRepository.findByLogin(login)
                 .map(userMapper::toDomain)
                 .orElseThrow(() -> {
@@ -43,6 +45,7 @@ public class UserService {
 
     public User findById(Long userId) {
         LOGGER.info("Execute method getUserById user: id = {} in UserService class", userId);
+
         return userRepository.findById(userId)
                 .map(userMapper::toDomain)
                 .orElseThrow(() -> {
@@ -53,6 +56,7 @@ public class UserService {
 
     public boolean isUserExistsByLogin(String login) {
         LOGGER.info("Execute method userExistByLogin user: login = {} in UserService class", login);
+
         return userRepository.existsByLogin(login);
     }
 }

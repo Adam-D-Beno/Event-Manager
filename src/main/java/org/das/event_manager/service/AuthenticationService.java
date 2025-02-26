@@ -33,6 +33,7 @@ public class AuthenticationService {
     public String authenticateUser(SignInRequest signInRequest) {
         LOGGER.info("Execute method authenticateUser user: login = {} in AuthenticationService class",
                 signInRequest.login());
+
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 signInRequest.login(),
                 signInRequest.password()
@@ -43,9 +44,11 @@ public class AuthenticationService {
 
     public User getCurrentAuthenticatedUserOrThrow() {
         LOGGER.info("Execute method getCurrentAuthenticatedUserOrThrow");
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getPrincipal() == null) {
             LOGGER.error("Authenticated user not found");
+
             throw  new IllegalStateException("Authenticated user not exist in context security");
         }
         return (User) authentication.getPrincipal();

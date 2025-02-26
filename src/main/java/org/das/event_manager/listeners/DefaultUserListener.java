@@ -3,6 +3,8 @@ package org.das.event_manager.listeners;
 import org.das.event_manager.domain.entity.UserEntity;
 import org.das.event_manager.repository.UserRepository;
 import org.das.event_manager.domain.UserRole;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultUserListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultUserListener.class);
     public static final String defaultAdmin = "admin";
     public static final String defaultUser = "user";
     private final UserRepository userRepository;
@@ -22,6 +26,8 @@ public class DefaultUserListener {
 
     @EventListener
     public void initialiseDefaultUsers(ApplicationStartedEvent applicationStartedEvent) {
+        LOGGER.info("Execute method initialiseDefaultUsers");
+
         if (!userRepository.existsByLogin(defaultAdmin)) {
             userRepository.save(createDefaultUser(defaultAdmin, UserRole.ADMIN));
         }
@@ -31,6 +37,8 @@ public class DefaultUserListener {
     }
 
     private UserEntity createDefaultUser(String login, UserRole userRole) {
+        LOGGER.info("Execute method createDefaultUser");
+
         return new UserEntity(null, login, passwordEncoder.encode(login), 1988, userRole);
     }
 }

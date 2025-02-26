@@ -41,6 +41,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         LOGGER.info("Execute doFilterInternal in JwtTokenFilter class");
+
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -52,6 +53,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             login = jwtTokenManager.getLoginFromToken(jwt);
         } catch (Exception e) {
             LOGGER.error("Error while reading jwt", e);
+
             filterChain.doFilter(request,response);
             return;
         }
@@ -67,6 +69,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private void addSecurityContextHolder(UsernamePasswordAuthenticationToken token) {
         LOGGER.info("Execute method addSecurityContextHolder");
+
         SecurityContextHolder.getContext().setAuthentication(token);
     }
 }

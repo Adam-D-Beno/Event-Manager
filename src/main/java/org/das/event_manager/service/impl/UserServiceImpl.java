@@ -1,5 +1,6 @@
 package org.das.event_manager.service.impl;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.domain.entity.UserEntity;
@@ -39,7 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByLogin(@NotNull String login) {
+    public User findByLogin(@NotBlank String login) {
         LOGGER.info("Execute method getUserByLogin user: login = {} in UserServiceImpl class", login);
 
         return userRepository.findByLogin(login)
@@ -63,7 +64,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isUserExistsByLogin(@NotNull String login) {
+    public boolean isUserExistsByLogin(@NotBlank String login) {
         LOGGER.info("Execute method userExistByLogin user: login = {} in UserServiceImpl class", login);
 
         return userRepository.existsByLogin(login);

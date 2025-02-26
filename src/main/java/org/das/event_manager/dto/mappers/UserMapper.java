@@ -7,8 +7,8 @@ import org.das.event_manager.dto.SignUpRequest;
 import org.das.event_manager.dto.UserResponseDto;
 
 public interface UserMapper {
-    UserResponseDto toDto(User user);
-    User toDomain(SignUpRequest signUpRequest);
-    UserEntity toEntity(User user);
-    User toDomain(UserEntity userEntity);
+    UserResponseDto toDto(@NotNull User user);
+    User toDomain(@NotNull SignUpRequest signUpRequest);
+    UserEntity toEntity(@NotNull User user);
+    User toDomain(@NotNull UserEntity userEntity);
 }

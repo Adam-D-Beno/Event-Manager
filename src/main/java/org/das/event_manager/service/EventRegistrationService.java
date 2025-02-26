@@ -1,6 +1,7 @@
 package org.das.event_manager.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.User;
@@ -13,8 +14,8 @@ import java.util.List;
 
 public interface EventRegistrationService {
 
-    void registerUserOnEvent(Long eventId);
-    void cancelOnRegistration(Long eventId);
+    void registerUserOnEvent(@NotNull Long eventId);
+    void cancelOnRegistration(@NotNull Long eventId);
     List<Event> findAllEventByUserRegistration();
-    EventRegistrationEntity findById(Long registrationId);
+    EventRegistrationEntity findById(@NotNull Long registrationId);
 }

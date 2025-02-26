@@ -9,11 +9,11 @@ import java.util.List;
 public interface LocationService {
 
      List<Location> findAll();
-     Location create(Location locationToUpdate);
-     Location deleteById(Long locationId);
-     Location findById(Long locationId);
-     Location updateById(Long locationId, Location location);
-     Integer getCapacity(Long locationId);
-     void existLocationAddress(String locationAddress);
-     void existLocationName(String locationName);
+     Location create(@NotNull Location locationToUpdate);
+     Location deleteById(@NotNull Long locationId);
+     Location findById(@NotNull Long locationId);
+     Location updateById(@NotNull Long locationId, @NotNull Location location);
+     Integer getCapacity(@NotNull Long locationId);
+     void existLocationAddress(@NotBlank String locationAddress);
+     void existLocationName(@NotBlank String locationName);
 }

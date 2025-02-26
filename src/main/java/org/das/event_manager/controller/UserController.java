@@ -10,6 +10,7 @@ import org.das.event_manager.dto.mappers.UserMapper;
 import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.UserRegistrationService;
 import org.das.event_manager.service.UserService;
+import org.das.event_manager.service.impl.AuthenticationServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,13 +22,13 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-    private final AuthenticationService authenticationService;
+    private final AuthenticationServiceImpl authenticationService;
     private final UserMapper userMapper;
     private final UserRegistrationService userRegistrationService;
     private final UserService userService;
 
     public UserController(
-            AuthenticationService authenticationService,
+            AuthenticationServiceImpl authenticationService,
             UserMapper userMapper,
             UserRegistrationService userRegistrationService,
             UserService userService
@@ -59,7 +60,6 @@ public class UserController {
     @PostMapping("/auth")
     public ResponseEntity<JwtResponse> authentication(@Valid @RequestBody SignInRequest signInRequest) {
         LOGGER.info("Post request for SignIn: login = {}", signInRequest.login());
-
         return ResponseEntity.ok().body(new JwtResponse(authenticationService.authenticateUser(signInRequest)));
     }
 }

@@ -1,5 +1,6 @@
 package org.das.event_manager.dto.mappers;
 
+import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.entity.EventEntity;
 import org.das.event_manager.dto.EventCreateRequestDto;
@@ -10,11 +11,11 @@ import java.util.List;
 
 public interface EventMapper {
 
-    Event toDomain(EventCreateRequestDto eventUpdateRequestDto);
-    Event toDomain(EventUpdateRequestDto eventUpdateRequestDto);
-    EventResponseDto toDto(Event event);
-    List<EventResponseDto> toDto(List<Event> events);
-    EventEntity toEntity(Event event);
-    Event toDomain(EventEntity eventEntity);
-    List<Event> toDomain(List<EventEntity> eventEntities);
+    Event toDomain(@NotNull EventCreateRequestDto eventUpdateRequestDto);
+    Event toDomain(@NotNull EventUpdateRequestDto eventUpdateRequestDto);
+    EventResponseDto toDto(@NotNull Event event);
+    List<EventResponseDto> toDto(@NotNull List<Event> events);
+    EventEntity toEntity(@NotNull Event event);
+    Event toDomain(@NotNull EventEntity eventEntity);
+    List<Event> toDomain(@NotNull List<EventEntity> eventEntities);
 }

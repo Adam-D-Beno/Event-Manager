@@ -58,12 +58,16 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event create(@NotNull Event event) {
         LOGGER.info("Execute method create in EventServiceImpl, event = {}", event);
+
         User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
         checkExistUser(currentAuthenticatedUser);
         checkExistLocation(event);
         checkMaxPlacesMoreThenOnLocation(event);
+
         UserEntity userEntity = userMapper.toEntity(currentAuthenticatedUser);
+        userEntity.setId(currentAuthenticatedUser.id());
         EventEntity eventEntity = eventMapper.toEntity(event);
+
         eventEntity.setOwner(userEntity);
         EventEntity saved = eventRepository.save(eventEntity);
         return eventMapper.toDomain(saved);
@@ -152,7 +156,7 @@ public class EventServiceImpl implements EventService {
     private void checkDatePastTime(@NotNull Event event) {
         LOGGER.info("Execute method checkDatePastTime in EventServiceImpl, event date = {}", event.date());
 
-        if (event.date() != null && event.date().isAfter(ZonedDateTime.now())) {
+        if (event.date() != null && event.date().isBefore(ZonedDateTime.now())) {
             LOGGER.error("Date cannot be a past time = {}", event.date());
 
             throw new IllegalArgumentException("Data for update = %s must be after current date event"

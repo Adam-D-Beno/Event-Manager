@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface LocationMapper {
 
-    Location toDomain(LocationDto locationDto);
-    LocationDto toDto(Location location);
-    List<LocationDto> toDto(List<Location> locations);
-    LocationEntity toEntity(Location location);
-    Location toDomain(LocationEntity locationEntity);
-    List<Location> toDomain(List<LocationEntity> locationEntities);
+    Location toDomain(@NotNull LocationDto locationDto);
+    LocationDto toDto(@NotNull Location location);
+    List<LocationDto> toDto(@NotNull List<Location> locations);
+    LocationEntity toEntity(@NotNull Location location);
+    Location toDomain(@NotNull LocationEntity locationEntity);
+    List<Location> toDomain(@NotNull List<LocationEntity> locationEntities);
 
 }

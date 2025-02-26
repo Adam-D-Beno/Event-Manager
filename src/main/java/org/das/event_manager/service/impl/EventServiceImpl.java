@@ -92,7 +92,6 @@ public class EventServiceImpl implements EventService {
                         .formatted(eventId)));
     }
 
-
     @Transactional
     @Override
     public Event update(@NotNull Long eventId, @NotNull Event eventToUpdate) {

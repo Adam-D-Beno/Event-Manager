@@ -1,6 +1,5 @@
 package org.das.event_manager;
 
-import org.das.event_manager.service.LocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;

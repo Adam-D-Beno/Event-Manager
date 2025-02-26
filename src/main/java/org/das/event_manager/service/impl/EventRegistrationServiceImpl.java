@@ -1,0 +1,119 @@
+package org.das.event_manager.service.impl;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
+import org.das.event_manager.domain.Event;
+import org.das.event_manager.domain.EventStatus;
+import org.das.event_manager.domain.User;
+import org.das.event_manager.domain.entity.EventEntity;
+import org.das.event_manager.domain.entity.EventRegistrationEntity;
+import org.das.event_manager.domain.entity.UserEntity;
+import org.das.event_manager.dto.mappers.EventMapper;
+import org.das.event_manager.dto.mappers.UserMapper;
+import org.das.event_manager.dto.mappers.impl.EventMapperImpl;
+import org.das.event_manager.dto.mappers.impl.UserMapperImpl;
+import org.das.event_manager.repository.RegistrationRepository;
+import org.das.event_manager.service.AuthenticationService;
+import org.das.event_manager.service.EventRegistrationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@Validated
+public class EventRegistrationServiceImpl implements EventRegistrationService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventRegistrationServiceImpl.class);
+    private final RegistrationRepository registrationRepository;
+    private final EventMapper eventMapper;
+    private final UserMapper userMapper;
+    private final AuthenticationService authenticationService;
+
+    public EventRegistrationServiceImpl(
+            RegistrationRepository registrationRepository,
+            @Lazy EventMapper eventMapper,
+            UserMapper userMapper,
+            AuthenticationService authenticationService
+    ) {
+        this.registrationRepository = registrationRepository;
+        this.eventMapper = eventMapper;
+        this.userMapper = userMapper;
+        this.authenticationService = authenticationService;
+    }
+
+    @Override
+    public void registerUserOnEvent(@NotNull Long eventId) {
+        LOGGER.info("Execute method registerUserOnEvent in RegistrationOnEventService, event id = {}",
+                eventId);
+
+        EventEntity eventFound = registrationRepository.findEventById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not find"
+                        .formatted(eventId)));
+
+        checkStatusEvent(eventFound);
+
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        UserEntity userEntity = userMapper.toEntity(currentAuthUser);
+
+        EventRegistrationEntity newRegistrationOnEvent = new EventRegistrationEntity(
+                null,
+                userEntity,
+                eventFound,
+                LocalDateTime.now()
+        );
+        registrationRepository.save(newRegistrationOnEvent);
+    }
+
+    @Override
+    public void cancelOnRegistration(@NotNull Long eventId) {
+        LOGGER.info("Execute method cancelOnRegistration event id = {}", eventId);
+
+        EventRegistrationEntity registrationEntity = registrationRepository
+                .getRegistrationsByEventId(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("EventRegistration not found or status is not WAIT_START"));
+
+        if (registrationEntity.getEvent().getStatus() != EventStatus.STARTED) {
+            LOGGER.error("Cannot cancel registration on event = {} has status = {}",
+                    registrationEntity.getEvent(), registrationEntity.getEvent());
+
+            throw new IllegalStateException("Cancellation of registration is impossible: " +
+                    "the status of an event is not wait_start");
+        }
+        registrationRepository.delete(registrationEntity);
+    }
+
+    @Override
+    public List<Event> findAllEventByUserRegistration() {
+        LOGGER.info("Execute method findAllEventByUserRegistration in EventServiceImpl");
+
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        return registrationRepository.getRegistrationsByUserId(currentAuthUser.id())
+                .stream()
+                .map(reg -> eventMapper.toDomain(reg.getEvent()))
+                .toList();
+    }
+
+    @Override
+    public EventRegistrationEntity findById(@NotNull Long registrationId) {
+        return registrationRepository.findById(registrationId)
+                .orElseThrow(() -> new EntityNotFoundException("EventRegistration not found"));
+
+    }
+
+    private void checkStatusEvent(@NotNull EventEntity eventEntity) {
+        LOGGER.info("Execute method checkStatusEvent in EventServiceImpl, event = {}", eventEntity);
+        if (eventEntity.getStatus() != null && eventEntity.getStatus() == EventStatus.CANCELLED
+                || eventEntity.getStatus() == EventStatus.FINISHED) {
+            LOGGER.error("Cannot registration event has status = {}",
+                    eventEntity.getStatus());
+
+            throw new IllegalArgumentException("Event has status %s".formatted(eventEntity.getStatus()));
+        }
+    }
+
+}

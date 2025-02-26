@@ -5,7 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.das.event_manager.domain.User;
-import org.das.event_manager.service.UserService;
+import org.das.event_manager.service.impl.UserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
@@ -21,16 +21,16 @@ import java.util.List;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final JwtTokenManager jwtTokenManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenFilter.class);
 
     public JwtTokenFilter(
-            @Lazy UserService userService,
+            @Lazy UserServiceImpl userServiceImpl,
             JwtTokenManager jwtTokenManager
     ) {
-        this.userService = userService;
+        this.userServiceImpl = userServiceImpl;
         this.jwtTokenManager = jwtTokenManager;
     }
 
@@ -57,7 +57,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
-        User foundUser = userService.findByLogin(login);
+        User foundUser = userServiceImpl.findByLogin(login);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 foundUser,
                 null,

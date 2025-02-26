@@ -2,7 +2,7 @@ package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.das.event_manager.dto.mappers.LocationDtoMapper;
+import org.das.event_manager.dto.mappers.LocationMapper;
 import org.das.event_manager.domain.Location;
 import org.das.event_manager.dto.LocationDto;
 import org.das.event_manager.service.LocationService;
@@ -20,10 +20,10 @@ public class LocationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationController.class);
     private final LocationService locationService;
-    private final LocationDtoMapper dtoMapper;
+    private final LocationMapper dtoMapper;
 
     @Autowired
-    public LocationController(LocationService locationService, LocationDtoMapper dtoMapper) {
+    public LocationController(LocationService locationService, LocationMapper dtoMapper) {
         this.locationService = locationService;
         this.dtoMapper = dtoMapper;
     }

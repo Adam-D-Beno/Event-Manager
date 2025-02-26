@@ -6,7 +6,7 @@ import org.das.event_manager.dto.JwtResponse;
 import org.das.event_manager.dto.SignInRequest;
 import org.das.event_manager.dto.SignUpRequest;
 import org.das.event_manager.dto.UserResponseDto;
-import org.das.event_manager.dto.mappers.UserDtoMapper;
+import org.das.event_manager.dto.mappers.UserMapper;
 import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.UserRegistrationService;
 import org.das.event_manager.service.UserService;
@@ -22,18 +22,18 @@ public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     private final AuthenticationService authenticationService;
-    private final UserDtoMapper userDtoMapper;
+    private final UserMapper userMapper;
     private final UserRegistrationService userRegistrationService;
     private final UserService userService;
 
     public UserController(
             AuthenticationService authenticationService,
-            UserDtoMapper userDtoMapper,
+            UserMapper userMapper,
             UserRegistrationService userRegistrationService,
             UserService userService
     ) {
         this.authenticationService = authenticationService;
-        this.userDtoMapper = userDtoMapper;
+        this.userMapper = userMapper;
         this.userRegistrationService = userRegistrationService;
         this.userService = userService;
     }
@@ -43,14 +43,14 @@ public class UserController {
         LOGGER.info("Post request for SignUp: login = {}", signUpRequest.login());
         return ResponseEntity.
                 status(HttpStatus.CREATED)
-                .body(userDtoMapper.toDto(userRegistrationService.register(userDtoMapper.toDomain(signUpRequest))));
+                .body(userMapper.toDto(userRegistrationService.register(userMapper.toDomain(signUpRequest))));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> findById(@NotNull @PathVariable(name = "id") Long id) {
         return ResponseEntity.
                 status(HttpStatus.FOUND)
-                .body(userDtoMapper.toDto(userService.findById(id)));
+                .body(userMapper.toDto(userService.findById(id)));
     }
 
     @PostMapping("/auth")

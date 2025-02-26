@@ -3,9 +3,9 @@ package org.das.event_manager.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.das.event_manager.dto.mappers.LocationEntityMapper;
 import org.das.event_manager.domain.Location;
 import org.das.event_manager.domain.entity.LocationEntity;
+import org.das.event_manager.dto.mappers.LocationMapper;
 import org.das.event_manager.repository.LocationRepository;
 import org.das.event_manager.validation.LocationValidate;
 import org.slf4j.Logger;
@@ -22,13 +22,13 @@ public class LocationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationService.class);
     private final LocationRepository locationRepository;
-    private final LocationEntityMapper entityMapper;
+    private final LocationMapper entityMapper;
     private final LocationValidate locationValidate;
 
     @Autowired
     public LocationService(
             LocationRepository locationRepository,
-            LocationEntityMapper entityMapper,
+            LocationMapper entityMapper,
             LocationValidate locationValidate
     ) {
         this.locationRepository = locationRepository;

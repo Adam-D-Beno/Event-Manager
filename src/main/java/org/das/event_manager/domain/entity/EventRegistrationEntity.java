@@ -6,14 +6,17 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "registrations", uniqueConstraints =
-            @UniqueConstraint(columnNames = {"user_id", "event_id"}))
+@Table(name = "registrations")
 @Setter
 @Getter
-public class RegistrationEntity {
+public class EventRegistrationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private UserEntity userEntity;
 
     @ManyToOne()
     @JoinColumn(name = "event_id", nullable = false)
@@ -22,17 +25,19 @@ public class RegistrationEntity {
     @Column(name = "date_registration")
     private LocalDateTime dateRegistration;
 
-    public RegistrationEntity(
+    public EventRegistrationEntity(
             Long id,
+            UserEntity userEntity,
             EventEntity event,
             LocalDateTime dateRegistration
     ) {
         this.id = id;
+        this.userEntity = userEntity;
         this.event = event;
         this.dateRegistration = dateRegistration;
     }
 
-    public RegistrationEntity() {
+    public EventRegistrationEntity() {
 
     }
 }

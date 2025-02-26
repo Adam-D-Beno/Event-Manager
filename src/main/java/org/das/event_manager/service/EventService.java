@@ -1,19 +1,18 @@
 package org.das.event_manager.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.*;
 import org.das.event_manager.domain.entity.EventEntity;
-import org.das.event_manager.domain.entity.RegistrationEntity;
 import org.das.event_manager.domain.entity.UserEntity;
 import org.das.event_manager.dto.EventSearchRequestDto;
-import org.das.event_manager.dto.mappers.EventEntityMapper;
-import org.das.event_manager.dto.mappers.LocationEntityMapper;
-import org.das.event_manager.dto.mappers.UserEntityMapper;
+import org.das.event_manager.dto.mappers.EventMapper;
+import org.das.event_manager.dto.mappers.LocationMapper;
+import org.das.event_manager.dto.mappers.UserMapper;
 import org.das.event_manager.repository.EventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -23,34 +22,30 @@ import java.util.List;
 public class EventService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventService.class);
     private final EventRepository eventRepository;
-    private final EventEntityMapper eventEntityMapper;
-    private final UserEntityMapper userEntityMapper;
-    private final LocationEntityMapper locationEntityMapper;
+    private final EventMapper eventMapper;
+    private final UserMapper userMapper;
+    private final LocationMapper locationMapper;
     private final LocationService locationService;
     private final AuthenticationService authenticationService;
     private final UserService userService;
-    private final RegistrationOnEventService registrationOnEventService;
 
     public EventService(
             EventRepository eventRepository,
-            EventEntityMapper eventEntityMapper,
-            UserEntityMapper userEntityMapper,
-            LocationEntityMapper locationEntityMapper,
+            EventMapper eventMapper,
+            UserMapper userMapper,
+            LocationMapper locationMapper,
             LocationService locationService,
             AuthenticationService authenticationService,
-            UserService userService,
-            RegistrationOnEventService registrationOnEventService
+            UserService userService
     ) {
         this.eventRepository = eventRepository;
-        this.eventEntityMapper = eventEntityMapper;
-        this.userEntityMapper = userEntityMapper;
-        this.locationEntityMapper = locationEntityMapper;
+        this.eventMapper = eventMapper;
+        this.userMapper = userMapper;
+        this.locationMapper = locationMapper;
         this.locationService = locationService;
         this.authenticationService = authenticationService;
         this.userService = userService;
-        this.registrationOnEventService = registrationOnEventService;
     }
-
 
     public Event create(Event event) {
         LOGGER.info("Execute method create in EventService, event = {}", event);
@@ -58,11 +53,11 @@ public class EventService {
         checkExistUser(currentAuthenticatedUser);
         checkExistLocation(event);
         checkMaxPlacesMoreThenOnLocation(event);
-        UserEntity userEntity = userEntityMapper.toEntity(currentAuthenticatedUser);
-        EventEntity eventEntity = eventEntityMapper.toEntity(event);
+        UserEntity userEntity = userMapper.toEntity(currentAuthenticatedUser);
+        EventEntity eventEntity = eventMapper.toEntity(event);
         eventEntity.setOwner(userEntity);
         EventEntity saved = eventRepository.save(eventEntity);
-        return eventEntityMapper.toDomain(saved);
+        return eventMapper.toDomain(saved);
     }
 
     public void deleteById(Long eventId) {
@@ -83,24 +78,22 @@ public class EventService {
     public Event findById(Long eventId) {
        LOGGER.info("Execute method findById in EventService, event id = {}", eventId);
        return eventRepository.findById(eventId)
-                .map(eventEntityMapper::toDomain)
+                .map(eventMapper::toDomain)
                 .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not find"
                         .formatted(eventId)));
     }
 
+    @Transactional
     public Event update(Long eventId, Event eventToUpdate) {
         checkDurationLessThenThirtyThrow(eventToUpdate);
         checkMaxPlacesMoreCurrentMaxPlaces(eventId, eventToUpdate);
         checkDatePastTime(eventToUpdate);
         checkCostMoreThenZero(eventToUpdate);
+        checkCurrentUserCanModify(eventId);
+        checkStatusEvent(findById(eventId));
 
         Location location = locationService.findById(eventToUpdate.locationId());
-        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
-
         EventEntity updated = eventRepository.findById(eventId)
-                .filter(eventEntity -> eventEntity.getStatus() == EventStatus.WAIT_START)
-                .filter(eventEntity -> currentAuthUser.userRole() == UserRole.ADMIN
-                        || eventEntity.getOwner().getId().equals(currentAuthUser.id()))
                 .map(eventEntity -> {
                     eventEntity.setId(eventId);
                     eventEntity.setName(eventToUpdate.name());
@@ -108,13 +101,14 @@ public class EventService {
                     eventEntity.setDate(eventToUpdate.date());
                     eventEntity.setCost(eventToUpdate.cost());
                     eventEntity.setDuration(eventToUpdate.duration());
-                    eventEntity.setLocation(locationEntityMapper.toEntity(location));
+                    eventEntity.setLocation(locationMapper.toEntity(location));
                     return eventRepository.save(eventEntity);
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not find"
                         .formatted(eventId)));
-        return eventEntityMapper.toDomain(updated);
+        return eventMapper.toDomain(updated);
     }
+
 
     public List<Event> search(EventSearchRequestDto eventSearchRequestDto) {
         LOGGER.info("Execute method search in EventService, eventSearchRequestDto = {}", eventSearchRequestDto);
@@ -131,48 +125,15 @@ public class EventService {
                 eventSearchRequestDto.locationId(),
                 eventSearchRequestDto.status()
         );
-        return eventEntityMapper.toDomain(searched);
+        return eventMapper.toDomain(searched);
     }
 
     public List<Event> findAllEventsCreationByOwner() {
         LOGGER.info("Execute method findAllEventsCreationByOwner in EventService, eventSearchRequestDto");
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
-        return eventEntityMapper.toDomain(eventRepository.findEventsByOwner_Id((currentAuthUser.id())));
+        return eventMapper.toDomain(eventRepository.findEventsByOwner_Id((currentAuthUser.id())));
     }
 
-    public void registrationOnEvent(Long eventId) {
-        LOGGER.info("Execute method search in EventService, event Id = {}", eventId);
-        Event eventFound = findById(eventId);
-        checkStatusEvent(eventFound);
-        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
-        registrationOnEventService.registerUserOnEvent(eventFound, currentAuthUser);
-    }
-
-
-    public List<Event> findAllEventByUserRegistration() {
-        LOGGER.info("Execute method findAllEventByUserRegistration in EventService");
-        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
-        List<EventEntity> eventsByUserCreation = eventRepository.findEventsByOwner_Id(currentAuthUser.id());
-        return eventsByUserCreation.stream()
-                .map(eventEntityMapper::toDomain)
-                .toList();
-
-    }
-
-    public void registrationCancelByEventId(Long eventId) {
-        LOGGER.info("Execute method registrationCancelByEventId in EventService, event id = {}", eventId);
-        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
-        registrationOnEventService.cancelOnRegistration(eventId, currentAuthUser);
-    }
-
-    private void checkStatusEvent(Event event) {
-        LOGGER.info("Execute method checkStatusEvent in EventService, event = {}", event);
-        if (event.status() == EventStatus.CANCELLED || event.status() == EventStatus.FINISHED) {
-            LOGGER.error("Cannot registration event has status = {}",
-                    event.status());
-            throw new IllegalArgumentException("Event has status %s".formatted(event.status()));
-        }
-    }
 
     private void checkDatePastTime(Event event) {
         LOGGER.info("Execute method checkDatePastTime in EventService, event date = {}", event.date());
@@ -189,6 +150,15 @@ public class EventService {
             LOGGER.error("Cost must be more then zero or negative= {}", event.cost());
             throw new IllegalArgumentException("Cost = %s for update must be more then zero"
                     .formatted(event.cost()));
+        }
+    }
+
+
+    private void checkCurrentUserCanModify(Long eventId) {
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        Event event = findById(eventId);
+        if (!event.ownerId().equals(currentAuthUser.id()) && !(currentAuthUser.userRole() == UserRole.ADMIN)) {
+            throw new IllegalArgumentException("User cant modify this event");
         }
     }
 
@@ -234,6 +204,14 @@ public class EventService {
     private void checkExistLocation(Event event) {
         LOGGER.info("Execute method checkExistLocation in EventService, user = {}", event.locationId());
         locationService.findById(event.locationId());
+    }
+
+    private void checkStatusEvent(Event event) {
+        LOGGER.info("Execute method checkStatusEvent in EventService, event = {}", event);
+        if (event.status() == EventStatus.STARTED) {
+            LOGGER.error("Cannot event has status = {}", event.status());
+            throw new IllegalArgumentException("Event has status %s".formatted(event.status()));
+        }
     }
 
 }

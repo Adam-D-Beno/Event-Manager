@@ -7,7 +7,7 @@ import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.EventSearchRequestDto;
 import org.das.event_manager.dto.EventUpdateRequestDto;
-import org.das.event_manager.dto.mappers.EventDtoMapper;
+import org.das.event_manager.dto.mappers.EventMapper;
 import org.das.event_manager.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,14 +23,14 @@ public class EventController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventController.class);
     private final EventService eventService;
-    private final EventDtoMapper eventDtoMapper;
+    private final EventMapper eventMapper;
 
     public EventController(
             EventService eventService,
-            EventDtoMapper eventDtoMapper
+            EventMapper eventMapper
     ) {
         this.eventService = eventService;
-        this.eventDtoMapper = eventDtoMapper;
+        this.eventMapper = eventMapper;
     }
 
     @PostMapping
@@ -38,10 +38,10 @@ public class EventController {
             @Valid @RequestBody EventCreateRequestDto eventCreateRequestDto
     ) {
         LOGGER.info("Post request for create EventCreateRequestDto {}", eventCreateRequestDto);
-        Event event = eventDtoMapper.toDomain(eventCreateRequestDto);
+        Event event = eventMapper.toDomain(eventCreateRequestDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(eventDtoMapper.toDto(eventService.create(event)));
+                .body(eventMapper.toDto(eventService.create(event)));
     }
 
     @DeleteMapping("/{eventId}")
@@ -56,7 +56,7 @@ public class EventController {
     public ResponseEntity<EventResponseDto> findById(
             @NotNull @PathVariable("eventId") Long eventId
     ) {
-        return ResponseEntity.ok().body(eventDtoMapper.toDto(eventService.findById(eventId)));
+        return ResponseEntity.ok().body(eventMapper.toDto(eventService.findById(eventId)));
     }
 
     @PutMapping("/{eventId}")
@@ -64,41 +64,19 @@ public class EventController {
             @NotNull @PathVariable("eventId") Long eventId,
             @Valid @RequestBody EventUpdateRequestDto eventUpdateRequestDto
             ) {
-        Event eventToUpdate = eventDtoMapper.toDomain(eventUpdateRequestDto);
-        return ResponseEntity.ok().body(eventDtoMapper.toDto(eventService.update(eventId, eventToUpdate)));
+        Event eventToUpdate = eventMapper.toDomain(eventUpdateRequestDto);
+        return ResponseEntity.ok().body(eventMapper.toDto(eventService.update(eventId, eventToUpdate)));
     }
 
     @PostMapping("/search")
     public ResponseEntity<List<EventResponseDto>> findAllEvents(
             @RequestBody EventSearchRequestDto eventSearchRequestDto
             ) {
-        return ResponseEntity.ok().body(eventDtoMapper.toDto(eventService.search(eventSearchRequestDto)));
+        return ResponseEntity.ok().body(eventMapper.toDto(eventService.search(eventSearchRequestDto)));
     }
 
     @GetMapping("/my")
     public ResponseEntity<List<EventResponseDto>> findEventsByUserCreation() {
-        return ResponseEntity.ok().body(eventDtoMapper.toDto(eventService.findAllEventsCreationByOwner()));
-    }
-
-    @PostMapping("/registrations/{eventId}")
-    public ResponseEntity<Void> registrationUserOnEvent(
-            @NotNull @PathVariable("eventId") Long eventId
-    ) {
-        eventService.registrationOnEvent(eventId);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/registrations/cancel/{eventId}")
-    public ResponseEntity<Void> registrationUserCancelEvent(
-            @NotNull @PathVariable("eventId") Long eventId
-    ) {
-        eventService.registrationCancelByEventId(eventId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
-    @GetMapping("/registrations/my")
-    public ResponseEntity<List<EventResponseDto>> findAllEventsByUserRegistration() {
-        return ResponseEntity.ok()
-                .body(eventDtoMapper.toDto(eventService.findAllEventByUserRegistration()));
+        return ResponseEntity.ok().body(eventMapper.toDto(eventService.findAllEventsCreationByOwner()));
     }
 }

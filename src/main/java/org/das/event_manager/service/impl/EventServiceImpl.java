@@ -1,7 +1,6 @@
 package org.das.event_manager.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.*;
 import org.das.event_manager.domain.entity.EventEntity;
 import org.das.event_manager.domain.entity.UserEntity;
@@ -13,15 +12,12 @@ import org.das.event_manager.repository.EventRepository;
 import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.EventService;
 import org.das.event_manager.service.LocationService;
-import org.das.event_manager.service.UserService;
+import org.das.event_manager.validation.EventValidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -35,7 +31,7 @@ public class EventServiceImpl implements EventService {
     private final LocationMapper locationMapper;
     private final LocationService locationService;
     private final AuthenticationService authenticationService;
-    private final UserService userService;
+    private final EventValidate eventValidate;
 
     public EventServiceImpl(
             EventRepository eventRepository,
@@ -44,7 +40,7 @@ public class EventServiceImpl implements EventService {
             LocationMapper locationMapper,
             LocationService locationService,
             AuthenticationService authenticationService,
-            UserService userService
+            EventValidate eventValidate
     ) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
@@ -52,7 +48,7 @@ public class EventServiceImpl implements EventService {
         this.locationMapper = locationMapper;
         this.locationService = locationService;
         this.authenticationService = authenticationService;
-        this.userService = userService;
+        this.eventValidate = eventValidate;
     }
 
     @Override
@@ -60,9 +56,11 @@ public class EventServiceImpl implements EventService {
         LOGGER.info("Execute method create in EventServiceImpl, event = {}", event);
 
         User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
-        checkExistUser(currentAuthenticatedUser);
-        checkExistLocation(event);
-        checkMaxPlacesMoreThenOnLocation(event);
+        eventValidate.checkExistUser(currentAuthenticatedUser);
+        eventValidate.checkExistLocation(event.locationId());
+        eventValidate.checkMaxPlacesMoreThenOnLocation(
+                event.maxPlaces(), locationService.getCapacity(event.locationId())
+        );
 
         UserEntity userEntity = userMapper.toEntity(currentAuthenticatedUser);
         userEntity.setId(currentAuthenticatedUser.id());
@@ -76,9 +74,9 @@ public class EventServiceImpl implements EventService {
     @Override
     public void deleteById(Long eventId) {
         LOGGER.info("Execute method create in EventServiceImpl, event id = {}", eventId);
-
-        checkStatusEvent(eventId);
-        checkCurrentUserCanModify(eventId);
+        Event event = findById(eventId);
+        eventValidate.checkStatusEvent(event.status());
+        eventValidate.checkCurrentUserCanModify(event.ownerId());
 
         eventRepository.findById(eventId)
            .map(eventEntity -> {
@@ -99,12 +97,13 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public Event update(Long eventId, Event eventToUpdate) {
-        checkDurationLessThenThirtyThrow(eventToUpdate);
-        checkMaxPlacesMoreCurrentMaxPlaces(eventId, eventToUpdate);
-        checkDatePastTime(eventToUpdate);
-        checkCostMoreThenZero(eventToUpdate);
-        checkCurrentUserCanModify(eventId);
-        checkStatusEvent(eventId);
+
+        eventValidate.checkDurationLessThenThirtyThrow(eventToUpdate.duration());
+        eventValidate.checkMaxPlacesMoreCurrentMaxPlaces(findById(eventId), eventToUpdate);
+        eventValidate.checkDatePastTime(eventToUpdate.date());
+        eventValidate.checkCostMoreThenZero(eventToUpdate.cost());
+        eventValidate.checkCurrentUserCanModify(eventId);
+        eventValidate.checkStatusEvent(eventRepository.findEventStatusById(eventId));
 
         Location location = locationService.findById(eventToUpdate.locationId());
         EventEntity updated = eventRepository.findById(eventId)
@@ -151,112 +150,4 @@ public class EventServiceImpl implements EventService {
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
         return eventMapper.toDomain(eventRepository.findEventsByOwner_Id((currentAuthUser.id())));
     }
-
-
-    private void checkDatePastTime(Event event) {
-        LOGGER.info("Execute method checkDatePastTime in EventServiceImpl, event date = {}", event.date());
-
-        if (event.date() != null && event.date().isBefore(LocalDateTime.now())) {
-            LOGGER.error("Date cannot be a past time = {}", event.date());
-
-            throw new IllegalArgumentException("Data for update = %s must be after current date event"
-                    .formatted(event.date()));
-        }
-    }
-
-    private void checkCostMoreThenZero(Event event) {
-        LOGGER.info("Execute method checkCostMoreThenZero in EventServiceImpl, cost = {}", event.cost());
-
-        if (event.cost() != null && event.cost().compareTo(BigDecimal.ZERO) <= 0) {
-            LOGGER.error("Cost must be more then zero or negative= {}", event.cost());
-
-            throw new IllegalArgumentException("Cost = %s for update must be more then zero"
-                    .formatted(event.cost()));
-        }
-    }
-
-    private void checkCurrentUserCanModify(Long eventId) {
-        LOGGER.info("Execute method checkCurrentUserCanModify in EventServiceImpl,event id = {}",
-                eventId);
-
-        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
-        Event event = findById(eventId);
-        if (!event.ownerId().equals(currentAuthUser.id()) && (currentAuthUser.userRole() != UserRole.ADMIN)) {
-            LOGGER.error("User with login = {} cant modify this event", currentAuthUser.login());
-
-            throw new IllegalArgumentException("User cant modify this event");
-        }
-    }
-
-    private void checkMaxPlacesMoreCurrentMaxPlaces(Long eventId, Event event) {
-        LOGGER.info("Execute method checkMaxPlacesMoreCurrentMaxPlaces in EventServiceImpl,event id = {}, cost = {}",
-                 eventId, event.cost());
-
-        Integer maxPlacesToUpdate = event.maxPlaces();
-        Integer currentMaxPlaces =  findById(eventId).maxPlaces();
-         if (maxPlacesToUpdate == null || currentMaxPlaces == null) {
-             return;
-         }
-         if (maxPlacesToUpdate < currentMaxPlaces) {
-             LOGGER.error("Max places for update = {}, cannot be then max places already exist = {}",
-                     maxPlacesToUpdate, currentMaxPlaces);
-
-             throw new IllegalArgumentException("Max places for update = %s must be more then current max places = %s"
-                     .formatted(maxPlacesToUpdate, currentMaxPlaces));
-         }
-    }
-
-    private void checkDurationLessThenThirtyThrow(Event event) {
-        LOGGER.info("Execute method checkDurationLessThenThirtyThrow in EventServiceImpl, duration = {}",
-                event.duration());
-
-        if (event.duration() != null && event.duration() < 30 ) {
-            LOGGER.error("Duration Less Then Thirty = {}", event.duration());
-
-            throw new IllegalArgumentException("Duration = %s for update must be more 30"
-                    .formatted(event.duration()));
-        }
-    }
-
-    private void checkMaxPlacesMoreThenOnLocation(Event event) {
-        LOGGER.info("Execute method checkMaxPlacesMoreThenOnLocation in EventServiceImpl, max places = {}",
-                event.maxPlaces());
-
-        Integer locationCapacity = locationService.getCapacity(event.locationId());
-
-        if (event.maxPlaces() == null || locationCapacity == null) {
-            return;
-        }
-        if (event.maxPlaces() > locationCapacity) {
-            LOGGER.error("Max places = {} at the event more then location capacity = {} ",
-                    event.maxPlaces(), locationCapacity);
-
-            throw new IllegalArgumentException("maxPlaces =%s cannot be more then location maxPlaces =%s"
-                    .formatted(event.maxPlaces(), locationCapacity));
-        }
-    }
-
-    private void checkExistUser(User currentAuthenticatedUser) {
-        LOGGER.info("Execute method checkExistUser in EventServiceImpl, user = {}", currentAuthenticatedUser);
-
-        userService.findById(currentAuthenticatedUser.id());
-    }
-
-    private void checkExistLocation(Event event) {
-        LOGGER.info("Execute method checkExistLocation in EventServiceImpl, user = {}", event.locationId());
-
-        locationService.findById(event.locationId());
-    }
-
-    private void checkStatusEvent(Long eventId) {
-        LOGGER.info("Execute method checkStatusEvent in EventServiceImpl, event id= {}", eventId);
-
-        Event event = findById(eventId);
-        if (event.status() != null && event.status() == EventStatus.STARTED) {
-            LOGGER.error("Cannot event has status = {}", event.status());
-
-            throw new IllegalArgumentException("Event has status %s".formatted(event.status()));
-        }
-    }
-
 }

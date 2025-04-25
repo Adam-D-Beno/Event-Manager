@@ -22,7 +22,6 @@ import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -154,7 +153,7 @@ public class EventServiceImpl implements EventService {
     }
 
 
-    private void checkDatePastTime(@NotNull Event event) {
+    private void checkDatePastTime(Event event) {
         LOGGER.info("Execute method checkDatePastTime in EventServiceImpl, event date = {}", event.date());
 
         if (event.date() != null && event.date().isBefore(LocalDateTime.now())) {
@@ -165,7 +164,7 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private void checkCostMoreThenZero(@NotNull Event event) {
+    private void checkCostMoreThenZero(Event event) {
         LOGGER.info("Execute method checkCostMoreThenZero in EventServiceImpl, cost = {}", event.cost());
 
         if (event.cost() != null && event.cost().compareTo(BigDecimal.ZERO) <= 0) {
@@ -176,20 +175,20 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private void checkCurrentUserCanModify(@NotNull Long eventId) {
+    private void checkCurrentUserCanModify(Long eventId) {
         LOGGER.info("Execute method checkCurrentUserCanModify in EventServiceImpl,event id = {}",
                 eventId);
 
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
         Event event = findById(eventId);
-        if (!event.ownerId().equals(currentAuthUser.id()) && !(currentAuthUser.userRole() == UserRole.ADMIN)) {
+        if (!event.ownerId().equals(currentAuthUser.id()) && (currentAuthUser.userRole() != UserRole.ADMIN)) {
             LOGGER.error("User with login = {} cant modify this event", currentAuthUser.login());
 
             throw new IllegalArgumentException("User cant modify this event");
         }
     }
 
-    private void checkMaxPlacesMoreCurrentMaxPlaces(@NotNull Long eventId, Event event) {
+    private void checkMaxPlacesMoreCurrentMaxPlaces(Long eventId, Event event) {
         LOGGER.info("Execute method checkMaxPlacesMoreCurrentMaxPlaces in EventServiceImpl,event id = {}, cost = {}",
                  eventId, event.cost());
 
@@ -207,7 +206,7 @@ public class EventServiceImpl implements EventService {
          }
     }
 
-    private void checkDurationLessThenThirtyThrow(@NotNull Event event) {
+    private void checkDurationLessThenThirtyThrow(Event event) {
         LOGGER.info("Execute method checkDurationLessThenThirtyThrow in EventServiceImpl, duration = {}",
                 event.duration());
 
@@ -219,7 +218,7 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private void checkMaxPlacesMoreThenOnLocation(@NotNull Event event) {
+    private void checkMaxPlacesMoreThenOnLocation(Event event) {
         LOGGER.info("Execute method checkMaxPlacesMoreThenOnLocation in EventServiceImpl, max places = {}",
                 event.maxPlaces());
 
@@ -237,19 +236,19 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private void checkExistUser(@NotNull User currentAuthenticatedUser) {
+    private void checkExistUser(User currentAuthenticatedUser) {
         LOGGER.info("Execute method checkExistUser in EventServiceImpl, user = {}", currentAuthenticatedUser);
 
         userService.findById(currentAuthenticatedUser.id());
     }
 
-    private void checkExistLocation(@NotNull Event event) {
+    private void checkExistLocation(Event event) {
         LOGGER.info("Execute method checkExistLocation in EventServiceImpl, user = {}", event.locationId());
 
         locationService.findById(event.locationId());
     }
 
-    private void checkStatusEvent(@NotNull Long eventId) {
+    private void checkStatusEvent(Long eventId) {
         LOGGER.info("Execute method checkStatusEvent in EventServiceImpl, event id= {}", eventId);
 
         Event event = findById(eventId);

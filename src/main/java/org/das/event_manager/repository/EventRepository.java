@@ -1,12 +1,16 @@
 package org.das.event_manager.repository;
 
 import jakarta.validation.constraints.NotNull;
+import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.entity.EventEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,7 +20,7 @@ public  interface EventRepository extends JpaRepository<EventEntity, Long> {
 
     @Query("""
             SELECT ev FROM EventEntity ev
-            WHERE (:name is null or ev.name = :name)
+            WHERE (:name is null or ev.name LIKE %:name%)
                 AND (:placesMin is null  or ev.maxPlaces >= :placesMin)
                 AND (:placesMax is null  or ev.maxPlaces <= :placesMax)
                 AND (CAST(:dateStartAfter as date) is null or ev.date >= :dateStartAfter)
@@ -44,4 +48,29 @@ public  interface EventRepository extends JpaRepository<EventEntity, Long> {
 
 
     List<EventEntity> findEventsByOwner_Id(Long ownerId);
+
+    @Query("""
+        select ev.id from EventEntity ev 
+        WHERE ev.status = :status
+        and ev.date < CURRENT_TIMESTAMP 
+    """)
+    List<Long> findStartedEventsWithStatus(@Param("status") EventStatus status);
+
+    @Query(value = """
+      SELECT ev.id from events ev
+          where ev.date + INTERVAL '1 MINUTE' * ev.duration < CURRENT_TIMESTAMP
+    """, nativeQuery = true)
+    List<Long> findEndedEventsWithStatus(@Param("status") EventStatus status);
+
+    @Modifying
+    @Transactional
+    @Query("""
+        update EventEntity ev
+        set ev.status = :status
+        where ev.id = :event_id
+    """)
+    void changeEventStatus(
+            @Param("event_id") Long eventId,
+            @Param("status") EventStatus status
+    );
 }

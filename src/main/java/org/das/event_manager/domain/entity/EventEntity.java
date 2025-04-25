@@ -44,7 +44,7 @@ public class EventEntity {
     private LocationEntity location;
 
     @Column(name = "status", nullable = false)
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private EventStatus status;
 
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)

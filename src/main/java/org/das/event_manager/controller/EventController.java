@@ -3,12 +3,14 @@ package org.das.event_manager.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.Event;
+import org.das.event_manager.domain.entity.EventEntity;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.EventSearchRequestDto;
 import org.das.event_manager.dto.EventUpdateRequestDto;
 import org.das.event_manager.dto.mappers.EventMapper;
 import org.das.event_manager.service.EventService;
+import org.das.event_manager.service.impl.SchedulerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,13 +26,16 @@ public class EventController {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventController.class);
     private final EventService eventService;
     private final EventMapper eventMapper;
+    private final SchedulerService schedulerService;
 
     public EventController(
             EventService eventService,
-            EventMapper eventMapper
+            EventMapper eventMapper,
+            SchedulerService schedulerService
     ) {
         this.eventService = eventService;
         this.eventMapper = eventMapper;
+        this.schedulerService = schedulerService;
     }
 
     @PostMapping
@@ -90,5 +95,10 @@ public class EventController {
         LOGGER.info("Get request for find events creation by user");
 
         return ResponseEntity.ok().body(eventMapper.toDto(eventService.findAllEventsCreationByOwner()));
+    }
+
+    @GetMapping("/shed")
+    public ResponseEntity<List<Long>> findEventsWithStatusWait() {
+        return ResponseEntity.ok(schedulerService.updateEventStatuses());
     }
 }

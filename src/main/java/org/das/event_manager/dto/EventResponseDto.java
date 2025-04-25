@@ -2,8 +2,10 @@ package org.das.event_manager.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.das.event_manager.domain.EventStatus;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 public record EventResponseDto(
@@ -12,8 +14,8 @@ public record EventResponseDto(
      Long ownerId,
      Integer maxPlaces,
      Integer occupiedPlaces,
-     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-     ZonedDateTime date,
+     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+     LocalDateTime date,
      BigDecimal cost,
      Integer duration,
      Long locationId,

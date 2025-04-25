@@ -1,6 +1,5 @@
 package org.das.event_manager.dto.mappers.impl;
 
-import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.entity.EventEntity;
@@ -35,7 +34,7 @@ public class EventMapperImpl implements EventMapper {
     }
 
     @Override
-    public Event toDomain(@NotNull EventCreateRequestDto eventUpdateRequestDto) {
+    public Event toDomain(EventCreateRequestDto eventUpdateRequestDto) {
         LOGGER.info("Execute method to toDomain in EventMapperImpl class eventUpdateRequestDto = {}",
                 eventUpdateRequestDto);
         return
@@ -55,7 +54,7 @@ public class EventMapperImpl implements EventMapper {
     }
 
     @Override
-    public Event toDomain(@NotNull EventUpdateRequestDto eventUpdateRequestDto) {
+    public Event toDomain(EventUpdateRequestDto eventUpdateRequestDto) {
         LOGGER.info("Execute method to toDomain in EventMapperImpl class EventUpdateRequestDto = {}",
                 eventUpdateRequestDto);
         return new Event(
@@ -74,7 +73,7 @@ public class EventMapperImpl implements EventMapper {
     }
 
     @Override
-    public EventResponseDto toDto(@NotNull Event event) {
+    public EventResponseDto toDto(Event event) {
         LOGGER.info("Execute method to toDto in EventMapperImpl class,  event = {}", event);
         return new EventResponseDto(
                 event.id(),
@@ -91,7 +90,7 @@ public class EventMapperImpl implements EventMapper {
     }
 
     @Override
-    public List<EventResponseDto> toDto(@NotNull List<Event> events) {
+    public List<EventResponseDto> toDto(List<Event> events) {
         LOGGER.info("Execute method to toDto in EventMapperImpl class, events ={}", events);
         return events.stream()
                 .map(this::toDto)
@@ -99,7 +98,7 @@ public class EventMapperImpl implements EventMapper {
     }
 
     @Override
-    public EventEntity toEntity(@NotNull Event event) {
+    public EventEntity toEntity(Event event) {
         LOGGER.info("Execute method to toEntity in EventEntityMapper class, event = {}",event);
         return new EventEntity(
                 event.id(),
@@ -119,7 +118,7 @@ public class EventMapperImpl implements EventMapper {
     }
 
     @Override
-    public Event toDomain(@NotNull EventEntity eventEntity) {
+    public Event toDomain(EventEntity eventEntity) {
         LOGGER.info("Execute method to toDomain in EventEntityMapper class, event = {}",eventEntity);
         return new Event(
                 eventEntity.getId(),
@@ -137,7 +136,7 @@ public class EventMapperImpl implements EventMapper {
     }
 
     @Override
-    public List<Event> toDomain(@NotNull List<EventEntity> eventEntities) {
+    public List<Event> toDomain(List<EventEntity> eventEntities) {
         LOGGER.info("Execute method to toDomain in EventEntityMapper class, eventEntities = {}",eventEntities);
         return eventEntities.stream()
                 .map(this::toDomain)

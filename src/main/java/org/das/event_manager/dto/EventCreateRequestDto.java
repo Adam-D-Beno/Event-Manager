@@ -21,7 +21,7 @@ public record EventCreateRequestDto(
         @NotNull
         @Future
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-        ZonedDateTime date,
+        LocalDateTime date,
 
         @NotNull
         @Positive(message = "cost should be positive")

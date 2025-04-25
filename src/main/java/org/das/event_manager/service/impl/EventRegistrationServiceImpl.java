@@ -10,8 +10,6 @@ import org.das.event_manager.domain.entity.EventRegistrationEntity;
 import org.das.event_manager.domain.entity.UserEntity;
 import org.das.event_manager.dto.mappers.EventMapper;
 import org.das.event_manager.dto.mappers.UserMapper;
-import org.das.event_manager.dto.mappers.impl.EventMapperImpl;
-import org.das.event_manager.dto.mappers.impl.UserMapperImpl;
 import org.das.event_manager.repository.RegistrationRepository;
 import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.EventRegistrationService;
@@ -47,7 +45,7 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
     }
 
     @Override
-    public void registerUserOnEvent(@NotNull Long eventId) {
+    public void registerUserOnEvent(Long eventId) {
         LOGGER.info("Execute method registerUserOnEvent in RegistrationOnEventService, event id = {}",
                 eventId);
 
@@ -70,7 +68,7 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
     }
 
     @Override
-    public void cancelOnRegistration(@NotNull Long eventId) {
+    public void cancelOnRegistration(Long eventId) {
         LOGGER.info("Execute method cancelOnRegistration event id = {}", eventId);
 
         EventRegistrationEntity registrationEntity = registrationRepository
@@ -99,7 +97,7 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
     }
 
     @Override
-    public EventRegistrationEntity findById(@NotNull Long registrationId) {
+    public EventRegistrationEntity findById(Long registrationId) {
         return registrationRepository.findById(registrationId)
                 .orElseThrow(() -> new EntityNotFoundException("EventRegistration not found"));
 

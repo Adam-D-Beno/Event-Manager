@@ -3,6 +3,7 @@ package org.das.event_manager.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 public record EventUpdateRequestDto(
@@ -19,7 +20,7 @@ public record EventUpdateRequestDto(
         @NotNull
         @Future
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-        ZonedDateTime date,
+        LocalDateTime date,
 
         @NotNull
         @Positive(message = "cost should be positive")

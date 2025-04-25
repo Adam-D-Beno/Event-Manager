@@ -1,6 +1,5 @@
 package org.das.event_manager.service.impl;
 
-import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.domain.UserRole;
 import org.das.event_manager.service.UserRegistrationService;
@@ -28,7 +27,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     }
 
     @Override
-    public User register(@NotNull User signUpRequest) {
+    public User register(User signUpRequest) {
         LOGGER.info("Execute method register user: login = {} in UserRegistrationService class"
                 ,signUpRequest.login());
 

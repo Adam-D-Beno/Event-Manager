@@ -1,6 +1,5 @@
 package org.das.event_manager.service.impl;
 
-import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.SignInRequest;
 import org.das.event_manager.security.jwt.JwtTokenManager;
@@ -36,7 +35,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public String authenticateUser(@NotNull SignInRequest signInRequest) {
+    public String authenticateUser(SignInRequest signInRequest) {
         LOGGER.info("Execute method authenticateUser user: login = {} in AuthenticationServiceImpl class",
                 signInRequest.login());
 

@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Event create(@NotNull Event event) {
+    public Event create(Event event) {
         LOGGER.info("Execute method create in EventServiceImpl, event = {}", event);
 
         User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
@@ -74,7 +75,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void deleteById(@NotNull Long eventId) {
+    public void deleteById(Long eventId) {
         LOGGER.info("Execute method create in EventServiceImpl, event id = {}", eventId);
 
         checkStatusEvent(eventId);
@@ -88,7 +89,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Event findById(@NotNull Long eventId) {
+    public Event findById(Long eventId) {
        LOGGER.info("Execute method findById in EventServiceImpl, event id = {}", eventId);
        return eventRepository.findById(eventId)
                 .map(eventMapper::toDomain)
@@ -98,7 +99,7 @@ public class EventServiceImpl implements EventService {
 
     @Transactional
     @Override
-    public Event update(@NotNull Long eventId, @NotNull Event eventToUpdate) {
+    public Event update(Long eventId, Event eventToUpdate) {
         checkDurationLessThenThirtyThrow(eventToUpdate);
         checkMaxPlacesMoreCurrentMaxPlaces(eventId, eventToUpdate);
         checkDatePastTime(eventToUpdate);
@@ -156,7 +157,7 @@ public class EventServiceImpl implements EventService {
     private void checkDatePastTime(@NotNull Event event) {
         LOGGER.info("Execute method checkDatePastTime in EventServiceImpl, event date = {}", event.date());
 
-        if (event.date() != null && event.date().isBefore(ZonedDateTime.now())) {
+        if (event.date() != null && event.date().isBefore(LocalDateTime.now())) {
             LOGGER.error("Date cannot be a past time = {}", event.date());
 
             throw new IllegalArgumentException("Data for update = %s must be after current date event"

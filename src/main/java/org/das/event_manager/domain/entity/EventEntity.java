@@ -1,9 +1,11 @@
 package org.das.event_manager.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.das.event_manager.domain.EventStatus;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ public class EventEntity {
     private Integer occupiedPlaces;
 
     @Column(name = "date", nullable = false)
-    private ZonedDateTime date;
+    private LocalDateTime date;
 
     @Column(name = "cost", nullable = false)
     private BigDecimal cost;
@@ -58,7 +60,7 @@ public class EventEntity {
             UserEntity owner,
             Integer maxPlaces,
             Integer occupiedPlaces,
-            ZonedDateTime date,
+            LocalDateTime date,
             BigDecimal cost,
             Integer duration,
             LocationEntity location,
@@ -120,11 +122,11 @@ public class EventEntity {
         this.occupiedPlaces = occupiedPlaces;
     }
 
-    public ZonedDateTime getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(ZonedDateTime date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

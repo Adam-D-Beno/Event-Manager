@@ -1,12 +1,9 @@
 package org.das.event_manager.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.Location;
 import org.das.event_manager.domain.entity.LocationEntity;
 import org.das.event_manager.dto.mappers.LocationMapper;
-import org.das.event_manager.dto.mappers.impl.LocationMapperImpl;
 import org.das.event_manager.repository.LocationRepository;
 import org.das.event_manager.service.LocationService;
 import org.das.event_manager.validation.LocationValidate;
@@ -45,7 +42,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Location create(@NotNull Location locationToUpdate) {
+    public Location create(Location locationToUpdate) {
         LOGGER.info("Execute method create in LocationService class, got argument locationToUpdate = {}",
                     locationToUpdate);
         locationValidate.validateLocationIdNull(locationToUpdate.id());
@@ -55,7 +52,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Location deleteById(@NotNull Long locationId) {
+    public Location deleteById(Long locationId) {
         LOGGER.info("Execute method deleteById in LocationService class, got argument locationId = {}",
                 locationId);
         LocationEntity foundEntityForDelete = locationRepository.findById(locationId)
@@ -69,7 +66,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Location findById(@NotNull Long locationId) {
+    public Location findById(Long locationId) {
         LOGGER.info("Execute method findById in LocationService class, got argument locationId = {}",
                 locationId);
 
@@ -86,7 +83,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Transactional
     @Override
-    public Location updateById(@NotNull Long locationId, @NotNull Location location) {
+    public Location updateById(Long locationId, Location location) {
         LOGGER.info("Execute method updateById in LocationService class, got arguments locationId = {}, location = {}",
                 locationId, location);
 
@@ -119,7 +116,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public void existLocationAddress(@NotBlank String locationAddress) {
+    public void existLocationAddress(String locationAddress) {
         LOGGER.info("Execute isExistLocationAddress in LocationService class, location address = {}"
                 , locationAddress);
 
@@ -131,7 +128,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public void existLocationName(@NotBlank String locationName) {
+    public void existLocationName(String locationName) {
         LOGGER.info("Execute isExistLocationName in LocationService class, location name = {}", locationName);
 
         if (locationRepository.existsByName(locationName)) {
@@ -142,7 +139,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Integer getCapacity(@NotNull Long locationId) {
+    public Integer getCapacity(Long locationId) {
         LOGGER.info("Execute getCapacity in LocationService class, location id = {}", locationId);
 
         return locationRepository.getCapacityById(locationId)

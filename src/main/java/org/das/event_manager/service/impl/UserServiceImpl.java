@@ -1,11 +1,8 @@
 package org.das.event_manager.service.impl;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.domain.entity.UserEntity;
 import org.das.event_manager.dto.mappers.UserMapper;
-import org.das.event_manager.dto.mappers.impl.UserMapperImpl;
 import org.das.event_manager.repository.UserRepository;
 import org.das.event_manager.service.UserService;
 import org.slf4j.Logger;
@@ -31,7 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User save(@NotNull User userToSave) {
+    public User save(User userToSave) {
         LOGGER.info("Execute method save user: login = {} in UserServiceImpl class", userToSave.login());
 
         UserEntity entityForSave = userMapper.toEntity(userToSave);
@@ -40,7 +37,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByLogin(@NotBlank String login) {
+    public User findByLogin(String login) {
         LOGGER.info("Execute method getUserByLogin user: login = {} in UserServiceImpl class", login);
 
         return userRepository.findByLogin(login)
@@ -52,7 +49,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(@NotNull Long userId) {
+    public User findById(Long userId) {
         LOGGER.info("Execute method getUserById user: id = {} in UserServiceImpl class", userId);
 
         return userRepository.findById(userId)
@@ -64,7 +61,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isUserExistsByLogin(@NotBlank String login) {
+    public boolean isUserExistsByLogin(String login) {
         LOGGER.info("Execute method userExistByLogin user: login = {} in UserServiceImpl class", login);
 
         return userRepository.existsByLogin(login);

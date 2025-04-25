@@ -11,7 +11,7 @@ public record Event(
         Long ownerId,
         Integer maxPlaces,
         Integer occupiedPlaces,
-        ZonedDateTime date,
+        LocalDateTime date,
         BigDecimal cost,
         Integer duration,
         Long locationId,

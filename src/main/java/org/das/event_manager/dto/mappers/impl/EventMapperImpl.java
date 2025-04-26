@@ -111,13 +111,13 @@ public class EventMapperImpl implements EventMapper {
         return new EventEntity(
                 event.id(),
                 event.name(),
-                new UserEntity(event.ownerId()),
+                event.ownerId(),
                 event.maxPlaces(),
                 event.occupiedPlaces(),
                 event.date(),
                 event.cost(),
                 event.duration(),
-                new LocationEntity(event.locationId()),
+                event.locationId(),
                 event.status(),
                 event.registrations()
                         .stream()
@@ -132,13 +132,13 @@ public class EventMapperImpl implements EventMapper {
         return new Event(
                 eventEntity.getId(),
                 eventEntity.getName(),
-                eventEntity.getOwner().getId(),
+                eventEntity.getId(),
                 eventEntity.getMaxPlaces(),
                 eventEntity.getOccupiedPlaces(),
                 eventEntity.getDate(),
                 eventEntity.getCost(),
                 eventEntity.getDuration(),
-                eventEntity.getLocation().getId(),
+                eventEntity.getId(),
                 eventEntity.getStatus(),
                 eventEntity.getRegistrations()
                         .stream()

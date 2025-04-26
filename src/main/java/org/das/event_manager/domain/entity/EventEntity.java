@@ -20,9 +20,8 @@ public class EventEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id", nullable = false)
-    private UserEntity owner;
+    @Column(name = "owner_id", nullable = false)
+    private Long owner;
 
     @Column(name = "max_Places", nullable = false)
     private Integer maxPlaces;
@@ -39,9 +38,8 @@ public class EventEntity {
     @Column(name = "duration", nullable = false)
     private Integer duration;
 
-    @OneToOne
-    @JoinColumn(name = "location_id", nullable = false)
-    private LocationEntity location;
+    @Column(name = "location_id", nullable = false)
+    private Long location;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -57,13 +55,13 @@ public class EventEntity {
     public EventEntity(
             Long id,
             String name,
-            UserEntity owner,
+            Long owner,
             Integer maxPlaces,
             Integer occupiedPlaces,
             LocalDateTime date,
             BigDecimal cost,
             Integer duration,
-            LocationEntity location,
+            Long location,
             EventStatus status,
             List<EventRegistrationEntity> registrations
     ) {
@@ -98,11 +96,11 @@ public class EventEntity {
         this.name = name;
     }
 
-    public UserEntity getOwner() {
+    public Long getOwner() {
         return owner;
     }
 
-    public void setOwner(UserEntity owner) {
+    public void setOwner(Long owner) {
         this.owner = owner;
     }
 
@@ -146,11 +144,11 @@ public class EventEntity {
         this.duration = duration;
     }
 
-    public LocationEntity getLocation() {
+    public Long getLocation() {
         return location;
     }
 
-    public void setLocation(LocationEntity location) {
+    public void setLocation(Long location) {
         this.location = location;
     }
 

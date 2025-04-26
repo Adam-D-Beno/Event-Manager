@@ -12,23 +12,13 @@ import org.springframework.validation.annotation.Validated;
 import java.util.List;
 
 @Component
-@Validated
 public class RegistrationMapperImpl implements RegistrationMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationMapperImpl.class);
-    private final EventMapperImpl eventMapperImpl;
-    private final UserMapperImpl userMapperImpl;
 
-    public RegistrationMapperImpl(
-            EventMapperImpl eventMapperImpl,
-            UserMapperImpl userMapperImpl
-    ) {
-        this.eventMapperImpl = eventMapperImpl;
-        this.userMapperImpl = userMapperImpl;
-    }
 
    @Override
-   public EventRegistration toDomain(@NotNull EventRegistrationEntity registrationEntity) {
+   public EventRegistration toDomain(EventRegistrationEntity registrationEntity) {
        LOGGER.info("Execute method toDomain in RegistrationEntityMapper,registrationEntity = {}"
                , registrationEntity);
 

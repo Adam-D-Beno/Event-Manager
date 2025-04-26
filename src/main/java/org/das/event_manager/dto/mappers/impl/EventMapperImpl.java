@@ -21,7 +21,6 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
-@Validated
 @Component
 public class EventMapperImpl implements EventMapper {
 

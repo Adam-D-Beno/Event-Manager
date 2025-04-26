@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public record EventRegistration(
         Long id,
-        User user,
-        Event event,
+        Long userId,
+        Long eventId,
         LocalDateTime dateRegistration
 ) {}

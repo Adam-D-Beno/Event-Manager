@@ -1,12 +1,10 @@
 package org.das.event_manager.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.das.event_manager.domain.EventStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class EventEntity {
     private String name;
 
     @Column(name = "owner_id", nullable = false)
-    private Long owner;
+    private Long ownerId;
 
     @Column(name = "max_Places", nullable = false)
     private Integer maxPlaces;
@@ -39,7 +37,7 @@ public class EventEntity {
     private Integer duration;
 
     @Column(name = "location_id", nullable = false)
-    private Long location;
+    private Long locationId;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -55,25 +53,25 @@ public class EventEntity {
     public EventEntity(
             Long id,
             String name,
-            Long owner,
+            Long ownerId,
             Integer maxPlaces,
             Integer occupiedPlaces,
             LocalDateTime date,
             BigDecimal cost,
             Integer duration,
-            Long location,
+            Long locationId,
             EventStatus status,
             List<EventRegistrationEntity> registrations
     ) {
         this.id = id;
         this.name = name;
-        this.owner = owner;
+        this.ownerId = ownerId;
         this.maxPlaces = maxPlaces;
         this.occupiedPlaces = occupiedPlaces;
         this.date = date;
         this.cost = cost;
         this.duration = duration;
-        this.location = location;
+        this.locationId = locationId;
         this.status = status;
         this.registrations = registrations;
     }
@@ -96,12 +94,12 @@ public class EventEntity {
         this.name = name;
     }
 
-    public Long getOwner() {
-        return owner;
+    public Long getOwnerId() {
+        return ownerId;
     }
 
-    public void setOwner(Long owner) {
-        this.owner = owner;
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     public Integer getMaxPlaces() {
@@ -144,12 +142,12 @@ public class EventEntity {
         this.duration = duration;
     }
 
-    public Long getLocation() {
-        return location;
+    public Long getLocationId() {
+        return locationId;
     }
 
-    public void setLocation(Long location) {
-        this.location = location;
+    public void setLocationId(Long locationId) {
+        this.locationId = locationId;
     }
 
     public EventStatus getStatus() {

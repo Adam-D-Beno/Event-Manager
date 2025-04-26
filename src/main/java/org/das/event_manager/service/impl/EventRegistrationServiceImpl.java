@@ -60,7 +60,7 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
 
         EventRegistrationEntity newRegistrationOnEvent = new EventRegistrationEntity(
                 null,
-                userEntity,
+                userEntity.getId(),
                 eventFound,
                 LocalDateTime.now()
         );

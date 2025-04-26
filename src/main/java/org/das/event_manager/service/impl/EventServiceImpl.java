@@ -66,7 +66,7 @@ public class EventServiceImpl implements EventService {
         userEntity.setId(currentAuthenticatedUser.id());
         EventEntity eventEntity = eventMapper.toEntity(event);
 
-        eventEntity.setOwner(userEntity.getId());
+        eventEntity.setOwnerId(userEntity.getId());
         EventEntity saved = eventRepository.save(eventEntity);
         return eventMapper.toDomain(saved);
     }
@@ -114,7 +114,7 @@ public class EventServiceImpl implements EventService {
                     eventEntity.setDate(eventToUpdate.date());
                     eventEntity.setCost(eventToUpdate.cost());
                     eventEntity.setDuration(eventToUpdate.duration());
-                    eventEntity.setLocation(location.id());
+                    eventEntity.setLocationId(location.id());
                     return eventRepository.save(eventEntity);
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not find"

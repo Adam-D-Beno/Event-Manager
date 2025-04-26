@@ -23,7 +23,7 @@ public interface RegistrationRepository extends JpaRepository<EventRegistrationE
 
     @Query("""
             SELECT re FROM EventRegistrationEntity re
-                        WHERE re.userEntity.id = :UserId
+                        WHERE re.id = :UserId
             """)
     List<EventRegistrationEntity> getRegistrationsByUserId(
             @Param("UserId") Long UserId

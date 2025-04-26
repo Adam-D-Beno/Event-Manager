@@ -14,9 +14,8 @@ public class EventRegistrationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private UserEntity userEntity;
+    @Column(name = "userId")
+    private Long userId;
 
     @ManyToOne()
     @JoinColumn(name = "event_id", nullable = false)
@@ -27,12 +26,12 @@ public class EventRegistrationEntity {
 
     public EventRegistrationEntity(
             Long id,
-            UserEntity userEntity,
+            Long userId,
             EventEntity event,
             LocalDateTime dateRegistration
     ) {
         this.id = id;
-        this.userEntity = userEntity;
+        this.userId = userId;
         this.event = event;
         this.dateRegistration = dateRegistration;
     }

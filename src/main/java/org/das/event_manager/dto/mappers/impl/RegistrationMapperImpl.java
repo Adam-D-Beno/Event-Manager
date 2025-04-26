@@ -34,8 +34,8 @@ public class RegistrationMapperImpl implements RegistrationMapper {
 
         return new EventRegistration(
                 registrationEntity.getId(),
-                userMapperImpl.toDomain(registrationEntity.getUserEntity()),
-                eventMapperImpl.toDomain(registrationEntity.getEvent()),
+                registrationEntity.getId(),
+                registrationEntity.getEvent().getId(),
                 registrationEntity.getDateRegistration()
         );
     }

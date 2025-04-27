@@ -1,18 +1,14 @@
 package org.das.event_manager.dto.mappers.impl;
 
 import org.das.event_manager.domain.Event;
-import org.das.event_manager.domain.EventRegistration;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.entity.EventEntity;
-import org.das.event_manager.domain.entity.EventRegistrationEntity;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.EventUpdateRequestDto;
 import org.das.event_manager.dto.mappers.EventMapper;
 import org.das.event_manager.dto.mappers.RegistrationMapper;
 import org.das.event_manager.service.AuthenticationService;
-import org.das.event_manager.service.impl.AuthenticationServiceImpl;
-import org.das.event_manager.service.impl.EventRegistrationServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
@@ -22,8 +18,7 @@ import java.util.List;
 
 @Component
 public class EventMapperImpl implements EventMapper {
-
-    private final Integer initDefaultOccupiedPlaces = 0;
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(EventMapperImpl.class);
     private final AuthenticationService authenticationServiceImpl;
     private final RegistrationMapper registrationMapper;
@@ -46,13 +41,12 @@ public class EventMapperImpl implements EventMapper {
                 eventUpdateRequestDto.name(),
                 authenticationServiceImpl.getCurrentAuthenticatedUser().id(),
                 eventUpdateRequestDto.maxPlaces(),
-                initDefaultOccupiedPlaces,
+                List.of(),
                 eventUpdateRequestDto.date(),
                 eventUpdateRequestDto.cost(),
                 eventUpdateRequestDto.duration(),
                 eventUpdateRequestDto.locationId(),
-                EventStatus.WAIT_START,
-                List.of()
+                EventStatus.WAIT_START
         );
     }
 
@@ -65,13 +59,12 @@ public class EventMapperImpl implements EventMapper {
                 eventUpdateRequestDto.name(),
                 authenticationServiceImpl.getCurrentAuthenticatedUser().id(),
                 eventUpdateRequestDto.maxPlaces(),
-                initDefaultOccupiedPlaces,
+                List.of(),
                 eventUpdateRequestDto.date(),
                 eventUpdateRequestDto.cost(),
                 eventUpdateRequestDto.duration(),
                 eventUpdateRequestDto.locationId(),
-                EventStatus.WAIT_START,
-                List.of()
+                null
         );
     }
 
@@ -83,7 +76,7 @@ public class EventMapperImpl implements EventMapper {
                 event.name(),
                 authenticationServiceImpl.getCurrentAuthenticatedUser().id(),
                 event.maxPlaces(),
-                event.occupiedPlaces(),
+                event.registrations().size(),
                 event.date(),
                 event.cost(),
                 event.duration(),
@@ -108,7 +101,7 @@ public class EventMapperImpl implements EventMapper {
                 event.name(),
                 event.ownerId(),
                 event.maxPlaces(),
-                event.occupiedPlaces(),
+                event.registrations().size(),
                 event.date(),
                 event.cost(),
                 event.duration(),
@@ -128,15 +121,14 @@ public class EventMapperImpl implements EventMapper {
                 eventEntity.getName(),
                 eventEntity.getId(),
                 eventEntity.getMaxPlaces(),
-                eventEntity.getOccupiedPlaces(),
+                eventEntity.getRegistrations()
+                        .stream()
+                        .map(registrationMapper::toDomain).toList(),
                 eventEntity.getDate(),
                 eventEntity.getCost(),
                 eventEntity.getDuration(),
                 eventEntity.getId(),
-                eventEntity.getStatus(),
-                eventEntity.getRegistrations()
-                        .stream()
-                        .map(registrationMapper::toDomain).toList()
+                eventEntity.getStatus()
         );
     }
 

@@ -9,11 +9,10 @@ public record Event(
         String name,
         Long ownerId,
         Integer maxPlaces,
-        Integer occupiedPlaces,
+        List<EventRegistration> registrations,
         LocalDateTime date,
         BigDecimal cost,
         Integer duration,
         Long locationId,
-        EventStatus status,
-        List<EventRegistration> registrations
+        EventStatus status
 ) {}

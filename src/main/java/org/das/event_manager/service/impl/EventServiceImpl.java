@@ -26,7 +26,6 @@ public class EventServiceImpl implements EventService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventServiceImpl.class);
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
-    private final UserMapper userMapper;
     private final LocationService locationService;
     private final AuthenticationService authenticationService;
     private final EventValidate eventValidate;
@@ -34,14 +33,12 @@ public class EventServiceImpl implements EventService {
     public EventServiceImpl(
             EventRepository eventRepository,
             EventMapper eventMapper,
-            UserMapper userMapper,
             LocationService locationService,
             AuthenticationService authenticationService,
             EventValidate eventValidate
     ) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
-        this.userMapper = userMapper;
         this.locationService = locationService;
         this.authenticationService = authenticationService;
         this.eventValidate = eventValidate;
@@ -59,12 +56,10 @@ public class EventServiceImpl implements EventService {
                 eventForCreate.maxPlaces(), locationService.getCapacity(eventForCreate.locationId())
         );
 
-//        UserEntity userEntity = userMapper.toEntity(currentAuthenticatedUser);
         //todo check th strline
-//        userEntity.setId(currentAuthenticatedUser.id());
         EventEntity eventEntity = eventMapper.toEntity(eventForCreate);
-
         eventEntity.setOwnerId(currentAuthenticatedUser.id());
+
         EventEntity saved = eventRepository.save(eventEntity);
         return eventMapper.toDomain(saved);
     }

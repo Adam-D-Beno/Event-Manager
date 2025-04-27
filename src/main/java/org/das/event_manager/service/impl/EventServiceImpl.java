@@ -79,7 +79,7 @@ public class EventServiceImpl implements EventService {
        LOGGER.info("Execute method findById in EventServiceImpl, event id = {}", eventId);
        return eventRepository.findById(eventId)
                 .map(eventMapper::toDomain)
-                .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not find"
+                .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not found"
                         .formatted(eventId)));
     }
 

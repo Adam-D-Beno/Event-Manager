@@ -1,7 +1,9 @@
 package org.das.event_manager.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
 
@@ -9,6 +11,8 @@ import java.time.LocalDateTime;
 @Table(name = "registrations")
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class EventRegistrationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,19 +28,5 @@ public class EventRegistrationEntity {
     @Column(name = "date_registration")
     private LocalDateTime dateRegistration;
 
-    public EventRegistrationEntity(
-            Long id,
-            Long userId,
-            EventEntity event,
-            LocalDateTime dateRegistration
-    ) {
-        this.id = id;
-        this.userId = userId;
-        this.event = event;
-        this.dateRegistration = dateRegistration;
-    }
 
-    public EventRegistrationEntity() {
-
-    }
 }

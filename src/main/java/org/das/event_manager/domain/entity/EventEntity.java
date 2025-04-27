@@ -1,6 +1,8 @@
 package org.das.event_manager.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.das.event_manager.domain.EventStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -8,6 +10,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "events")
+@Getter
+@Setter
 public class EventEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,77 +76,5 @@ public class EventEntity {
         this.locationId = locationId;
         this.status = status;
         this.registrations = registrations;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setOwnerId(Long ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public Integer getMaxPlaces() {
-        return maxPlaces;
-    }
-
-    public void setMaxPlaces(Integer maxPlaces) {
-        this.maxPlaces = maxPlaces;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
-    public BigDecimal getCost() {
-        return cost;
-    }
-
-    public void setCost(BigDecimal cost) {
-        this.cost = cost;
-    }
-
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
-    }
-
-    public Long getLocationId() {
-        return locationId;
-    }
-
-    public void setLocationId(Long locationId) {
-        this.locationId = locationId;
-    }
-
-    public EventStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(EventStatus status) {
-        this.status = status;
-    }
-
-    public List<EventRegistrationEntity> getRegistrations() {
-        return registrations;
     }
 }

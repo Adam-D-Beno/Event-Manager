@@ -1,6 +1,5 @@
 package org.das.event_manager.dto.mappers.impl;
 
-import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.EventRegistration;
 import org.das.event_manager.domain.entity.EventRegistrationEntity;
 import org.das.event_manager.dto.mappers.RegistrationMapper;
@@ -8,8 +7,6 @@ import org.das.event_manager.repository.RegistrationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
-
 import java.util.List;
 
 @Component

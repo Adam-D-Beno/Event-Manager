@@ -2,10 +2,8 @@ package org.das.event_manager.domain.entity;
 
 import jakarta.persistence.*;
 import org.das.event_manager.domain.EventStatus;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -76,8 +74,6 @@ public class EventEntity {
         this.registrations = registrations;
     }
 
-
-
     public Long getId() {
         return id;
     }
@@ -94,10 +90,6 @@ public class EventEntity {
         this.name = name;
     }
 
-    public Long getOwnerId() {
-        return ownerId;
-    }
-
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
     }
@@ -108,14 +100,6 @@ public class EventEntity {
 
     public void setMaxPlaces(Integer maxPlaces) {
         this.maxPlaces = maxPlaces;
-    }
-
-    public Integer getOccupiedPlaces() {
-        return occupiedPlaces;
-    }
-
-    public void setOccupiedPlaces(Integer occupiedPlaces) {
-        this.occupiedPlaces = occupiedPlaces;
     }
 
     public LocalDateTime getDate() {
@@ -160,9 +144,5 @@ public class EventEntity {
 
     public List<EventRegistrationEntity> getRegistrations() {
         return registrations;
-    }
-
-    public void setRegistrations(List<EventRegistrationEntity> registrations) {
-        this.registrations = registrations;
     }
 }

@@ -58,7 +58,7 @@ public class EventValidate {
         LOGGER.info("Execute method checkCurrentUserCanModify eventOwnerId = {}",
                 eventOwnerId);
 
-        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
         if (!eventOwnerId.equals(currentAuthUser.id()) && (currentAuthUser.userRole() != UserRole.ADMIN)) {
             LOGGER.error("User with login = {} cant modify this event", currentAuthUser.login());
 
@@ -107,7 +107,7 @@ public class EventValidate {
             LOGGER.error("Max places = {} at the event more then location capacity = {} ",
                     eventMaxPlaces, locationCapacity);
 
-            throw new IllegalArgumentException("maxPlaces =%s cannot be more then location maxPlaces =%s"
+            throw new IllegalArgumentException("maxPlaces = %s cannot be more then location capacity = %s"
                     .formatted(eventMaxPlaces, locationCapacity));
         }
     }

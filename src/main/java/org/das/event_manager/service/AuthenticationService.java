@@ -7,5 +7,5 @@ public interface AuthenticationService {
 
     String authenticateUser(SignInRequest signInRequest);
 
-    User getCurrentAuthenticatedUserOrThrow();
+    User getCurrentAuthenticatedUser();
 }

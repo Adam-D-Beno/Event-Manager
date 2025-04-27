@@ -6,7 +6,6 @@ import org.das.event_manager.domain.entity.EventEntity;
 import org.das.event_manager.domain.entity.UserEntity;
 import org.das.event_manager.dto.EventSearchRequestDto;
 import org.das.event_manager.dto.mappers.EventMapper;
-import org.das.event_manager.dto.mappers.LocationMapper;
 import org.das.event_manager.dto.mappers.UserMapper;
 import org.das.event_manager.repository.EventRepository;
 import org.das.event_manager.service.AuthenticationService;
@@ -28,7 +27,6 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final UserMapper userMapper;
-    private final LocationMapper locationMapper;
     private final LocationService locationService;
     private final AuthenticationService authenticationService;
     private final EventValidate eventValidate;
@@ -37,7 +35,6 @@ public class EventServiceImpl implements EventService {
             EventRepository eventRepository,
             EventMapper eventMapper,
             UserMapper userMapper,
-            LocationMapper locationMapper,
             LocationService locationService,
             AuthenticationService authenticationService,
             EventValidate eventValidate
@@ -45,28 +42,29 @@ public class EventServiceImpl implements EventService {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
         this.userMapper = userMapper;
-        this.locationMapper = locationMapper;
         this.locationService = locationService;
         this.authenticationService = authenticationService;
         this.eventValidate = eventValidate;
     }
 
     @Override
-    public Event create(Event event) {
-        LOGGER.info("Execute method create in EventServiceImpl, event = {}", event);
+    public Event create(Event eventForCreate) {
+        LOGGER.info("Execute method create in EventServiceImpl, event = {}", eventForCreate);
 
-        User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUser();
+        //check already exist event
         eventValidate.checkExistUser(currentAuthenticatedUser);
-        eventValidate.checkExistLocation(event.locationId());
+        eventValidate.checkExistLocation(eventForCreate.locationId());
         eventValidate.checkMaxPlacesMoreThenOnLocation(
-                event.maxPlaces(), locationService.getCapacity(event.locationId())
+                eventForCreate.maxPlaces(), locationService.getCapacity(eventForCreate.locationId())
         );
 
-        UserEntity userEntity = userMapper.toEntity(currentAuthenticatedUser);
-        userEntity.setId(currentAuthenticatedUser.id());
-        EventEntity eventEntity = eventMapper.toEntity(event);
+//        UserEntity userEntity = userMapper.toEntity(currentAuthenticatedUser);
+        //todo check th strline
+//        userEntity.setId(currentAuthenticatedUser.id());
+        EventEntity eventEntity = eventMapper.toEntity(eventForCreate);
 
-        eventEntity.setOwnerId(userEntity.getId());
+        eventEntity.setOwnerId(currentAuthenticatedUser.id());
         EventEntity saved = eventRepository.save(eventEntity);
         return eventMapper.toDomain(saved);
     }
@@ -96,24 +94,24 @@ public class EventServiceImpl implements EventService {
 
     @Transactional
     @Override
-    public Event update(Long eventId, Event eventToUpdate) {
+    public Event update(Long eventId, Event eventForUpdate) {
 
-        eventValidate.checkDurationLessThenThirtyThrow(eventToUpdate.duration());
-        eventValidate.checkMaxPlacesMoreCurrentMaxPlaces(findById(eventId), eventToUpdate);
-        eventValidate.checkDatePastTime(eventToUpdate.date());
-        eventValidate.checkCostMoreThenZero(eventToUpdate.cost());
+        eventValidate.checkDurationLessThenThirtyThrow(eventForUpdate.duration());
+        eventValidate.checkMaxPlacesMoreCurrentMaxPlaces(findById(eventId), eventForUpdate);
+        eventValidate.checkDatePastTime(eventForUpdate.date());
+        eventValidate.checkCostMoreThenZero(eventForUpdate.cost());
         eventValidate.checkCurrentUserCanModify(eventId);
         eventValidate.checkStatusEvent(eventRepository.findEventStatusById(eventId));
 
-        Location location = locationService.findById(eventToUpdate.locationId());
+        Location location = locationService.findById(eventForUpdate.locationId());
         EventEntity updated = eventRepository.findById(eventId)
                 .map(eventEntity -> {
                     eventEntity.setId(eventId);
-                    eventEntity.setName(eventToUpdate.name());
-                    eventEntity.setMaxPlaces(eventToUpdate.maxPlaces());
-                    eventEntity.setDate(eventToUpdate.date());
-                    eventEntity.setCost(eventToUpdate.cost());
-                    eventEntity.setDuration(eventToUpdate.duration());
+                    eventEntity.setName(eventForUpdate.name());
+                    eventEntity.setMaxPlaces(eventForUpdate.maxPlaces());
+                    eventEntity.setDate(eventForUpdate.date());
+                    eventEntity.setCost(eventForUpdate.cost());
+                    eventEntity.setDuration(eventForUpdate.duration());
                     eventEntity.setLocationId(location.id());
                     return eventRepository.save(eventEntity);
                 })
@@ -147,7 +145,7 @@ public class EventServiceImpl implements EventService {
     public List<Event> findAllEventsCreationByOwner() {
         LOGGER.info("Execute method findAllEventsCreationByOwner in EventServiceImpl, eventSearchRequestDto");
 
-        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
         return eventMapper.toDomain(eventRepository.findEventsByOwner_Id((currentAuthUser.id())));
     }
 }

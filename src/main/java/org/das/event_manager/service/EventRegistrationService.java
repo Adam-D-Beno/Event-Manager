@@ -11,4 +11,5 @@ public interface EventRegistrationService {
     void cancelOnRegistration(Long eventId);
     List<Event> findAllEventByUserRegistration();
     EventRegistrationEntity findById(Long registrationId);
+    List<EventRegistrationEntity> findAllById(List<Long> registrationId);
 }

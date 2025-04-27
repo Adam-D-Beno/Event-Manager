@@ -55,7 +55,7 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
 
         checkStatusEvent(eventFound);
 
-        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
         UserEntity userEntity = userMapper.toEntity(currentAuthUser);
 
         EventRegistrationEntity newRegistrationOnEvent = new EventRegistrationEntity(
@@ -89,7 +89,7 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
     public List<Event> findAllEventByUserRegistration() {
         LOGGER.info("Execute method findAllEventByUserRegistration in EventServiceImpl");
 
-        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
         return registrationRepository.getRegistrationsByUserId(currentAuthUser.id())
                 .stream()
                 .map(reg -> eventMapper.toDomain(reg.getEvent()))
@@ -101,6 +101,11 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
         return registrationRepository.findById(registrationId)
                 .orElseThrow(() -> new EntityNotFoundException("EventRegistration not found"));
 
+    }
+
+    @Override
+    public List<EventRegistrationEntity> findAllById(List<Long> registrationId) {
+        return registrationRepository.findAllById(registrationId);
     }
 
     private void checkStatusEvent(@NotNull EventEntity eventEntity) {

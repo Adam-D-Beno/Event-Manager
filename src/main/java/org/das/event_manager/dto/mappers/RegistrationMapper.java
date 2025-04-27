@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface RegistrationMapper {
 
-    EventRegistration toDomain(@NotNull EventRegistrationEntity registrationEntity);
-    List<EventRegistration> toDomain(@NotNull List<EventRegistrationEntity> registrationEntities);
+    EventRegistration toDomain(EventRegistrationEntity registrationEntity);
+    List<EventRegistration> toDomain(List<EventRegistrationEntity> registrationEntities);
+    List<EventRegistrationEntity> toEntity(List<EventRegistration> eventRegistrations);
 }

@@ -44,7 +44,7 @@ public class EventEntity {
     private EventStatus status;
 
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
-    private List<EventRegistrationEntity> registrations = new ArrayList<>();
+    private List<EventRegistrationEntity> registrations;
 
 
     public EventEntity() {

@@ -115,8 +115,7 @@ public class LocationServiceImpl implements LocationService {
         return entityMapper.toDomain(foundEntityForUpdate);
     }
 
-    @Override
-    public void existLocationAddress(String locationAddress) {
+    private void existLocationAddress(String locationAddress) {
         LOGGER.info("Execute isExistLocationAddress in LocationService class, location address = {}"
                 , locationAddress);
 
@@ -127,8 +126,7 @@ public class LocationServiceImpl implements LocationService {
         }
     }
 
-    @Override
-    public void existLocationName(String locationName) {
+    private void existLocationName(String locationName) {
         LOGGER.info("Execute isExistLocationName in LocationService class, location name = {}", locationName);
 
         if (locationRepository.existsByName(locationName)) {
@@ -136,17 +134,5 @@ public class LocationServiceImpl implements LocationService {
 
             throw new IllegalArgumentException("Location: name = %s already exists".formatted(locationName));
         }
-    }
-
-    @Override
-    public Integer getCapacity(Long locationId) {
-        LOGGER.info("Execute getCapacity in LocationService class, location id = {}", locationId);
-
-        return locationRepository.getCapacityById(locationId)
-                .orElseThrow(() -> {
-                    LOGGER.error("Location capacity is null for locationId: {}", locationId);
-
-                    return new IllegalArgumentException("Location capacity cannot be null");
-                });
     }
 }

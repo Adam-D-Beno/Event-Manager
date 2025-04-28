@@ -34,6 +34,7 @@ public class LocationController {
     @GetMapping()
     public ResponseEntity<List<LocationDto>> findAll() {
         LOGGER.info("Get request for find all locations");
+
         return ResponseEntity
                 .ok()
                 .body(dtoMapper.toDto(locationService.findAll()));
@@ -44,6 +45,7 @@ public class LocationController {
         @RequestBody @Valid LocationDto locationDtoToCreate
     ) {
         LOGGER.info("Post request for create locationDto = {}", locationDtoToCreate);
+
         return ResponseEntity.
                 status(HttpStatus.CREATED)
                .body(dtoMapper.toDto(locationService.create(dtoMapper.toDomain(locationDtoToCreate))));
@@ -54,6 +56,7 @@ public class LocationController {
             @NotNull @PathVariable("locationId") Long locationId
     ) {
         LOGGER.info("Delete request for delete by id = {} location", locationId);
+
         Location deletedLocation = locationService.deleteById(locationId);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
@@ -65,6 +68,7 @@ public class LocationController {
             @NotNull @PathVariable("locationId") Long locationId
     ) {
        LOGGER.info("Get request for find by id = {} location", locationId);
+
        return ResponseEntity
                .status(HttpStatus.FOUND)
                .body(dtoMapper.toDto(locationService.findById(locationId)));
@@ -76,6 +80,7 @@ public class LocationController {
             @RequestBody @Valid LocationDto locationDtoToUpdate
     ) {
         LOGGER.info("Put request for update locationDto = {} with id = {}", locationDtoToUpdate, locationId);
+
         Location updatedLocation = locationService
                 .updateById(locationId, dtoMapper.toDomain(locationDtoToUpdate));
         return ResponseEntity.ok().body(dtoMapper.toDto(updatedLocation));

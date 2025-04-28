@@ -66,7 +66,7 @@ public class EventServiceImpl implements EventService {
         userEntity.setId(currentAuthenticatedUser.id());
         EventEntity eventEntity = eventMapper.toEntity(event);
 
-        eventEntity.setOwner(userEntity);
+        eventEntity.setOwnerId(userEntity);
         EventEntity saved = eventRepository.save(eventEntity);
         return eventMapper.toDomain(saved);
     }

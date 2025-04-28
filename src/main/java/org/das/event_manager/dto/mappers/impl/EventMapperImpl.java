@@ -4,8 +4,6 @@ import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.entity.EventEntity;
 import org.das.event_manager.domain.entity.EventRegistrationEntity;
-import org.das.event_manager.domain.entity.LocationEntity;
-import org.das.event_manager.domain.entity.UserEntity;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.EventUpdateRequestDto;
@@ -23,7 +21,6 @@ import java.util.List;
 @Component
 public class EventMapperImpl implements EventMapper {
 
-    private final Integer initDefaultOccupiedPlaces = 0;
     private static final Logger LOGGER = LoggerFactory.getLogger(EventMapperImpl.class);
     private final AuthenticationServiceImpl authenticationServiceImpl;
     private final EventRegistrationServiceImpl registrationService;
@@ -43,13 +40,12 @@ public class EventMapperImpl implements EventMapper {
                 eventUpdateRequestDto.name(),
                 authenticationServiceImpl.getCurrentAuthenticatedUserOrThrow().id(),
                 eventUpdateRequestDto.maxPlaces(),
-                initDefaultOccupiedPlaces,
+                List.of(),
                 eventUpdateRequestDto.date(),
                 eventUpdateRequestDto.cost(),
                 eventUpdateRequestDto.duration(),
                 eventUpdateRequestDto.locationId(),
-                EventStatus.WAIT_START,
-                List.of()
+                EventStatus.WAIT_START
         );
     }
 
@@ -62,13 +58,12 @@ public class EventMapperImpl implements EventMapper {
                 eventUpdateRequestDto.name(),
                 authenticationServiceImpl.getCurrentAuthenticatedUserOrThrow().id(),
                 eventUpdateRequestDto.maxPlaces(),
-                initDefaultOccupiedPlaces,
+                List.of(),
                 eventUpdateRequestDto.date(),
                 eventUpdateRequestDto.cost(),
                 eventUpdateRequestDto.duration(),
                 eventUpdateRequestDto.locationId(),
-                EventStatus.WAIT_START,
-                List.of()
+                EventStatus.WAIT_START
         );
     }
 
@@ -80,7 +75,7 @@ public class EventMapperImpl implements EventMapper {
                 event.name(),
                 authenticationServiceImpl.getCurrentAuthenticatedUserOrThrow().id(),
                 event.maxPlaces(),
-                event.occupiedPlaces(),
+                event.registrations().size(),
                 event.date(),
                 event.cost(),
                 event.duration(),
@@ -103,13 +98,13 @@ public class EventMapperImpl implements EventMapper {
         return new EventEntity(
                 event.id(),
                 event.name(),
-                new UserEntity(event.ownerId()),
+                event.ownerId(),
                 event.maxPlaces(),
-                event.occupiedPlaces(),
+                event.registrations().size(),
                 event.date(),
                 event.cost(),
                 event.duration(),
-                new LocationEntity(event.locationId()),
+                event.locationId(),
                 event.status(),
                 event.registrations()
                         .stream()
@@ -123,15 +118,14 @@ public class EventMapperImpl implements EventMapper {
         return new Event(
                 eventEntity.getId(),
                 eventEntity.getName(),
-                eventEntity.getOwner().getId(),
+                eventEntity.getOwnerId(),
                 eventEntity.getMaxPlaces(),
-                eventEntity.getOccupiedPlaces(),
+                eventEntity.getRegistrations().stream().map(EventRegistrationEntity::getId).toList(),
                 eventEntity.getDate(),
                 eventEntity.getCost(),
                 eventEntity.getDuration(),
-                eventEntity.getLocation().getId(),
-                eventEntity.getStatus(),
-                eventEntity.getRegistrations().stream().map(EventRegistrationEntity::getId).toList()
+                eventEntity.getLocation(),
+                eventEntity.getStatus()
         );
     }
 

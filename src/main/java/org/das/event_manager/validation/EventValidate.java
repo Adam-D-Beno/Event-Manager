@@ -66,6 +66,7 @@ public class EventValidate {
         }
     }
 
+    @Deprecated
     public void checkMaxPlacesMoreCurrentMaxPlaces(Event event, Event eventToUpdate) {
         LOGGER.info("Execute method checkMaxPlacesMoreCurrentMaxPlaces event id = {}, cost = {}",
                 event.id(), event.cost());

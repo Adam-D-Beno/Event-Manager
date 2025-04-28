@@ -1,9 +1,7 @@
 package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.Event;
-import org.das.event_manager.domain.entity.EventEntity;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.EventSearchRequestDto;

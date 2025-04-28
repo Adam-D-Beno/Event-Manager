@@ -44,7 +44,6 @@ public class EventServiceImpl implements EventService {
     public Event create(Event eventForCreate) {
         LOGGER.info("Execute method create in EventServiceImpl, event = {}", eventForCreate);
         User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUser();
-
         Location location = locationService.findById(eventForCreate.locationId());
 
         if (location.capacity() < eventForCreate.maxPlaces()) {
@@ -89,9 +88,13 @@ public class EventServiceImpl implements EventService {
     public Event update(Long eventId, Event eventForUpdate) {
         LOGGER.info("Execute method update in EventServiceImpl, event = {}", eventForUpdate);
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
-        var eventEntity = eventRepository.findById(eventId).orElseThrow();
+        var eventEntity = eventRepository.findById(eventId).orElseThrow(
+                () -> new EntityNotFoundException("Event with id = %s not found"
+                        .formatted(eventId))
+        );
 
-        if (!eventEntity.getOwnerId().equals(currentAuthUser.id()) && !currentAuthUser.userRole().equals(UserRole.ADMIN)) {
+        if (!eventEntity.getOwnerId().equals(currentAuthUser.id())
+                && !currentAuthUser.userRole().equals(UserRole.ADMIN)) {
             LOGGER.error("User with login = {} cant modify this event", currentAuthUser.login());
             throw new IllegalArgumentException("User cant modify this event");
         }

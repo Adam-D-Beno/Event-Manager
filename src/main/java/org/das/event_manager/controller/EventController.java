@@ -8,7 +8,6 @@ import org.das.event_manager.dto.EventSearchRequestDto;
 import org.das.event_manager.dto.EventUpdateRequestDto;
 import org.das.event_manager.dto.mappers.EventMapper;
 import org.das.event_manager.service.EventService;
-import org.das.event_manager.service.impl.SchedulerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

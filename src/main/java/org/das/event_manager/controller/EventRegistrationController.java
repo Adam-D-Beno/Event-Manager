@@ -1,6 +1,5 @@
 package org.das.event_manager.controller;
 
-import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.mappers.EventMapper;
 import org.das.event_manager.service.EventRegistrationService;

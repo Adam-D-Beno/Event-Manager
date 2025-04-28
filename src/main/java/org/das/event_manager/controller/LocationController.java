@@ -2,9 +2,9 @@ package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.das.event_manager.dto.mappers.LocationMapper;
 import org.das.event_manager.domain.Location;
 import org.das.event_manager.dto.LocationDto;
+import org.das.event_manager.dto.mappers.LocationMapper;
 import org.das.event_manager.service.LocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,15 +20,15 @@ public class LocationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationController.class);
     private final LocationService locationService;
-    private final LocationMapper dtoMapper;
+    private final LocationMapper LocationMapper;
 
     @Autowired
     public LocationController(
             LocationService locationService,
-            LocationMapper dtoMapper
+            LocationMapper LocationMapper
     ) {
         this.locationService = locationService;
-        this.dtoMapper = dtoMapper;
+        this.LocationMapper = LocationMapper;
     }
 
     @GetMapping()
@@ -37,7 +37,7 @@ public class LocationController {
 
         return ResponseEntity
                 .ok()
-                .body(dtoMapper.toDto(locationService.findAll()));
+                .body(LocationMapper.toDto(locationService.findAll()));
     }
 
     @PostMapping
@@ -48,7 +48,7 @@ public class LocationController {
 
         return ResponseEntity.
                 status(HttpStatus.CREATED)
-               .body(dtoMapper.toDto(locationService.create(dtoMapper.toDomain(locationDtoToCreate))));
+               .body(LocationMapper.toDto(locationService.create(LocationMapper.toDomain(locationDtoToCreate))));
     }
 
     @DeleteMapping("/{locationId}")
@@ -60,7 +60,7 @@ public class LocationController {
         Location deletedLocation = locationService.deleteById(locationId);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
-                .body(dtoMapper.toDto(deletedLocation));
+                .body(LocationMapper.toDto(deletedLocation));
     }
 
     @GetMapping("/{locationId}")
@@ -71,7 +71,7 @@ public class LocationController {
 
        return ResponseEntity
                .status(HttpStatus.FOUND)
-               .body(dtoMapper.toDto(locationService.findById(locationId)));
+               .body(LocationMapper.toDto(locationService.findById(locationId)));
     }
 
     @PutMapping("/{locationId}")
@@ -82,7 +82,7 @@ public class LocationController {
         LOGGER.info("Put request for update locationDto = {} with id = {}", locationDtoToUpdate, locationId);
 
         Location updatedLocation = locationService
-                .updateById(locationId, dtoMapper.toDomain(locationDtoToUpdate));
-        return ResponseEntity.ok().body(dtoMapper.toDto(updatedLocation));
+                .updateById(locationId, LocationMapper.toDomain(locationDtoToUpdate));
+        return ResponseEntity.ok().body(LocationMapper.toDto(updatedLocation));
     }
 }

@@ -45,6 +45,13 @@ public class EventServiceImpl implements EventService {
         LOGGER.info("Execute method create in EventServiceImpl, event = {}", eventForCreate);
         User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUser();
 
+        Location location = locationService.findById(eventForCreate.locationId());
+
+        if (location.capacity() < eventForCreate.maxPlaces()) {
+            throw new IllegalArgumentException("Capacity of location is: %s, but maxPlaces is: %s"
+                    .formatted(location.capacity(), eventForCreate.maxPlaces()));
+        }
+       //todo check create event location on different date
         EventEntity eventEntity = eventMapper.toEntity(eventForCreate);
         eventEntity.setOwnerId(currentAuthenticatedUser.id());
 

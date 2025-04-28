@@ -43,7 +43,6 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
     public void registerUserOnEvent(Long eventId) {
         LOGGER.info("Execute method registerUserOnEvent in RegistrationOnEventService, event id = {}",
                 eventId);
-
         var event = eventService.findById(eventId);
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
         if (currentAuthUser.id().equals(event.ownerId())) {
@@ -55,7 +54,6 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
             throw new IllegalArgumentException("User with id=%s already registered".formatted(currentAuthUser.id()));
         }
         checkStatusEvent(event);
-
         EventRegistrationEntity newRegistrationOnEvent = new EventRegistrationEntity(
                 null,
                 currentAuthUser.id(),
@@ -72,12 +70,12 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
         EventRegistrationEntity registrationEntity = registrationRepository
                 .findRegistration(eventId, currentAuthUser.id())
-                .orElseThrow(() -> new EntityNotFoundException("EventRegistration not found or status is not WAIT_START"));
+                .orElseThrow(() -> new EntityNotFoundException("EventRegistration =%s not found, userId=%s"
+                        .formatted(eventId, currentAuthUser.id())));
 
         if (registrationEntity.getEvent().getStatus() != EventStatus.STARTED) {
             LOGGER.error("Cannot cancel registration on event = {} has status = {}",
                     registrationEntity.getEvent(), registrationEntity.getEvent());
-
             throw new IllegalStateException("Cancellation of registration is impossible: " +
                     "the status of an event is not wait_start");
         }
@@ -87,7 +85,6 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
     @Override
     public List<Event> findAllEventByUserRegistration() {
         LOGGER.info("Execute method findAllEventByUserRegistration in EventServiceImpl");
-
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
         return registrationRepository.findRegisteredEvents(currentAuthUser.id())
                 .stream()
@@ -95,24 +92,11 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
                 .toList();
     }
 
-    @Override
-    public EventRegistrationEntity findById(Long registrationId) {
-        return registrationRepository.findById(registrationId)
-                .orElseThrow(() -> new EntityNotFoundException("EventRegistration not found"));
-
-    }
-
-    @Override
-    public List<EventRegistrationEntity> findAllById(List<Long> registrationId) {
-        return registrationRepository.findAllById(registrationId);
-    }
-
     private void checkStatusEvent(Event event) {
         LOGGER.info("Execute method checkStatusEvent in EventServiceImpl, event = {}", event);
         if (event.status() != EventStatus.WAIT_START) {
             LOGGER.error("Cannot registration event has status = {}",
                     event.status());
-
             throw new IllegalArgumentException("Event has status %s".formatted(event.status()));
         }
     }

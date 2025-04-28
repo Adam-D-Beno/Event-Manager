@@ -46,14 +46,13 @@ public class EventServiceImpl implements EventService {
         LOGGER.info("Execute method create in EventServiceImpl, event = {}", eventForCreate);
 
         User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUser();
-        //check already exist event
+        //todo check already exist event
         eventValidate.checkExistUser(currentAuthenticatedUser);
         eventValidate.checkExistLocation(eventForCreate.locationId());
         eventValidate.checkMaxPlacesMoreThenOnLocation(
                 eventForCreate.maxPlaces(), locationService.getCapacity(eventForCreate.locationId())
         );
 
-        //todo check th strline
         EventEntity eventEntity = eventMapper.toEntity(eventForCreate);
         eventEntity.setOwnerId(currentAuthenticatedUser.id());
 
@@ -84,16 +83,26 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event update(Long eventId, Event eventForUpdate) {
         LOGGER.info("Execute method update in EventServiceImpl, event = {}", eventForUpdate);
+
         Event event = findById(eventId);
+        Long locationId = Optional.ofNullable(eventForUpdate.locationId())
+                .orElse(event.locationId());
+        Integer maxPlaces = Optional.ofNullable(eventForUpdate.maxPlaces())
+                .orElse(event.maxPlaces());
+        Location location = locationService.findById(locationId);
+
+        if (location.capacity() < maxPlaces) {
+            throw new IllegalArgumentException("Capacity of location  less then maxPlaces: capacity=%s, maxPlaces=%s"
+                    .formatted(location.capacity(), maxPlaces));
+        }
         eventValidate.checkCurrentUserCanModify(eventId);
         eventValidate.checkStatusEvent(event.status());
-        eventValidate.checkMaxPlacesMoreCurrentMaxPlaces(event, eventForUpdate);
+
         eventValidate.checkDurationLessThenThirty(eventForUpdate.duration());
         eventValidate.checkDatePastTime(eventForUpdate.date());
         eventValidate.checkCostMoreThenZero(eventForUpdate.cost());
 
-        Long locationId = Optional.ofNullable(eventForUpdate.locationId())
-                .orElse(event.locationId());
+
         EventEntity updated = eventRepository.findById(eventId)
                 .map(eventEntity -> {
                     eventEntity.setId(eventId);

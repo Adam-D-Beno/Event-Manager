@@ -30,7 +30,7 @@ public  interface EventRepository extends JpaRepository<EventEntity, Long> {
                 AND (:costMax is null or ev.cost <= :costMax)
                 AND (:durationMin is null or ev.duration >= :durationMin)
                 AND (:durationMax is null or ev.duration <= :durationMax)
-                AND (:locationId is null or ev.location.id = :locationId)
+                AND (:locationId is null or ev.locationId = :locationId)
                 AND (:status is null or ev.status = :status)
     """)
     List<EventEntity> search(

@@ -3,6 +3,7 @@ package org.das.event_manager.domain.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.das.event_manager.domain.EventStatus;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "events")
 @AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 public class EventEntity {
@@ -43,7 +45,7 @@ public class EventEntity {
     private Integer duration;
 
     @Column(name = "location_id", nullable = false)
-    private Long location;
+    private Long locationId;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -51,8 +53,4 @@ public class EventEntity {
 
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
     private List<EventRegistrationEntity> registrations = new ArrayList<>();
-
-
-    public EventEntity() {
-    }
 }

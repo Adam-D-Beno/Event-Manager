@@ -124,7 +124,7 @@ public class EventMapperImpl implements EventMapper {
                 eventEntity.getDate(),
                 eventEntity.getCost(),
                 eventEntity.getDuration(),
-                eventEntity.getLocation(),
+                eventEntity.getLocationId(),
                 eventEntity.getStatus()
         );
     }

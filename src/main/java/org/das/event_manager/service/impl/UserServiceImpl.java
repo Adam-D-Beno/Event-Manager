@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(User userToSave) {
         LOGGER.info("Execute method save user: login = {} in UserServiceImpl class", userToSave.login());
-
         UserEntity entityForSave = userMapper.toEntity(userToSave);
         UserEntity saved = userRepository.save(entityForSave);
         return userMapper.toDomain(saved);
@@ -39,7 +38,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByLogin(String login) {
         LOGGER.info("Execute method getUserByLogin user: login = {} in UserServiceImpl class", login);
-
         return userRepository.findByLogin(login)
                 .map(userMapper::toDomain)
                 .orElseThrow(() -> {
@@ -51,7 +49,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findById(Long userId) {
         LOGGER.info("Execute method getUserById user: id = {} in UserServiceImpl class", userId);
-
         return userRepository.findById(userId)
                 .map(userMapper::toDomain)
                 .orElseThrow(() -> {
@@ -63,7 +60,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isUserExistsByLogin(String login) {
         LOGGER.info("Execute method userExistByLogin user: login = {} in UserServiceImpl class", login);
-
         return userRepository.existsByLogin(login);
     }
 }

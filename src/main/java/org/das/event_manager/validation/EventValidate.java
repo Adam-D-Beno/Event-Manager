@@ -59,7 +59,7 @@ public class EventValidate {
                 eventOwnerId);
 
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
-        if (!eventOwnerId.equals(currentAuthUser.id()) && (currentAuthUser.userRole() != UserRole.ADMIN)) {
+        if (!eventOwnerId.equals(currentAuthUser.id()) && !currentAuthUser.userRole().equals(UserRole.ADMIN)) {
             LOGGER.error("User with login = {} cant modify this event", currentAuthUser.login());
 
             throw new IllegalArgumentException("User cant modify this event");
@@ -84,7 +84,7 @@ public class EventValidate {
         }
     }
 
-    public void checkDurationLessThenThirtyThrow(Integer eventDuration) {
+    public void checkDurationLessThenThirty(Integer eventDuration) {
         LOGGER.info("Execute method checkDurationLessThenThirtyThrow, duration = {}",
                 eventDuration);
 
@@ -127,8 +127,8 @@ public class EventValidate {
     public void checkStatusEvent(EventStatus status) {
         LOGGER.info("Execute method checkStatusEvent, event status = {}", status);
 
-        if (status == EventStatus.STARTED) {
-            LOGGER.error("Cannot event has status = {}", status);
+        if (status != EventStatus.WAIT_START) {
+            LOGGER.error("Event has status = {}", status);
 
             throw new IllegalArgumentException("Event has status %s".formatted(status));
         }

@@ -67,11 +67,7 @@ public class EventServiceImpl implements EventService {
         eventValidate.checkStatusEvent(event.status());
         eventValidate.checkCurrentUserCanModify(event.ownerId());
 
-        eventRepository.findById(eventId)
-           .map(eventEntity -> {
-                    eventEntity.setStatus(EventStatus.CANCELLED);
-                   return eventRepository.save(eventEntity);
-                }).orElseThrow(() -> new EntityNotFoundException("Event not found or status is not WAIT_START"));
+        eventRepository.changeEventStatus(event.id(), EventStatus.CANCELLED);
     }
 
     @Override
@@ -86,8 +82,8 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public Event update(Long eventId, Event eventForUpdate) {
-
-        eventValidate.checkDurationLessThenThirtyThrow(eventForUpdate.duration());
+        LOGGER.info("Execute method update in EventServiceImpl, event = {}", eventForUpdate);
+        eventValidate.checkDurationLessThenThirty(eventForUpdate.duration());
         eventValidate.checkMaxPlacesMoreCurrentMaxPlaces(findById(eventId), eventForUpdate);
         eventValidate.checkDatePastTime(eventForUpdate.date());
         eventValidate.checkCostMoreThenZero(eventForUpdate.cost());

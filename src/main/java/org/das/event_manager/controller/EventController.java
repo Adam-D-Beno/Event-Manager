@@ -52,7 +52,7 @@ public class EventController {
 
     @DeleteMapping("/{eventId}")
     public ResponseEntity<Void> deleteById(
-            @NotNull @PathVariable("eventId") Long eventId
+            @PathVariable("eventId") Long eventId
     ) {
         LOGGER.info("Delete request by event with id = {}", eventId);
 
@@ -62,7 +62,7 @@ public class EventController {
 
     @GetMapping("/{eventId}")
     public ResponseEntity<EventResponseDto> findById(
-            @NotNull @PathVariable("eventId") Long eventId
+            @PathVariable("eventId") Long eventId
     ) {
         LOGGER.info("Get request find By id = {}", eventId);
 
@@ -71,7 +71,7 @@ public class EventController {
 
     @PutMapping("/{eventId}")
     public ResponseEntity<EventResponseDto> updateById(
-            @NotNull @PathVariable("eventId") Long eventId,
+            @PathVariable("eventId") Long eventId,
             @Valid @RequestBody EventUpdateRequestDto eventUpdateRequestDto
             ) {
         LOGGER.info("Put request for update event By Id = {}, eventUpdateRequestDto = {}"
@@ -97,8 +97,4 @@ public class EventController {
         return ResponseEntity.ok().body(eventMapper.toDto(eventService.findAllEventsCreationByOwner()));
     }
 
-    @GetMapping("/shed")
-    public ResponseEntity<List<Long>> findEventsWithStatusWait() {
-        return ResponseEntity.ok(schedulerService.updateEventStatuses());
-    }
 }

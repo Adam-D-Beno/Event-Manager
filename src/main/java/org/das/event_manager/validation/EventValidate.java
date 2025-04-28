@@ -32,6 +32,7 @@ public class EventValidate {
         this.locationService = locationService;
     }
 
+    @Deprecated
     public void checkDatePastTime(LocalDateTime eventDate) {
         LOGGER.info("Execute method checkDatePastTime, event date = {}", eventDate);
 
@@ -43,6 +44,7 @@ public class EventValidate {
         }
     }
 
+    @Deprecated
     public void checkCostMoreThenZero(BigDecimal eventCost) {
         LOGGER.info("Execute method checkCostMoreThenZero, cost = {}", eventCost);
 
@@ -85,6 +87,7 @@ public class EventValidate {
         }
     }
 
+    @Deprecated
     public void checkDurationLessThenThirty(Integer eventDuration) {
         LOGGER.info("Execute method checkDurationLessThenThirtyThrow, duration = {}",
                 eventDuration);
@@ -97,6 +100,7 @@ public class EventValidate {
         }
     }
 
+    @Deprecated
     public void checkMaxPlacesMoreThenOnLocation(Integer eventMaxPlaces, Integer locationCapacity) {
         LOGGER.info("Execute method checkMaxPlacesMoreThenOnLocation, max places = {}, locationCapacity = {}",
                 eventMaxPlaces, locationCapacity);
@@ -113,12 +117,14 @@ public class EventValidate {
         }
     }
 
+    @Deprecated
     public void checkExistUser(User currentAuthenticatedUser) {
         LOGGER.info("Execute method checkExistUser, user = {}", currentAuthenticatedUser);
 
         userService.findById(currentAuthenticatedUser.id());
     }
 
+    @Deprecated
     public void checkExistLocation(Long locationId) {
         LOGGER.info("Execute method checkExistLocation , location id = {}", locationId);
 

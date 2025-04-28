@@ -3,3 +3,8 @@
 
 2. Нужно сделать проверку при создании мероприятия что оно еще есть
 3. В локации можно создать еще мероприятия в другое время
+
+
+update EventEntity ev
+                set ev.name = COALESCE(:name, ev.name)
+                where ev.id = :eventId

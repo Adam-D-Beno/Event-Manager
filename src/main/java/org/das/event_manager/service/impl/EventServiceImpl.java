@@ -79,44 +79,52 @@ public class EventServiceImpl implements EventService {
                         .formatted(eventId)));
     }
 
-    @Transactional
     @Override
     public Event update(Long eventId, Event eventForUpdate) {
         LOGGER.info("Execute method update in EventServiceImpl, event = {}", eventForUpdate);
 
-        Event event = findById(eventId);
-        Long locationId = Optional.ofNullable(eventForUpdate.locationId())
-                .orElse(event.locationId());
-        Integer maxPlaces = Optional.ofNullable(eventForUpdate.maxPlaces())
-                .orElse(event.maxPlaces());
-        Location location = locationService.findById(locationId);
-
-        if (location.capacity() < maxPlaces) {
-            throw new IllegalArgumentException("Capacity of location  less then maxPlaces: capacity=%s, maxPlaces=%s"
-                    .formatted(location.capacity(), maxPlaces));
-        }
         eventValidate.checkCurrentUserCanModify(eventId);
-        eventValidate.checkStatusEvent(event.status());
+        var eventEntity = eventRepository.findById(eventId).orElseThrow();
+        if (eventEntity.getStatus() != EventStatus.WAIT_START) {
+            LOGGER.error("Cannot modify event in status = {}", eventEntity.getStatus());
+            throw new IllegalArgumentException("Cannot modify event in status %s".formatted(eventEntity.getStatus()));
+        }
+
+
+        if (eventForUpdate.maxPlaces() != null || eventForUpdate.locationId() != null) {
+            Long locationId = Optional.ofNullable(eventForUpdate.locationId())
+                    .orElse(eventEntity.getLocationId());
+            Integer maxPlaces = Optional.ofNullable(eventForUpdate.maxPlaces())
+                    .orElse(eventEntity.getMaxPlaces());
+            Location location = locationService.findById(locationId);
+
+            if (location.capacity() < maxPlaces) {
+                LOGGER.error("Capacity of location  less then maxPlaces");
+                throw new IllegalArgumentException(
+                        "Capacity of location  less then maxPlaces: capacity=%s, maxPlaces=%s"
+                        .formatted(location.capacity(), maxPlaces));
+            }
+        }
+        if (eventForUpdate.maxPlaces() != null && eventEntity.getRegistrations().size() > eventForUpdate.maxPlaces()) {
+            LOGGER.error("Registration count than more maxPlaces");
+            throw new IllegalArgumentException(
+                    "Registration count than more maxPlaces = RegCount=%s, MaxPlaces=%s"
+                            .formatted(eventEntity.getRegistrations().size(), eventForUpdate.maxPlaces()));
+        }
 
         eventValidate.checkDurationLessThenThirty(eventForUpdate.duration());
         eventValidate.checkDatePastTime(eventForUpdate.date());
         eventValidate.checkCostMoreThenZero(eventForUpdate.cost());
 
+        Optional.ofNullable(eventForUpdate.name()).ifPresent(eventEntity::setName);
+        Optional.ofNullable(eventForUpdate.maxPlaces()).ifPresent(eventEntity::setMaxPlaces);
+        Optional.ofNullable(eventForUpdate.date()).ifPresent(eventEntity::setDate);
+        Optional.ofNullable(eventForUpdate.cost()).ifPresent(eventEntity::setCost);
+        Optional.ofNullable(eventForUpdate.duration()).ifPresent(eventEntity::setDuration);
+        Optional.ofNullable(eventForUpdate.locationId()).ifPresent(eventEntity::setLocationId);
 
-        EventEntity updated = eventRepository.findById(eventId)
-                .map(eventEntity -> {
-                    eventEntity.setId(eventId);
-                    eventEntity.setName(eventForUpdate.name());
-                    eventEntity.setMaxPlaces(eventForUpdate.maxPlaces());
-                    eventEntity.setDate(eventForUpdate.date());
-                    eventEntity.setCost(eventForUpdate.cost());
-                    eventEntity.setDuration(eventForUpdate.duration());
-                    eventEntity.setLocationId(locationId);
-                    return eventRepository.save(eventEntity);
-                })
-                .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not find"
-                        .formatted(eventId)));
-        return eventMapper.toDomain(updated);
+        eventRepository.save(eventEntity);
+        return eventMapper.toDomain(eventEntity);
     }
 
     @Override

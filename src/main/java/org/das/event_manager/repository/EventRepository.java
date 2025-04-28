@@ -1,6 +1,7 @@
 package org.das.event_manager.repository;
 
-import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.*;
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.entity.EventEntity;
@@ -70,17 +71,33 @@ public  interface EventRepository extends JpaRepository<EventEntity, Long> {
     @Transactional
     @Query("""
         update EventEntity ev
-        set ev.status = :status
-        where ev.id = :event_id
+            set ev.status = :status
+            where ev.id = :event_id
     """)
     void changeEventStatus(
             @Param("event_id") Long eventId,
             @Param("status") EventStatus status
     );
 
+    @Transactional
+    @Modifying
     @Query("""
-        select ev.status from EventEntity ev
-            where ev.id = :eventId
-        """)
-    EventStatus findEventStatusById(@Param("eventId") Long eventId);
+            update EventEntity ev
+                set ev.name = :name,
+                    ev.maxPlaces = :maxPlaces,
+                    ev.date = :date,
+                    ev.cost = :cost,
+                    ev.duration = :duration,
+                    ev.locationId = :locationId
+                where ev.id = :eventId
+    """)
+    void update(
+            @Param("eventId") Long eventId,
+            @Param("name") String name,
+            @Param("maxPlaces") Integer maxPlaces,
+            @Param("date") LocalDateTime date,
+            @Param("cost") BigDecimal cost,
+            @Param("duration") Integer duration,
+            @Param("locationId") Long locationId
+    );
 }

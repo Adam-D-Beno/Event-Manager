@@ -24,20 +24,17 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
     private final LocationService locationService;
     private final AuthenticationService authenticationService;
-    private final EventValidate eventValidate;
 
     public EventServiceImpl(
             EventRepository eventRepository,
             EventMapper eventMapper,
             LocationService locationService,
-            AuthenticationService authenticationService,
-            EventValidate eventValidate
+            AuthenticationService authenticationService
     ) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
         this.locationService = locationService;
         this.authenticationService = authenticationService;
-        this.eventValidate = eventValidate;
     }
 
     @Override

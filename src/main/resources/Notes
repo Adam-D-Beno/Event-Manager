@@ -1,18 +1,5 @@
 1. Как нужно удалить ивент, софт или хард методом
 //     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 
-Вопрос: Почему ты хранишь в доменных классах Ид объектов, а не сам Объект целиком
-Мой вариант:
-public record EventRegistration(
-        Long id,
-        User user,
-        Event event,
-        LocalDateTime dateRegistration
-) {}
-Твой вариант:
-public record EventRegistration(
-        Long id,
-        Long userId,
-        Long eventId,
-        LocalDateTime dateRegistration
-) {}
+2. Нужно сделать проверку при создании мероприятия что оно еще есть
+3. В локации можно создать еще мероприятия в другое время

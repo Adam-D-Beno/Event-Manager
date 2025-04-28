@@ -71,7 +71,7 @@ public class EventValidate {
                 event.id(), event.cost());
 
         Integer maxPlacesToUpdate = eventToUpdate.maxPlaces();
-        Integer currentMaxPlaces =  event.maxPlaces();
+        Integer currentMaxPlaces = event.maxPlaces();
         if (maxPlacesToUpdate == null || currentMaxPlaces == null) {
             return;
         }
@@ -128,9 +128,9 @@ public class EventValidate {
         LOGGER.info("Execute method checkStatusEvent, event status = {}", status);
 
         if (status != EventStatus.WAIT_START) {
-            LOGGER.error("Event has status = {}", status);
+            LOGGER.error("Cannot modify event in status = {}", status);
 
-            throw new IllegalArgumentException("Event has status %s".formatted(status));
+            throw new IllegalArgumentException("Cannot modify event in status %s".formatted(status));
         }
     }
 }

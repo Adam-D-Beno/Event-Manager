@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -83,14 +84,16 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event update(Long eventId, Event eventForUpdate) {
         LOGGER.info("Execute method update in EventServiceImpl, event = {}", eventForUpdate);
+        Event event = findById(eventId);
+        eventValidate.checkCurrentUserCanModify(eventId);
+        eventValidate.checkStatusEvent(event.status());
+        eventValidate.checkMaxPlacesMoreCurrentMaxPlaces(event, eventForUpdate);
         eventValidate.checkDurationLessThenThirty(eventForUpdate.duration());
-        eventValidate.checkMaxPlacesMoreCurrentMaxPlaces(findById(eventId), eventForUpdate);
         eventValidate.checkDatePastTime(eventForUpdate.date());
         eventValidate.checkCostMoreThenZero(eventForUpdate.cost());
-        eventValidate.checkCurrentUserCanModify(eventId);
-        eventValidate.checkStatusEvent(eventRepository.findEventStatusById(eventId));
 
-        Location location = locationService.findById(eventForUpdate.locationId());
+        Long locationId = Optional.ofNullable(eventForUpdate.locationId())
+                .orElse(event.locationId());
         EventEntity updated = eventRepository.findById(eventId)
                 .map(eventEntity -> {
                     eventEntity.setId(eventId);
@@ -99,7 +102,7 @@ public class EventServiceImpl implements EventService {
                     eventEntity.setDate(eventForUpdate.date());
                     eventEntity.setCost(eventForUpdate.cost());
                     eventEntity.setDuration(eventForUpdate.duration());
-                    eventEntity.setLocationId(location.id());
+                    eventEntity.setLocationId(locationId);
                     return eventRepository.save(eventEntity);
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not find"

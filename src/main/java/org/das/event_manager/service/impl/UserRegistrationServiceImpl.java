@@ -30,10 +30,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     public User register(User signUpRequest) {
         LOGGER.info("Execute method register user: login = {} in UserRegistrationService class"
                 ,signUpRequest.login());
-
         if (userService.isUserExistsByLogin(signUpRequest.login())) {
             LOGGER.error("User with login={} already exist", signUpRequest.login());
-
             throw new IllegalArgumentException("User with such login = %s already exist"
                     .formatted(signUpRequest.login()));
         }

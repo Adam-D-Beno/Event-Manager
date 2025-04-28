@@ -45,7 +45,7 @@ public class EventServiceImpl implements EventService {
             throw new IllegalArgumentException("Capacity of location is: %s, but maxPlaces is: %s"
                     .formatted(location.capacity(), eventForCreate.maxPlaces()));
         }
-       //todo check create event location on different date
+       //todo check create event location on different date-time
         EventEntity eventEntity = eventMapper.toEntity(eventForCreate);
         eventEntity.setOwnerId(currentAuthenticatedUser.id());
 
@@ -119,7 +119,6 @@ public class EventServiceImpl implements EventService {
                     "Registration count than more maxPlaces = RegCount=%s, MaxPlaces=%s"
                             .formatted(eventEntity.getRegistrations().size(), eventForUpdate.maxPlaces()));
         }
-
         Optional.ofNullable(eventForUpdate.name()).ifPresent(eventEntity::setName);
         Optional.ofNullable(eventForUpdate.maxPlaces()).ifPresent(eventEntity::setMaxPlaces);
         Optional.ofNullable(eventForUpdate.date()).ifPresent(eventEntity::setDate);

@@ -23,7 +23,6 @@ public class RegistrationMapperImpl implements RegistrationMapper {
    public EventRegistration toDomain(EventRegistrationEntity registrationEntity) {
        LOGGER.info("Execute method toDomain in RegistrationEntityMapper,registrationEntity = {}"
                , registrationEntity);
-
         return new EventRegistration(
                 registrationEntity.getId(),
                 registrationEntity.getId(),
@@ -36,7 +35,6 @@ public class RegistrationMapperImpl implements RegistrationMapper {
    public List<EventRegistration> toDomain(List<EventRegistrationEntity> registrationEntities) {
        LOGGER.info("Execute method toDomain in RegistrationEntityMapper,registrationEntities = {}"
                , registrationEntities);
-
         return registrationEntities.stream()
                 .map(this::toDomain)
                 .toList();

@@ -69,12 +69,10 @@ public class LocationServiceImpl implements LocationService {
     public Location findById(Long locationId) {
         LOGGER.info("Execute method findById in LocationService class, got argument locationId = {}",
                 locationId);
-
         return locationRepository.findById(locationId)
                 .map(entityMapper::toDomain)
                 .orElseThrow(() -> {
                    LOGGER.error("No found location with id={}", locationId);
-
                    return new EntityNotFoundException("No such found location with id = %s"
                             .formatted(locationId));
                 });
@@ -91,7 +89,6 @@ public class LocationServiceImpl implements LocationService {
         LocationEntity foundEntityForUpdate = locationRepository.findById(locationId)
                 .orElseThrow(() -> {
                     LOGGER.error("No found location = {} with id = {}",locationId, location);
-
                     return new EntityNotFoundException("LocationEntity not found by id=%s".formatted(locationId)
                     );
                 });
@@ -100,7 +97,6 @@ public class LocationServiceImpl implements LocationService {
             LOGGER.error("Capacity for update = {} should be greater than the existing capacity = {} " +
                             "for location: id = {}, name = {}",
                     location.capacity(), currentLocationCapacity, locationId, location.name());
-
             throw new IllegalArgumentException(("Capacity for update = %s should be more "
                     .formatted(location.capacity())
                     + "than the capacity = %s that already exists")
@@ -118,20 +114,16 @@ public class LocationServiceImpl implements LocationService {
     private void existLocationAddress(String locationAddress) {
         LOGGER.info("Execute isExistLocationAddress in LocationService class, location address = {}"
                 , locationAddress);
-
         if (locationRepository.existsByAddress(locationAddress)) {
             LOGGER.error("Location address = {} already exist", locationAddress);
-
             throw new IllegalArgumentException("Location address = %s exist".formatted(locationAddress));
         }
     }
 
     private void existLocationName(String locationName) {
         LOGGER.info("Execute isExistLocationName in LocationService class, location name = {}", locationName);
-
         if (locationRepository.existsByName(locationName)) {
             LOGGER.error("location name = {} already exists", locationName);
-
             throw new IllegalArgumentException("Location: name = %s already exists".formatted(locationName));
         }
     }

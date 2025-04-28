@@ -48,7 +48,6 @@ public class EventController {
             @PathVariable("eventId") Long eventId
     ) {
         LOGGER.info("Delete request by event with id = {}", eventId);
-
         eventService.deleteById(eventId);
         return ResponseEntity.noContent().build();
     }
@@ -58,7 +57,6 @@ public class EventController {
             @PathVariable("eventId") Long eventId
     ) {
         LOGGER.info("Get request find By id = {}", eventId);
-
         return ResponseEntity.ok().body(eventMapper.toDto(eventService.findById(eventId)));
     }
 
@@ -69,7 +67,6 @@ public class EventController {
             ) {
         LOGGER.info("Put request for update event By Id = {}, eventUpdateRequestDto = {}"
                 , eventId, eventUpdateRequestDto);
-
         Event eventToUpdate = eventMapper.toDomain(eventUpdateRequestDto);
         return ResponseEntity.ok().body(eventMapper.toDto(eventService.update(eventId, eventToUpdate)));
     }
@@ -79,14 +76,12 @@ public class EventController {
             @RequestBody EventSearchRequestDto eventSearchRequestDto
             ) {
         LOGGER.info("Get request for search events by filter = {}" , eventSearchRequestDto);
-
         return ResponseEntity.ok().body(eventMapper.toDto(eventService.search(eventSearchRequestDto)));
     }
 
     @GetMapping("/my")
     public ResponseEntity<List<EventResponseDto>> findEventsByUserCreation() {
         LOGGER.info("Get request for find events creation by user");
-
         return ResponseEntity.ok().body(eventMapper.toDto(eventService.findAllEventsCreationByOwner()));
     }
 

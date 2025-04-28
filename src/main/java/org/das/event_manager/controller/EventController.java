@@ -1,9 +1,7 @@
 package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.das.event_manager.domain.Event;
-import org.das.event_manager.domain.entity.EventEntity;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.EventSearchRequestDto;
@@ -26,16 +24,13 @@ public class EventController {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventController.class);
     private final EventService eventService;
     private final EventMapper eventMapper;
-    private final SchedulerService schedulerService;
 
     public EventController(
             EventService eventService,
-            EventMapper eventMapper,
-            SchedulerService schedulerService
+            EventMapper eventMapper
     ) {
         this.eventService = eventService;
         this.eventMapper = eventMapper;
-        this.schedulerService = schedulerService;
     }
 
     @PostMapping

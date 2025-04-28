@@ -6,7 +6,6 @@ import org.das.event_manager.domain.entity.EventEntity;
 import org.das.event_manager.dto.EventSearchRequestDto;
 import org.das.event_manager.dto.mappers.EventMapper;
 import org.das.event_manager.repository.EventRepository;
-import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.EventService;
 import org.das.event_manager.service.LocationService;
 import org.slf4j.Logger;

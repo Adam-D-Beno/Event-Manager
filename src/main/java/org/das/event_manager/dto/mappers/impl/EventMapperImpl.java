@@ -8,7 +8,7 @@ import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.EventUpdateRequestDto;
 import org.das.event_manager.dto.mappers.EventMapper;
 import org.das.event_manager.dto.mappers.RegistrationMapper;
-import org.das.event_manager.service.AuthenticationService;
+import org.das.event_manager.service.impl.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
@@ -20,14 +20,14 @@ import java.util.List;
 public class EventMapperImpl implements EventMapper {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(EventMapperImpl.class);
-    private final AuthenticationService authenticationServiceImpl;
+    private final AuthenticationService authenticationService;
     private final RegistrationMapper registrationMapper;
 
     public EventMapperImpl(
-            AuthenticationService authenticationServiceImpl,
+            AuthenticationService authenticationService,
            @Lazy RegistrationMapper registrationMapper
     ) {
-        this.authenticationServiceImpl = authenticationServiceImpl;
+        this.authenticationService = authenticationService;
         this.registrationMapper = registrationMapper;
     }
 
@@ -39,7 +39,7 @@ public class EventMapperImpl implements EventMapper {
                 new Event(
                 null,
                 eventUpdateRequestDto.name(),
-                authenticationServiceImpl.getCurrentAuthenticatedUser().id(),
+                authenticationService.getCurrentAuthenticatedUser().id(),
                 eventUpdateRequestDto.maxPlaces(),
                 List.of(),
                 eventUpdateRequestDto.date(),
@@ -57,7 +57,7 @@ public class EventMapperImpl implements EventMapper {
         return new Event(
                 null,
                 eventUpdateRequestDto.name(),
-                authenticationServiceImpl.getCurrentAuthenticatedUser().id(),
+                authenticationService.getCurrentAuthenticatedUser().id(),
                 eventUpdateRequestDto.maxPlaces(),
                 List.of(),
                 eventUpdateRequestDto.date(),
@@ -74,7 +74,7 @@ public class EventMapperImpl implements EventMapper {
         return new EventResponseDto(
                 event.id(),
                 event.name(),
-                authenticationServiceImpl.getCurrentAuthenticatedUser().id(),
+                authenticationService.getCurrentAuthenticatedUser().id(),
                 event.maxPlaces(),
                 event.registrations().size(),
                 event.date(),

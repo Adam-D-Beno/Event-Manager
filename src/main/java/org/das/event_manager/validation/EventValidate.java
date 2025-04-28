@@ -1,18 +1,15 @@
 package org.das.event_manager.validation;
 
 import org.das.event_manager.domain.Event;
-import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.User;
-import org.das.event_manager.domain.UserRole;
-import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.LocationService;
 import org.das.event_manager.service.UserService;
+import org.das.event_manager.service.impl.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Component
 public class EventValidate {

@@ -7,7 +7,6 @@ import org.das.event_manager.domain.User;
 import org.das.event_manager.domain.entity.EventRegistrationEntity;
 import org.das.event_manager.dto.mappers.EventMapper;
 import org.das.event_manager.repository.RegistrationRepository;
-import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.EventRegistrationService;
 import org.das.event_manager.service.EventService;
 import org.slf4j.Logger;

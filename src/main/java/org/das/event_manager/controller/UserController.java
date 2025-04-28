@@ -7,10 +7,9 @@ import org.das.event_manager.dto.SignInRequest;
 import org.das.event_manager.dto.SignUpRequest;
 import org.das.event_manager.dto.UserResponseDto;
 import org.das.event_manager.dto.mappers.UserMapper;
-import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.UserRegistrationService;
 import org.das.event_manager.service.UserService;
-import org.das.event_manager.service.impl.AuthenticationServiceImpl;
+import org.das.event_manager.service.impl.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -22,13 +21,13 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-    private final AuthenticationServiceImpl authenticationService;
+    private final AuthenticationService authenticationService;
     private final UserMapper userMapper;
     private final UserRegistrationService userRegistrationService;
     private final UserService userService;
 
     public UserController(
-            AuthenticationServiceImpl authenticationService,
+            AuthenticationService authenticationService,
             UserMapper userMapper,
             UserRegistrationService userRegistrationService,
             UserService userService

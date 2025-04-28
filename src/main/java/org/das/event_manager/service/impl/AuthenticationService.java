@@ -3,7 +3,6 @@ package org.das.event_manager.service.impl;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.SignInRequest;
 import org.das.event_manager.security.jwt.JwtTokenManager;
-import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +15,15 @@ import org.springframework.validation.annotation.Validated;
 
 @Service
 @Validated
-public class AuthenticationServiceImpl implements AuthenticationService {
+public class AuthenticationService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationService.class);
     private final AuthenticationManager authenticationManager;
     private final JwtTokenManager jwtTokenManager;
     private final UserService userService;
 
 
-    public AuthenticationServiceImpl(
+    public AuthenticationService(
             AuthenticationManager authenticationManager,
             JwtTokenManager jwtTokenManager,
             UserService userService
@@ -34,9 +33,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.userService = userService;
     }
 
-    @Override
     public String authenticateUser(SignInRequest signInRequest) {
-        LOGGER.info("Execute method authenticateUser user: login = {} in AuthenticationServiceImpl class",
+        LOGGER.info("Execute method authenticateUser user: login = {} in AuthenticationService class",
                 signInRequest.login());
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -47,7 +45,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return jwtTokenManager.generateJwtToken(foundUser);
     }
 
-    @Override
     public User getCurrentAuthenticatedUser() {
         LOGGER.info("Execute method getCurrentAuthenticatedUserOrThrow");
 

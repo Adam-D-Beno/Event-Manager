@@ -9,7 +9,6 @@ import org.das.event_manager.repository.EventRepository;
 import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.EventService;
 import org.das.event_manager.service.LocationService;
-import org.das.event_manager.validation.EventValidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

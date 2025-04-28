@@ -62,16 +62,16 @@ public class EventServiceImpl implements EventService {
         eventValidate.checkStatusEvent(event.status());
         eventValidate.checkCurrentUserCanModify(event.ownerId());
         eventRepository.findById(eventId)
-           .map(eventEntity -> {
+                .map(eventEntity -> {
                     eventEntity.setStatus(EventStatus.CANCELLED);
-                   return eventRepository.save(eventEntity);
+                    return eventRepository.save(eventEntity);
                 }).orElseThrow(() -> new EntityNotFoundException("Event not found or status is not WAIT_START"));
     }
 
     @Override
     public Event findById(Long eventId) {
-       LOGGER.info("Execute method findById in EventServiceImpl, event id = {}", eventId);
-       return eventRepository.findById(eventId)
+        LOGGER.info("Execute method findById in EventServiceImpl, event id = {}", eventId);
+        return eventRepository.findById(eventId)
                 .map(eventMapper::toDomain)
                 .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not find"
                         .formatted(eventId)));

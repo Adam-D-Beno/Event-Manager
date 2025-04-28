@@ -37,7 +37,6 @@ public class EventController {
             @Valid @RequestBody EventCreateRequestDto eventCreateRequestDto
     ) {
         LOGGER.info("Post request for create EventCreateRequestDto {}", eventCreateRequestDto);
-
         Event event = eventMapper.toDomain(eventCreateRequestDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

@@ -13,7 +13,6 @@ import org.das.event_manager.validation.EventValidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,14 +43,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event create(Event eventForCreate) {
         LOGGER.info("Execute method create in EventServiceImpl, event = {}", eventForCreate);
-
         User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUser();
-        //todo check already exist event
-        eventValidate.checkExistUser(currentAuthenticatedUser);
-        eventValidate.checkExistLocation(eventForCreate.locationId());
-        eventValidate.checkMaxPlacesMoreThenOnLocation(
-                eventForCreate.maxPlaces(), locationService.getCapacity(eventForCreate.locationId())
-        );
 
         EventEntity eventEntity = eventMapper.toEntity(eventForCreate);
         eventEntity.setOwnerId(currentAuthenticatedUser.id());
@@ -64,9 +56,16 @@ public class EventServiceImpl implements EventService {
     public void deleteById(Long eventId) {
         LOGGER.info("Execute method create in EventServiceImpl, event id = {}", eventId);
         Event event = findById(eventId);
-        eventValidate.checkStatusEvent(event.status());
-        eventValidate.checkCurrentUserCanModify(event.ownerId());
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
 
+        if (event.status() != EventStatus.WAIT_START) {
+            LOGGER.error("Cannot modify event in status = {}", event.status());
+            throw new IllegalArgumentException("Cannot modify event in status %s".formatted(event.status()));
+        }
+        if (!event.ownerId().equals(currentAuthUser.id()) && !currentAuthUser.userRole().equals(UserRole.ADMIN)) {
+            LOGGER.error("User with login = {} cant modify this event", currentAuthUser.login());
+            throw new IllegalArgumentException("User cant modify this event");
+        }
         eventRepository.changeEventStatus(event.id(), EventStatus.CANCELLED);
     }
 
@@ -82,14 +81,18 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event update(Long eventId, Event eventForUpdate) {
         LOGGER.info("Execute method update in EventServiceImpl, event = {}", eventForUpdate);
-
-        eventValidate.checkCurrentUserCanModify(eventId);
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
         var eventEntity = eventRepository.findById(eventId).orElseThrow();
+
+        if (!eventEntity.getOwnerId().equals(currentAuthUser.id()) && !currentAuthUser.userRole().equals(UserRole.ADMIN)) {
+            LOGGER.error("User with login = {} cant modify this event", currentAuthUser.login());
+            throw new IllegalArgumentException("User cant modify this event");
+        }
+
         if (eventEntity.getStatus() != EventStatus.WAIT_START) {
             LOGGER.error("Cannot modify event in status = {}", eventEntity.getStatus());
             throw new IllegalArgumentException("Cannot modify event in status %s".formatted(eventEntity.getStatus()));
         }
-
 
         if (eventForUpdate.maxPlaces() != null || eventForUpdate.locationId() != null) {
             Long locationId = Optional.ofNullable(eventForUpdate.locationId())
@@ -112,10 +115,6 @@ public class EventServiceImpl implements EventService {
                             .formatted(eventEntity.getRegistrations().size(), eventForUpdate.maxPlaces()));
         }
 
-        eventValidate.checkDurationLessThenThirty(eventForUpdate.duration());
-        eventValidate.checkDatePastTime(eventForUpdate.date());
-        eventValidate.checkCostMoreThenZero(eventForUpdate.cost());
-
         Optional.ofNullable(eventForUpdate.name()).ifPresent(eventEntity::setName);
         Optional.ofNullable(eventForUpdate.maxPlaces()).ifPresent(eventEntity::setMaxPlaces);
         Optional.ofNullable(eventForUpdate.date()).ifPresent(eventEntity::setDate);
@@ -131,7 +130,6 @@ public class EventServiceImpl implements EventService {
     public List<Event> search(EventSearchRequestDto eventSearchRequestDto) {
         LOGGER.info("Execute method search in EventServiceImpl, eventSearchRequestDto = {}"
                 , eventSearchRequestDto);
-
         List<EventEntity> searched = eventRepository.search(
                 eventSearchRequestDto.name(),
                 eventSearchRequestDto.placesMin(),
@@ -151,7 +149,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<Event> findAllEventsCreationByOwner() {
         LOGGER.info("Execute method findAllEventsCreationByOwner in EventServiceImpl, eventSearchRequestDto");
-
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
         return eventMapper.toDomain(eventRepository.findEventsByOwner_Id((currentAuthUser.id())));
     }

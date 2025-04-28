@@ -33,40 +33,16 @@ public class EventValidate {
     }
 
     @Deprecated
-    public void checkDatePastTime(LocalDateTime eventDate) {
-        LOGGER.info("Execute method checkDatePastTime, event date = {}", eventDate);
-
-        if (eventDate != null && eventDate.isBefore(LocalDateTime.now())) {
-            LOGGER.error("Date cannot be a past time = {}", eventDate);
-
-            throw new IllegalArgumentException("Data for update = %s must be after current date event"
-                    .formatted(eventDate));
-        }
-    }
-
-    @Deprecated
     public void checkCostMoreThenZero(BigDecimal eventCost) {
         LOGGER.info("Execute method checkCostMoreThenZero, cost = {}", eventCost);
 
         if (eventCost != null && eventCost.compareTo(BigDecimal.ZERO) <= 0) {
             LOGGER.error("Cost must be more then zero or negative= {}", eventCost);
-
             throw new IllegalArgumentException("Cost = %s for update must be more then zero"
                     .formatted(eventCost));
         }
     }
 
-    public void checkCurrentUserCanModify(Long eventOwnerId) {
-        LOGGER.info("Execute method checkCurrentUserCanModify eventOwnerId = {}",
-                eventOwnerId);
-
-        User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
-        if (!eventOwnerId.equals(currentAuthUser.id()) && !currentAuthUser.userRole().equals(UserRole.ADMIN)) {
-            LOGGER.error("User with login = {} cant modify this event", currentAuthUser.login());
-
-            throw new IllegalArgumentException("User cant modify this event");
-        }
-    }
 
     @Deprecated
     public void checkMaxPlacesMoreCurrentMaxPlaces(Event event, Event eventToUpdate) {
@@ -81,7 +57,6 @@ public class EventValidate {
         if (maxPlacesToUpdate < currentMaxPlaces) {
             LOGGER.error("Max places for update = {}, cannot be then max places already exist = {}",
                     maxPlacesToUpdate, currentMaxPlaces);
-
             throw new IllegalArgumentException("Max places for update = %s must be more then current max places = %s"
                     .formatted(maxPlacesToUpdate, currentMaxPlaces));
         }
@@ -94,7 +69,6 @@ public class EventValidate {
 
         if (eventDuration != null && eventDuration < 30 ) {
             LOGGER.error("Duration Less Then Thirty = {}", eventDuration);
-
             throw new IllegalArgumentException("Duration = %s for update must be more 30"
                     .formatted(eventDuration));
         }
@@ -111,7 +85,6 @@ public class EventValidate {
         if (eventMaxPlaces > locationCapacity) {
             LOGGER.error("Max places = {} at the event more then location capacity = {} ",
                     eventMaxPlaces, locationCapacity);
-
             throw new IllegalArgumentException("maxPlaces = %s cannot be more then location capacity = %s"
                     .formatted(eventMaxPlaces, locationCapacity));
         }
@@ -120,24 +93,6 @@ public class EventValidate {
     @Deprecated
     public void checkExistUser(User currentAuthenticatedUser) {
         LOGGER.info("Execute method checkExistUser, user = {}", currentAuthenticatedUser);
-
         userService.findById(currentAuthenticatedUser.id());
-    }
-
-    @Deprecated
-    public void checkExistLocation(Long locationId) {
-        LOGGER.info("Execute method checkExistLocation , location id = {}", locationId);
-
-        locationService.findById(locationId);
-    }
-
-    public void checkStatusEvent(EventStatus status) {
-        LOGGER.info("Execute method checkStatusEvent, event status = {}", status);
-
-        if (status != EventStatus.WAIT_START) {
-            LOGGER.error("Cannot modify event in status = {}", status);
-
-            throw new IllegalArgumentException("Cannot modify event in status %s".formatted(status));
-        }
     }
 }

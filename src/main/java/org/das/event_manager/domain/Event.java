@@ -9,7 +9,7 @@ public record Event(
         String name,
         Long ownerId,
         Integer maxPlaces,
-        List<Long> registrations,
+        List<EventRegistration> registrations,
         LocalDateTime date,
         BigDecimal cost,
         Integer duration,

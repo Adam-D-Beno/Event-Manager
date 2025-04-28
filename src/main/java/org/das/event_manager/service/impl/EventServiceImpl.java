@@ -9,12 +9,11 @@ import org.das.event_manager.repository.EventRepository;
 import org.das.event_manager.service.AuthenticationService;
 import org.das.event_manager.service.EventService;
 import org.das.event_manager.service.LocationService;
-import org.das.event_manager.validation.EventValidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -24,33 +23,33 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
     private final LocationService locationService;
     private final AuthenticationService authenticationService;
-    private final EventValidate eventValidate;
 
     public EventServiceImpl(
             EventRepository eventRepository,
             EventMapper eventMapper,
             LocationService locationService,
-            AuthenticationService authenticationService,
-            EventValidate eventValidate
+            AuthenticationService authenticationService
     ) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
         this.locationService = locationService;
         this.authenticationService = authenticationService;
-        this.eventValidate = eventValidate;
     }
 
     @Override
-    public Event create(Event event) {
-        LOGGER.info("Execute method create in EventServiceImpl, event = {}", event);
-        User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
-        eventValidate.checkExistUser(currentAuthenticatedUser);
-        eventValidate.checkExistLocation(event.locationId());
-        eventValidate.checkMaxPlacesMoreThenOnLocation(
-                event.maxPlaces(), locationService.getCapacity(event.locationId())
-        );
-        EventEntity eventEntity = eventMapper.toEntity(event);
+    public Event create(Event eventForCreate) {
+        LOGGER.info("Execute method create in EventServiceImpl, event = {}", eventForCreate);
+        User currentAuthenticatedUser = authenticationService.getCurrentAuthenticatedUser();
+        Location location = locationService.findById(eventForCreate.locationId());
+
+        if (location.capacity() < eventForCreate.maxPlaces()) {
+            throw new IllegalArgumentException("Capacity of location is: %s, but maxPlaces is: %s"
+                    .formatted(location.capacity(), eventForCreate.maxPlaces()));
+        }
+       //todo check create event location on different date
+        EventEntity eventEntity = eventMapper.toEntity(eventForCreate);
         eventEntity.setOwnerId(currentAuthenticatedUser.id());
+
         EventEntity saved = eventRepository.save(eventEntity);
         return eventMapper.toDomain(saved);
     }
@@ -59,48 +58,78 @@ public class EventServiceImpl implements EventService {
     public void deleteById(Long eventId) {
         LOGGER.info("Execute method create in EventServiceImpl, event id = {}", eventId);
         Event event = findById(eventId);
-        eventValidate.checkStatusEvent(event.status());
-        eventValidate.checkCurrentUserCanModify(event.ownerId());
-        eventRepository.findById(eventId)
-                .map(eventEntity -> {
-                    eventEntity.setStatus(EventStatus.CANCELLED);
-                    return eventRepository.save(eventEntity);
-                }).orElseThrow(() -> new EntityNotFoundException("Event not found or status is not WAIT_START"));
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
+
+        if (event.status() != EventStatus.WAIT_START) {
+            LOGGER.error("Cannot modify event in status = {}", event.status());
+            throw new IllegalArgumentException("Cannot modify event in status %s".formatted(event.status()));
+        }
+        if (!event.ownerId().equals(currentAuthUser.id()) && !currentAuthUser.userRole().equals(UserRole.ADMIN)) {
+            LOGGER.error("User with login = {} cant modify this event", currentAuthUser.login());
+            throw new IllegalArgumentException("User cant modify this event");
+        }
+        eventRepository.changeEventStatus(event.id(), EventStatus.CANCELLED);
     }
 
     @Override
     public Event findById(Long eventId) {
-        LOGGER.info("Execute method findById in EventServiceImpl, event id = {}", eventId);
-        return eventRepository.findById(eventId)
+       LOGGER.info("Execute method findById in EventServiceImpl, event id = {}", eventId);
+       return eventRepository.findById(eventId)
                 .map(eventMapper::toDomain)
-                .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not find"
+                .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not found"
                         .formatted(eventId)));
     }
 
-    @Transactional
     @Override
-    public Event update(Long eventId, Event eventToUpdate) {
-        eventValidate.checkDurationLessThenThirtyThrow(eventToUpdate.duration());
-        eventValidate.checkMaxPlacesMoreCurrentMaxPlaces(findById(eventId), eventToUpdate);
-        eventValidate.checkDatePastTime(eventToUpdate.date());
-        eventValidate.checkCostMoreThenZero(eventToUpdate.cost());
-        eventValidate.checkCurrentUserCanModify(eventId);
-        eventValidate.checkStatusEvent(eventRepository.findEventStatusById(eventId));
-        Location location = locationService.findById(eventToUpdate.locationId());
-        EventEntity updated = eventRepository.findById(eventId)
-                .map(eventEntity -> {
-                    eventEntity.setId(eventId);
-                    eventEntity.setName(eventToUpdate.name());
-                    eventEntity.setMaxPlaces(eventToUpdate.maxPlaces());
-                    eventEntity.setDate(eventToUpdate.date());
-                    eventEntity.setCost(eventToUpdate.cost());
-                    eventEntity.setDuration(eventToUpdate.duration());
-                    eventEntity.setLocationId(location.id());
-                    return eventRepository.save(eventEntity);
-                })
-                .orElseThrow(() -> new EntityNotFoundException("Event with id = %s not find"
-                        .formatted(eventId)));
-        return eventMapper.toDomain(updated);
+    public Event update(Long eventId, Event eventForUpdate) {
+        LOGGER.info("Execute method update in EventServiceImpl, event = {}", eventForUpdate);
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
+        var eventEntity = eventRepository.findById(eventId).orElseThrow(
+                () -> new EntityNotFoundException("Event with id = %s not found"
+                        .formatted(eventId))
+        );
+
+        if (!eventEntity.getOwnerId().equals(currentAuthUser.id())
+                && !currentAuthUser.userRole().equals(UserRole.ADMIN)) {
+            LOGGER.error("User with login = {} cant modify this event", currentAuthUser.login());
+            throw new IllegalArgumentException("User cant modify this event");
+        }
+
+        if (eventEntity.getStatus() != EventStatus.WAIT_START) {
+            LOGGER.error("Cannot modify event in status = {}", eventEntity.getStatus());
+            throw new IllegalArgumentException("Cannot modify event in status %s".formatted(eventEntity.getStatus()));
+        }
+
+        if (eventForUpdate.maxPlaces() != null || eventForUpdate.locationId() != null) {
+            Long locationId = Optional.ofNullable(eventForUpdate.locationId())
+                    .orElse(eventEntity.getLocationId());
+            Integer maxPlaces = Optional.ofNullable(eventForUpdate.maxPlaces())
+                    .orElse(eventEntity.getMaxPlaces());
+            Location location = locationService.findById(locationId);
+
+            if (location.capacity() < maxPlaces) {
+                LOGGER.error("Capacity of location  less then maxPlaces");
+                throw new IllegalArgumentException(
+                        "Capacity of location  less then maxPlaces: capacity=%s, maxPlaces=%s"
+                        .formatted(location.capacity(), maxPlaces));
+            }
+        }
+        if (eventForUpdate.maxPlaces() != null && eventEntity.getRegistrations().size() > eventForUpdate.maxPlaces()) {
+            LOGGER.error("Registration count than more maxPlaces");
+            throw new IllegalArgumentException(
+                    "Registration count than more maxPlaces = RegCount=%s, MaxPlaces=%s"
+                            .formatted(eventEntity.getRegistrations().size(), eventForUpdate.maxPlaces()));
+        }
+
+        Optional.ofNullable(eventForUpdate.name()).ifPresent(eventEntity::setName);
+        Optional.ofNullable(eventForUpdate.maxPlaces()).ifPresent(eventEntity::setMaxPlaces);
+        Optional.ofNullable(eventForUpdate.date()).ifPresent(eventEntity::setDate);
+        Optional.ofNullable(eventForUpdate.cost()).ifPresent(eventEntity::setCost);
+        Optional.ofNullable(eventForUpdate.duration()).ifPresent(eventEntity::setDuration);
+        Optional.ofNullable(eventForUpdate.locationId()).ifPresent(eventEntity::setLocationId);
+
+        eventRepository.save(eventEntity);
+        return eventMapper.toDomain(eventEntity);
     }
 
     @Override
@@ -126,7 +155,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<Event> findAllEventsCreationByOwner() {
         LOGGER.info("Execute method findAllEventsCreationByOwner in EventServiceImpl, eventSearchRequestDto");
-        User currentAuthUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
         return eventMapper.toDomain(eventRepository.findEventsByOwner_Id((currentAuthUser.id())));
     }
 }

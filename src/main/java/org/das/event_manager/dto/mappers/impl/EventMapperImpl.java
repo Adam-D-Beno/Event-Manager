@@ -3,31 +3,32 @@ package org.das.event_manager.dto.mappers.impl;
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.entity.EventEntity;
-import org.das.event_manager.domain.entity.EventRegistrationEntity;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.EventUpdateRequestDto;
 import org.das.event_manager.dto.mappers.EventMapper;
-import org.das.event_manager.service.impl.AuthenticationServiceImpl;
-import org.das.event_manager.service.impl.EventRegistrationServiceImpl;
+import org.das.event_manager.dto.mappers.RegistrationMapper;
+import org.das.event_manager.service.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
-@Validated
 @Component
 public class EventMapperImpl implements EventMapper {
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(EventMapperImpl.class);
-    private final AuthenticationServiceImpl authenticationServiceImpl;
-    private final EventRegistrationServiceImpl registrationService;
+    private final AuthenticationService authenticationServiceImpl;
+    private final RegistrationMapper registrationMapper;
 
-    public EventMapperImpl(AuthenticationServiceImpl authenticationServiceImpl, EventRegistrationServiceImpl registrationService) {
+    public EventMapperImpl(
+            AuthenticationService authenticationServiceImpl,
+           @Lazy RegistrationMapper registrationMapper
+    ) {
         this.authenticationServiceImpl = authenticationServiceImpl;
-        this.registrationService = registrationService;
+        this.registrationMapper = registrationMapper;
     }
 
     @Override
@@ -38,7 +39,7 @@ public class EventMapperImpl implements EventMapper {
                 new Event(
                 null,
                 eventUpdateRequestDto.name(),
-                authenticationServiceImpl.getCurrentAuthenticatedUserOrThrow().id(),
+                authenticationServiceImpl.getCurrentAuthenticatedUser().id(),
                 eventUpdateRequestDto.maxPlaces(),
                 List.of(),
                 eventUpdateRequestDto.date(),
@@ -56,14 +57,14 @@ public class EventMapperImpl implements EventMapper {
         return new Event(
                 null,
                 eventUpdateRequestDto.name(),
-                authenticationServiceImpl.getCurrentAuthenticatedUserOrThrow().id(),
+                authenticationServiceImpl.getCurrentAuthenticatedUser().id(),
                 eventUpdateRequestDto.maxPlaces(),
                 List.of(),
                 eventUpdateRequestDto.date(),
                 eventUpdateRequestDto.cost(),
                 eventUpdateRequestDto.duration(),
                 eventUpdateRequestDto.locationId(),
-                EventStatus.WAIT_START
+                null
         );
     }
 
@@ -73,7 +74,7 @@ public class EventMapperImpl implements EventMapper {
         return new EventResponseDto(
                 event.id(),
                 event.name(),
-                authenticationServiceImpl.getCurrentAuthenticatedUserOrThrow().id(),
+                authenticationServiceImpl.getCurrentAuthenticatedUser().id(),
                 event.maxPlaces(),
                 event.registrations().size(),
                 event.date(),
@@ -106,9 +107,9 @@ public class EventMapperImpl implements EventMapper {
                 event.duration(),
                 event.locationId(),
                 event.status(),
-                event.registrations()
-                        .stream()
-                        .map(registrationService::findById).toList()
+                event.registrations().isEmpty()
+                        ? List.of()
+                        : registrationMapper.toEntity(event.registrations())
         );
     }
 
@@ -118,13 +119,15 @@ public class EventMapperImpl implements EventMapper {
         return new Event(
                 eventEntity.getId(),
                 eventEntity.getName(),
-                eventEntity.getOwnerId(),
+                eventEntity.getId(),
                 eventEntity.getMaxPlaces(),
-                eventEntity.getRegistrations().stream().map(EventRegistrationEntity::getId).toList(),
+                eventEntity.getRegistrations()
+                        .stream()
+                        .map(registrationMapper::toDomain).toList(),
                 eventEntity.getDate(),
                 eventEntity.getCost(),
                 eventEntity.getDuration(),
-                eventEntity.getLocationId(),
+                eventEntity.getId(),
                 eventEntity.getStatus()
         );
     }
@@ -136,5 +139,4 @@ public class EventMapperImpl implements EventMapper {
                 .map(this::toDomain)
                 .toList();
     }
-
 }

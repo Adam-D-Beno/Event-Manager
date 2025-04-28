@@ -22,16 +22,20 @@ public interface RegistrationRepository extends JpaRepository<EventRegistrationE
     );
 
     @Query("""
-            SELECT re FROM EventRegistrationEntity re
-                        WHERE re.userEntity.id = :UserId
+            SELECT re.event FROM EventRegistrationEntity re
+                        WHERE re.id = :UserId
             """)
-    List<EventRegistrationEntity> getRegistrationsByUserId(
+    List<EventEntity> findRegisteredEvents(
             @Param("UserId") Long UserId
     );
 
     @Query("""
-            SELECT re.event FROM EventRegistrationEntity re
+            SELECT re FROM EventRegistrationEntity re
             WHERE re.event.id = :eventId
+            AND re.userId = :userId
             """)
-    Optional<EventEntity> findEventById(@Param("eventId") Long eventId);
+    Optional<EventRegistrationEntity> findRegistration(
+            @Param("eventId") Long eventId,
+            @Param("userId") Long userId
+    );
 }

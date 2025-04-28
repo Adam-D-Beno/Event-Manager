@@ -11,14 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
-@Validated
 @Component
 public class UserMapperImpl implements UserMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserMapperImpl.class);
 
     @Override
-    public UserResponseDto toDto(@NotNull User user) {
+    public UserResponseDto toDto(User user) {
         LOGGER.info("Execute method toDto in UserDtoMapper, user login: {}", user.login());
         return new UserResponseDto(
                 user.id(),
@@ -29,7 +28,7 @@ public class UserMapperImpl implements UserMapper {
     }
 
     @Override
-    public User toDomain(@NotNull SignUpRequest signUpRequest) {
+    public User toDomain(SignUpRequest signUpRequest) {
         LOGGER.info("Execute method toDomain in UserDtoMapper, user login: {}", signUpRequest.login());
         return new User(
                 null,
@@ -41,7 +40,7 @@ public class UserMapperImpl implements UserMapper {
     }
 
     @Override
-    public UserEntity toEntity(@NotNull User user) {
+    public UserEntity toEntity(User user) {
         LOGGER.info("Execute method toEntity in UserEntityMapper, user login: {}", user.login());
         return new UserEntity(
                 null,
@@ -53,7 +52,7 @@ public class UserMapperImpl implements UserMapper {
     }
 
     @Override
-    public User toDomain(@NotNull UserEntity userEntity) {
+    public User toDomain(UserEntity userEntity) {
         LOGGER.info("Execute method toDomain in UserEntityMapper, user login: {}", userEntity.getLogin());
         return new User(
                 userEntity.getId(),

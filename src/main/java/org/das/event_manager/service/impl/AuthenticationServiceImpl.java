@@ -48,7 +48,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public User getCurrentAuthenticatedUserOrThrow() {
+    public User getCurrentAuthenticatedUser() {
         LOGGER.info("Execute method getCurrentAuthenticatedUserOrThrow");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

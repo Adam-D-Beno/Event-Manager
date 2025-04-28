@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -67,8 +68,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .formLogin(login -> login.disable())
-                .csrf(csrf -> csrf.disable())
+                .formLogin(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
@@ -101,8 +102,8 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.POST, "/events/search")
                             .hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
                             .requestMatchers(HttpMethod.GET, "/events/my")
-
                             .hasAnyAuthority(UserRole.USER.name())
+
                             .requestMatchers(HttpMethod.POST, "/events/registrations/**")
                             .hasAnyAuthority(UserRole.USER.name())
                             .requestMatchers(HttpMethod.DELETE, "/events/registrations/cancel/**")

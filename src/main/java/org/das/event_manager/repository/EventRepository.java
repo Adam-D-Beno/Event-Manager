@@ -1,11 +1,15 @@
 package org.das.event_manager.repository;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.*;
+import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.entity.EventEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,9 +55,9 @@ public  interface EventRepository extends JpaRepository<EventEntity, Long> {
     List<EventEntity> findEventsByOwner_Id(@Param("ownerId") Long ownerId);
 
     @Query("""
-        select ev.id from EventEntity ev
+        select ev.id from EventEntity ev 
         WHERE ev.status = :status
-        and ev.date < CURRENT_TIMESTAMP
+        and ev.date < CURRENT_TIMESTAMP 
     """)
     List<Long> findStartedEventsWithStatus(@Param("status") EventStatus status);
 
@@ -67,17 +71,33 @@ public  interface EventRepository extends JpaRepository<EventEntity, Long> {
     @Transactional
     @Query("""
         update EventEntity ev
-        set ev.status = :status
-        where ev.id = :event_id
+            set ev.status = :status
+            where ev.id = :event_id
     """)
     void changeEventStatus(
             @Param("event_id") Long eventId,
             @Param("status") EventStatus status
     );
 
+    @Transactional
+    @Modifying
     @Query("""
-        select ev.status from EventEntity ev
-            where ev.id = :eventId
-        """)
-    EventStatus findEventStatusById(@Param("eventId") Long eventId);
+            update EventEntity ev
+                set ev.name = :name,
+                    ev.maxPlaces = :maxPlaces,
+                    ev.date = :date,
+                    ev.cost = :cost,
+                    ev.duration = :duration,
+                    ev.locationId = :locationId
+                where ev.id = :eventId
+    """)
+    void update(
+            @Param("eventId") Long eventId,
+            @Param("name") String name,
+            @Param("maxPlaces") Integer maxPlaces,
+            @Param("date") LocalDateTime date,
+            @Param("cost") BigDecimal cost,
+            @Param("duration") Integer duration,
+            @Param("locationId") Long locationId
+    );
 }

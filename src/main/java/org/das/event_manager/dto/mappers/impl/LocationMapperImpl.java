@@ -11,14 +11,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import java.util.List;
 
-@Validated
 @Component
 public class LocationMapperImpl implements LocationMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationMapperImpl.class);
 
     @Override
-    public Location toDomain(@NotNull LocationDto locationDto) {
+    public Location toDomain(LocationDto locationDto) {
         LOGGER.info("Execute method toDomain in LocationDtoMapper class, locationDto = {} ",
                 locationDto);
         return new Location(
@@ -31,7 +30,7 @@ public class LocationMapperImpl implements LocationMapper {
     }
 
     @Override
-    public LocationDto toDto(@NotNull Location location) {
+    public LocationDto toDto(Location location) {
         LOGGER.info("Execute method toDto in LocationDtoMapper class, location = {} ",
                 location);
         return new LocationDto(
@@ -44,7 +43,7 @@ public class LocationMapperImpl implements LocationMapper {
     }
 
     @Override
-    public List<LocationDto> toDto(@NotNull List<Location> locations) {
+    public List<LocationDto> toDto(List<Location> locations) {
         if (locations.isEmpty()) {
             return List.of();
         }
@@ -56,7 +55,7 @@ public class LocationMapperImpl implements LocationMapper {
     }
 
     @Override
-    public LocationEntity toEntity(@NotNull Location location) {
+    public LocationEntity toEntity(Location location) {
         LOGGER.info("Execute method toEntity in LocationEntityMapper class, location = {} ",
                 location);
         return new LocationEntity(

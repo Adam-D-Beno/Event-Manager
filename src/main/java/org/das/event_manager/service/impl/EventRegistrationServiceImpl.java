@@ -52,7 +52,11 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
         if (registration.isPresent()) {
             throw new IllegalArgumentException("User with id=%s already registered".formatted(currentAuthUser.id()));
         }
-        checkStatusEvent(event);
+        if (event.status() != EventStatus.WAIT_START) {
+            LOGGER.error("Cannot registration event has status = {}",
+                    event.status());
+            throw new IllegalArgumentException("Event has status %s".formatted(event.status()));
+        }
         EventRegistrationEntity newRegistrationOnEvent = new EventRegistrationEntity(
                 null,
                 currentAuthUser.id(),
@@ -72,7 +76,7 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
                 .orElseThrow(() -> new EntityNotFoundException("EventRegistration =%s not found, userId=%s"
                         .formatted(eventId, currentAuthUser.id())));
 
-        if (registrationEntity.getEvent().getStatus() != EventStatus.STARTED) {
+        if (registrationEntity.getEvent().getStatus() != EventStatus.WAIT_START) {
             LOGGER.error("Cannot cancel registration on event = {} has status = {}",
                     registrationEntity.getEvent(), registrationEntity.getEvent());
             throw new IllegalStateException("Cancellation of registration is impossible: " +
@@ -90,14 +94,4 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
                 .map(eventMapper::toDomain)
                 .toList();
     }
-
-    private void checkStatusEvent(Event event) {
-        LOGGER.info("Execute method checkStatusEvent in EventServiceImpl, event = {}", event);
-        if (event.status() != EventStatus.WAIT_START) {
-            LOGGER.error("Cannot registration event has status = {}",
-                    event.status());
-            throw new IllegalArgumentException("Event has status %s".formatted(event.status()));
-        }
-    }
-
 }

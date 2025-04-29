@@ -94,24 +94,25 @@ public class EventMapper {
                 event.name(),
                 event.ownerId(),
                 event.maxPlaces(),
-                event.registrations().size(),
+                event.registrations().isEmpty()
+                        ? List.of()
+                        : registrationMapper.toEntity(event.registrations()),
                 event.date(),
                 event.cost(),
                 event.duration(),
                 event.locationId(),
-                event.status(),
-                event.registrations().isEmpty()
-                        ? List.of()
-                        : registrationMapper.toEntity(event.registrations())
+                event.status()
         );
     }
+
+
 
     public Event toDomain(EventEntity eventEntity) {
         LOGGER.info("Execute method to toDomain in EventEntityMapper class, event = {}",eventEntity);
         return new Event(
                 eventEntity.getId(),
                 eventEntity.getName(),
-                eventEntity.getId(),
+                eventEntity.getOwnerId(),
                 eventEntity.getMaxPlaces(),
                 eventEntity.getRegistrations()
                         .stream()

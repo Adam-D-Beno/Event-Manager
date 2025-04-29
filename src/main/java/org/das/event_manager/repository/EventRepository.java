@@ -1,15 +1,11 @@
 package org.das.event_manager.repository;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.*;
-import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.entity.EventEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,6 +62,18 @@ public  interface EventRepository extends JpaRepository<EventEntity, Long> {
           where ev.date + INTERVAL '1 MINUTE' * ev.duration < CURRENT_TIMESTAMP
     """, nativeQuery = true)
     List<Long> findEndedEventsWithStatus(@Param("status") EventStatus status);
+
+    @Query(value = """
+            select CASE WHEN COUNT(ev) > 0 THEN TRUE ELSE FALSE END
+            from events ev
+            where ev.date <= :newEndTime
+            AND ev.date  + INTERVAL '1 MINUTE' * ev.duration >= :newStartTime
+            AND ev.location_id = :locationId
+    """,nativeQuery = true)
+    boolean isDateForCreateEventBusy(
+            @Param("newStartTime") LocalDateTime newStartTime,
+            @Param("newEndTime") LocalDateTime newEndTime,
+            @Param("locationId") Long locationId);
 
     @Modifying
     @Transactional

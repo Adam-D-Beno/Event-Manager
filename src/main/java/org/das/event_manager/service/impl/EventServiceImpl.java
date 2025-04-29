@@ -11,6 +11,8 @@ import org.das.event_manager.service.LocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,7 +47,16 @@ public class EventServiceImpl implements EventService {
             throw new IllegalArgumentException("Capacity of location is: %s, but maxPlaces is: %s"
                     .formatted(location.capacity(), eventForCreate.maxPlaces()));
         }
-       //todo check create event location on different date-time
+        LocalDateTime startDateEvent = eventForCreate.date();
+        LocalDateTime endDateEvent = eventForCreate.date().plusMinutes(eventForCreate.duration());
+        var isDateForCreateBusy = eventRepository.isDateForCreateEventBusy(
+                startDateEvent, endDateEvent, eventForCreate.locationId()
+        );
+        if (isDateForCreateBusy) {
+            throw new IllegalArgumentException(("Cannot create event=%s on that date=%s " +
+                    "because event on that already exist")
+                    .formatted(eventForCreate, eventForCreate.date()));
+        }
         EventEntity eventEntity = eventMapper.toEntity(eventForCreate);
         eventEntity.setOwnerId(currentAuthenticatedUser.id());
 

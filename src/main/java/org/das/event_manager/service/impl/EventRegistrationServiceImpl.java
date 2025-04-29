@@ -85,7 +85,7 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
     public List<Event> findAllEventByUserRegistration() {
         LOGGER.info("Execute method findAllEventByUserRegistration in EventServiceImpl");
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
-        return registrationRepository.findRegisteredEvents(currentAuthUser.id())
+        return registrationRepository.findAllRegisteredEventsByUserId(currentAuthUser.id())
                 .stream()
                 .map(eventMapper::toDomain)
                 .toList();

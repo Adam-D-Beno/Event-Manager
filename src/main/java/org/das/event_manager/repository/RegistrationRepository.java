@@ -14,18 +14,10 @@ import java.util.Optional;
 public interface RegistrationRepository extends JpaRepository<EventRegistrationEntity, Long> {
 
     @Query("""
-            SELECT re FROM EventRegistrationEntity re
-                        WHERE re.event.id = :eventId
-            """)
-    Optional<EventRegistrationEntity> getRegistrationsByEventId(
-            @Param("eventId") Long eventId
-    );
-
-    @Query("""
             SELECT re.event FROM EventRegistrationEntity re
                         WHERE re.id = :UserId
             """)
-    List<EventEntity> findRegisteredEvents(
+    List<EventEntity> findAllRegisteredEventsByUserId(
             @Param("UserId") Long UserId
     );
 

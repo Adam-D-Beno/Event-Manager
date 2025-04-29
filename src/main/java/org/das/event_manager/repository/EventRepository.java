@@ -51,9 +51,9 @@ public  interface EventRepository extends JpaRepository<EventEntity, Long> {
     List<EventEntity> findEventsByOwner_Id(@Param("ownerId") Long ownerId);
 
     @Query("""
-        select ev.id from EventEntity ev 
+        select ev.id from EventEntity ev
         WHERE ev.status = :status
-        and ev.date < CURRENT_TIMESTAMP 
+        and ev.date < CURRENT_TIMESTAMP
     """)
     List<Long> findStartedEventsWithStatus(@Param("status") EventStatus status);
 

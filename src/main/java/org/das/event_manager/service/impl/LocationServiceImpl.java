@@ -6,7 +6,6 @@ import org.das.event_manager.domain.entity.LocationEntity;
 import org.das.event_manager.dto.mappers.LocationMapper;
 import org.das.event_manager.repository.LocationRepository;
 import org.das.event_manager.service.LocationService;
-import org.das.event_manager.validation.LocationValidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +21,14 @@ public class LocationServiceImpl implements LocationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationServiceImpl.class);
     private final LocationRepository locationRepository;
     private final LocationMapper entityMapper;
-    private final LocationValidate locationValidate;
 
     @Autowired
     public LocationServiceImpl(
             LocationRepository locationRepository,
-            LocationMapper entityMapper,
-            LocationValidate locationValidate
+            LocationMapper entityMapper
     ) {
         this.locationRepository = locationRepository;
         this.entityMapper = entityMapper;
-        this.locationValidate = locationValidate;
     }
 
     @Override
@@ -45,7 +41,7 @@ public class LocationServiceImpl implements LocationService {
     public Location create(Location locationToUpdate) {
         LOGGER.info("Execute method create in LocationService class, got argument locationToUpdate = {}",
                     locationToUpdate);
-        locationValidate.validateLocationIdNull(locationToUpdate.id());
+        validateLocationIdNull(locationToUpdate.id());
         existLocationName(locationToUpdate.name());
         existLocationAddress(locationToUpdate.address());
         return entityMapper.toDomain(locationRepository.save(entityMapper.toEntity(locationToUpdate)));
@@ -85,7 +81,7 @@ public class LocationServiceImpl implements LocationService {
         LOGGER.info("Execute method updateById in LocationService class, got arguments locationId = {}, location = {}",
                 locationId, location);
 
-        locationValidate.validateLocationIdNull(location.id());
+        validateLocationIdNull(location.id());
         LocationEntity foundEntityForUpdate = locationRepository.findById(locationId)
                 .orElseThrow(() -> {
                     LOGGER.error("No found location = {} with id = {}",locationId, location);
@@ -125,6 +121,17 @@ public class LocationServiceImpl implements LocationService {
         if (locationRepository.existsByName(locationName)) {
             LOGGER.error("location name = {} already exists", locationName);
             throw new IllegalArgumentException("Location: name = %s already exists".formatted(locationName));
+        }
+    }
+
+    private void validateLocationIdNull(Long locationId) {
+        LOGGER.info("Execute method isLocationIdNull in LocationValidate class, checking locationId = {}"
+                , locationId);
+
+        if (locationId != null) {
+            LOGGER.info("Cannot creation Location with provided id. id = {} must be empty", locationId);
+
+            throw new IllegalArgumentException("Cannot creation Location with provided id. id must be empty");
         }
     }
 }

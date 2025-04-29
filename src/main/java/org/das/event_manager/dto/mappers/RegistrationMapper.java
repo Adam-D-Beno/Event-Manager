@@ -1,5 +1,6 @@
 package org.das.event_manager.dto.mappers;
 
+import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.EventRegistration;
 import org.das.event_manager.domain.entity.EventRegistrationEntity;
 import org.das.event_manager.repository.RegistrationRepository;
@@ -9,14 +10,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class RegistrationMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationMapper.class);
     private final RegistrationRepository registrationRepository;
-
-    public RegistrationMapper(RegistrationRepository registrationRepository) {
-        this.registrationRepository = registrationRepository;
-    }
 
    public EventRegistration toDomain(EventRegistrationEntity registrationEntity) {
        LOGGER.info("Execute method toDomain in RegistrationEntityMapper,registrationEntity = {}"

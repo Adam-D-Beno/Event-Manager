@@ -1,5 +1,6 @@
 package org.das.event_manager.security;
 
+import lombok.RequiredArgsConstructor;
 import org.das.event_manager.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,14 +14,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomUserDetailService.class);
     private final UserRepository userRepository;
-
-    public CustomUserDetailService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {

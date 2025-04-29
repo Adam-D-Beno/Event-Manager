@@ -1,6 +1,7 @@
 package org.das.event_manager.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.User;
@@ -11,13 +12,13 @@ import org.das.event_manager.service.EventRegistrationService;
 import org.das.event_manager.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class EventRegistrationServiceImpl implements EventRegistrationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventRegistrationServiceImpl.class);
@@ -26,17 +27,6 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
     private final AuthenticationService authenticationService;
     private final EventService eventService;
 
-    public EventRegistrationServiceImpl(
-            RegistrationRepository registrationRepository,
-            @Lazy EventMapper eventMapper,
-            AuthenticationService authenticationService,
-            EventService eventService
-    ) {
-        this.registrationRepository = registrationRepository;
-        this.eventMapper = eventMapper;
-        this.authenticationService = authenticationService;
-        this.eventService = eventService;
-    }
 
     @Override
     public void registerUserOnEvent(Long eventId) {

@@ -1,5 +1,6 @@
 package org.das.event_manager.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.mappers.EventMapper;
 import org.das.event_manager.service.EventRegistrationService;
@@ -7,12 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/events/registrations")
 public class EventRegistrationController {
 
@@ -20,13 +21,6 @@ public class EventRegistrationController {
     private final EventRegistrationService eventRegistrationService;
     private final EventMapper eventMapper;
 
-    public EventRegistrationController(
-            EventRegistrationService eventRegistrationService,
-            EventMapper eventMapper
-    ) {
-        this.eventRegistrationService = eventRegistrationService;
-        this.eventMapper = eventMapper;
-    }
 
     @PostMapping("/{eventId}")
     public ResponseEntity<Void> registrationUserOnEvent(

@@ -1,5 +1,6 @@
 package org.das.event_manager.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.domain.UserRole;
 import org.das.event_manager.service.UserRegistrationService;
@@ -8,23 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 @Service
-@Validated
+@RequiredArgsConstructor
 public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserRegistrationServiceImpl.class);
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserRegistrationServiceImpl(
-            UserService userService,
-            PasswordEncoder passwordEncoder
-    ) {
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Override
     public User register(User signUpRequest) {

@@ -1,5 +1,6 @@
 package org.das.event_manager.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.dto.SignInRequest;
 import org.das.event_manager.security.jwt.JwtTokenManager;
@@ -11,10 +12,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 @Service
-@Validated
+@RequiredArgsConstructor
 public class AuthenticationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationService.class);
@@ -22,16 +22,6 @@ public class AuthenticationService {
     private final JwtTokenManager jwtTokenManager;
     private final UserService userService;
 
-
-    public AuthenticationService(
-            AuthenticationManager authenticationManager,
-            JwtTokenManager jwtTokenManager,
-            UserService userService
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenManager = jwtTokenManager;
-        this.userService = userService;
-    }
 
     public String authenticateUser(SignInRequest signInRequest) {
         LOGGER.info("Execute method authenticateUser user: login = {} in AuthenticationService class",

@@ -2,6 +2,7 @@ package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.das.event_manager.dto.JwtResponse;
 import org.das.event_manager.dto.SignInRequest;
 import org.das.event_manager.dto.SignUpRequest;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
 
@@ -25,18 +27,6 @@ public class UserController {
     private final UserMapper userMapper;
     private final UserRegistrationService userRegistrationService;
     private final UserService userService;
-
-    public UserController(
-            AuthenticationService authenticationService,
-            UserMapper userMapper,
-            UserRegistrationService userRegistrationService,
-            UserService userService
-    ) {
-        this.authenticationService = authenticationService;
-        this.userMapper = userMapper;
-        this.userRegistrationService = userRegistrationService;
-        this.userService = userService;
-    }
 
     @PostMapping
     public ResponseEntity<UserResponseDto> register(@Valid @RequestBody SignUpRequest signUpRequest) {

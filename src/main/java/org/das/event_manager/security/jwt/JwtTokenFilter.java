@@ -4,11 +4,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.User;
 import org.das.event_manager.service.impl.UserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,19 +20,13 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenFilter.class);
     private final UserServiceImpl userServiceImpl;
     private final JwtTokenManager jwtTokenManager;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenFilter.class);
-
-    public JwtTokenFilter(
-            @Lazy UserServiceImpl userServiceImpl,
-            JwtTokenManager jwtTokenManager
-    ) {
-        this.userServiceImpl = userServiceImpl;
-        this.jwtTokenManager = jwtTokenManager;
-    }
 
     @Override
     protected void doFilterInternal(

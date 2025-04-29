@@ -1,5 +1,6 @@
 package org.das.event_manager.dto.mappers;
 
+import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.entity.EventEntity;
@@ -9,25 +10,17 @@ import org.das.event_manager.dto.EventUpdateRequestDto;
 import org.das.event_manager.service.impl.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class EventMapper {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(EventMapper.class);
     private final AuthenticationService authenticationService;
     private final RegistrationMapper registrationMapper;
-
-    public EventMapper(
-            AuthenticationService authenticationService,
-           @Lazy RegistrationMapper registrationMapper
-    ) {
-        this.authenticationService = authenticationService;
-        this.registrationMapper = registrationMapper;
-    }
 
     public Event toDomain(EventCreateRequestDto eventUpdateRequestDto) {
         LOGGER.info("Execute method to toDomain in EventMapper class eventUpdateRequestDto = {}",

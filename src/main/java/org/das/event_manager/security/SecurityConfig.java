@@ -1,6 +1,7 @@
 package org.das.event_manager.security;
 
 
+import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.UserRole;
 import org.das.event_manager.exeption.CustomAccessDeniedHandler;
 import org.das.event_manager.exeption.CustomAuthenticationEntryPoint;
@@ -24,6 +25,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
 
@@ -32,17 +34,6 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final JwtTokenFilter jwtTokenFilter;
 
-    public SecurityConfig(
-            UserDetailsService userDetailsService,
-            CustomAuthenticationEntryPoint authenticationEntryPoint,
-            CustomAccessDeniedHandler customAccessDeniedHandler,
-            JwtTokenFilter jwtTokenFilter
-    ) {
-        this.userDetailsService = userDetailsService;
-        this.authenticationEntryPoint = authenticationEntryPoint;
-        this.customAccessDeniedHandler = customAccessDeniedHandler;
-        this.jwtTokenFilter = jwtTokenFilter;
-    }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {

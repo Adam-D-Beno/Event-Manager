@@ -1,6 +1,7 @@
 package org.das.event_manager.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.Location;
 import org.das.event_manager.domain.entity.LocationEntity;
 import org.das.event_manager.dto.mappers.LocationMapper;
@@ -8,28 +9,18 @@ import org.das.event_manager.repository.LocationRepository;
 import org.das.event_manager.service.LocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import java.util.List;
 
 @Service
-@Validated
+@RequiredArgsConstructor
 public class LocationServiceImpl implements LocationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationServiceImpl.class);
     private final LocationRepository locationRepository;
     private final LocationMapper entityMapper;
 
-    @Autowired
-    public LocationServiceImpl(
-            LocationRepository locationRepository,
-            LocationMapper entityMapper
-    ) {
-        this.locationRepository = locationRepository;
-        this.entityMapper = entityMapper;
-    }
 
     @Override
     public List<Location> findAll() {

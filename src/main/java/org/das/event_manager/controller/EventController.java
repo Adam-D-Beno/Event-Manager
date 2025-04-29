@@ -1,6 +1,7 @@
 package org.das.event_manager.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.Event;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventResponseDto;
@@ -13,9 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/events")
 public class EventController {
@@ -24,13 +25,6 @@ public class EventController {
     private final EventService eventService;
     private final EventMapper eventMapper;
 
-    public EventController(
-            EventService eventService,
-            EventMapper eventMapper
-    ) {
-        this.eventService = eventService;
-        this.eventMapper = eventMapper;
-    }
 
     @PostMapping
     public ResponseEntity<EventResponseDto> create(

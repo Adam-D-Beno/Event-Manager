@@ -1,6 +1,7 @@
 package org.das.event_manager.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.*;
 import org.das.event_manager.domain.entity.EventEntity;
 import org.das.event_manager.dto.EventSearchRequestDto;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventServiceImpl.class);
@@ -24,18 +26,6 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
     private final LocationService locationService;
     private final AuthenticationService authenticationService;
-
-    public EventServiceImpl(
-            EventRepository eventRepository,
-            EventMapper eventMapper,
-            LocationService locationService,
-            AuthenticationService authenticationService
-    ) {
-        this.eventRepository = eventRepository;
-        this.eventMapper = eventMapper;
-        this.locationService = locationService;
-        this.authenticationService = authenticationService;
-    }
 
     @Override
     public Event create(Event eventForCreate) {

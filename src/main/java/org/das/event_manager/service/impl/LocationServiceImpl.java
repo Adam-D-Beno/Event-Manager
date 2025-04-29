@@ -72,7 +72,6 @@ public class LocationServiceImpl implements LocationService {
                    return new EntityNotFoundException("No such found location with id = %s"
                             .formatted(locationId));
                 });
-
     }
 
     @Transactional
@@ -127,7 +126,6 @@ public class LocationServiceImpl implements LocationService {
     private void validateLocationIdNull(Long locationId) {
         LOGGER.info("Execute method isLocationIdNull in LocationValidate class, checking locationId = {}"
                 , locationId);
-
         if (locationId != null) {
             LOGGER.info("Cannot creation Location with provided id. id = {} must be empty", locationId);
 

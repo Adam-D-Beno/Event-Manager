@@ -35,6 +35,7 @@ public class JwtTokenManager {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", user.userRole().name());
+        claims.put("id", user.id());
         return Jwts
                 .builder()
                 .claims(claims)
@@ -59,7 +60,6 @@ public class JwtTokenManager {
 
     public String getRoleFromToken(String jwt) {
         LOGGER.info("Get role from jwt token = {} ", jwt);
-
         return Jwts
                 .parser()
                 .setSigningKey(secretKey)

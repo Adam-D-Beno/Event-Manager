@@ -30,12 +30,14 @@ public class SchedulerService {
                 eventService.findStartedEventsWithStatus(EventStatus.WAIT_START);
         List<Long> startedEventsIds =
                 eventService.findEndedEventsWithStatus(EventStatus.STARTED);
-        log.info("Events for start = {}, end = {}", waitStartEventsIds, startedEventsIds);
+        log.info("Events to start = {}, to end = {}", waitStartEventsIds, startedEventsIds);
         if (!waitStartEventsIds.isEmpty()) {
+            log.info("Change Events = {} fron WAIT_START to STARTED", waitStartEventsIds);
             eventService.changeEventStatuses(waitStartEventsIds, EventStatus.STARTED);
             sendEventStatusUpdatesToKafka(waitStartEventsIds, EventStatus.WAIT_START);
         }
         if (!startedEventsIds.isEmpty()) {
+            log.info("Change Events = {} fron STARTED to FINISHED", startedEventsIds);
             eventService.changeEventStatuses(startedEventsIds, EventStatus.FINISHED);
             sendEventStatusUpdatesToKafka(waitStartEventsIds, EventStatus.STARTED);
         }
@@ -45,6 +47,8 @@ public class SchedulerService {
             List<Long> Events,
             EventStatus OldStatus
     ) {
+        log.info("Begin send kafka event message for change events statuses on STARTED or FINISHED: events = {}",
+                Events);
         Events.forEach(eventId -> {
             Event eventFound = eventService.findById(eventId);
             eventKafkaProducerService.sendEvent(

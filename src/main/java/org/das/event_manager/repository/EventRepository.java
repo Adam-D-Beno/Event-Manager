@@ -80,10 +80,10 @@ public  interface EventRepository extends JpaRepository<EventEntity, Long> {
     @Query("""
         update EventEntity ev
             set ev.status = :status
-            where ev.id = :event_id
+            where ev.id in :event_ids
     """)
-    void changeEventStatus(
-            @Param("event_id") Long eventId,
+    void changeEventStatuses(
+            @Param("event_ids") List<Long> eventIds,
             @Param("status") EventStatus status
     );
 

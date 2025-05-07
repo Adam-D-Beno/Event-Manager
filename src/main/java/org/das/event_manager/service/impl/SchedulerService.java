@@ -22,25 +22,34 @@ public class SchedulerService {
     private final EventService eventService;
     private final EventKafkaProducerService eventKafkaProducerService;
 
-    @Transactional
     @Scheduled(cron = "${event.stats.cron}")
     public void updateEventStatuses() {
         log.info("EventStatus Scheduled Updater started");
-        List<Long> waitStartEventsIds =
-                eventService.findStartedEventsWithStatus(EventStatus.WAIT_START);
-        List<Long> startedEventsIds =
-                eventService.findEndedEventsWithStatus(EventStatus.STARTED);
-        log.info("Events to start = {}, to end = {}", waitStartEventsIds, startedEventsIds);
+        List<Long> startedEventsIds = updateEventsToStarted();
+        sendEventStatusUpdatesToKafka(startedEventsIds, EventStatus.WAIT_START);
+        List<Long> finishedEventsIds = updateEventsToFinished();
+        sendEventStatusUpdatesToKafka(finishedEventsIds, EventStatus.STARTED);
+    }
+
+    private List<Long> updateEventsToStarted() {
+        List<Long> waitStartEventsIds = eventService.findEventsToStarted(EventStatus.WAIT_START);
         if (!waitStartEventsIds.isEmpty()) {
             log.info("Change Events = {} from WAIT_START to STARTED", waitStartEventsIds);
-            eventService.changeEventStatuses(waitStartEventsIds, EventStatus.STARTED);
-            sendEventStatusUpdatesToKafka(waitStartEventsIds, EventStatus.WAIT_START);
+            eventService.saveChangeEventStatuses(waitStartEventsIds, EventStatus.STARTED);
+            return waitStartEventsIds;
         }
+        return List.of();
+    }
+
+    private List<Long> updateEventsToFinished() {
+        List<Long> startedEventsIds =
+                eventService.findEventsToEnded(EventStatus.STARTED);
         if (!startedEventsIds.isEmpty()) {
             log.info("Change Events = {} from STARTED to FINISHED", startedEventsIds);
-            eventService.changeEventStatuses(startedEventsIds, EventStatus.FINISHED);
-            sendEventStatusUpdatesToKafka(startedEventsIds, EventStatus.STARTED);
+            eventService.saveChangeEventStatuses(startedEventsIds, EventStatus.FINISHED);
+            return startedEventsIds;
         }
+        return List.of();
     }
 
     private void sendEventStatusUpdatesToKafka(

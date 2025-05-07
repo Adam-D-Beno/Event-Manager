@@ -1,9 +1,12 @@
 package org.das.event_manager.domain;
 
+import lombok.Builder;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Builder
 public record EventChangeKafkaMessage(
       Long eventId,
       Long userEventChangedId,

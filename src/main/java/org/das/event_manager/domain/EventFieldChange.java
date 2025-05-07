@@ -10,7 +10,6 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Embeddable
 public class EventFieldChange<T> {
     T oldValue;
     T newValue;

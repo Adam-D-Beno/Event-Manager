@@ -39,7 +39,7 @@ public class SchedulerService {
         if (!startedEventsIds.isEmpty()) {
             log.info("Change Events = {} from STARTED to FINISHED", startedEventsIds);
             eventService.changeEventStatuses(startedEventsIds, EventStatus.FINISHED);
-            sendEventStatusUpdatesToKafka(waitStartEventsIds, EventStatus.STARTED);
+            sendEventStatusUpdatesToKafka(startedEventsIds, EventStatus.STARTED);
         }
     }
 

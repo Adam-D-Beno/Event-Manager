@@ -44,7 +44,7 @@ public class SchedulerService {
             List<Long> Events,
             EventStatus OldStatus
     ) {
-        log.info("Begin send kafka event message for change events statuses on STARTED or FINISHED: events = {}",
+        log.info("Begin send kafka event message for change events statuses to STARTED or FINISHED: events = {}",
                 Events);
         Events.forEach(eventId -> {
             Event eventFound = eventService.findById(eventId);

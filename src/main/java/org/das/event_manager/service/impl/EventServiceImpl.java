@@ -133,7 +133,8 @@ public class EventServiceImpl implements EventService {
                 .duration(new EventFieldChange<>(eventEntity.getDuration(), eventForUpdate.duration()))
                 .locationId(new EventFieldChange<>(eventEntity.getLocationId(), eventForUpdate.locationId()))
                 .status(new EventFieldChange<>(eventEntity.getStatus(), eventForUpdate.status()))
-                .userRegistrationsOnEvent(eventEntity.getRegistrations().stream()
+                .userRegistrationsOnEvent(eventEntity.getRegistrations()
+                        .stream()
                         .map(EventRegistrationEntity::getId).toList())
                 .build();
 
@@ -174,5 +175,20 @@ public class EventServiceImpl implements EventService {
         LOGGER.info("Execute method findAllEventsCreationByOwner in EventServiceImpl, eventSearchRequestDto");
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
         return eventMapper.toDomain(eventRepository.findEventsByOwner_Id((currentAuthUser.id())));
+    }
+
+    @Override
+    public List<Long> findStartedEventsWithStatus(EventStatus status) {
+        return eventRepository.findStartedEventsWithStatus(status);
+    }
+
+    @Override
+    public List<Long> findEndedEventsWithStatus(EventStatus status) {
+        return eventRepository.findEndedEventsWithStatus(status);
+    }
+
+    @Override
+    public void changeEventStatuses(List<Long> eventIds, EventStatus status) {
+        eventRepository.changeEventStatuses(eventIds, status);
     }
 }

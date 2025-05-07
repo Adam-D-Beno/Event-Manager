@@ -178,17 +178,17 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Long> findStartedEventsWithStatus(EventStatus status) {
+    public List<Long> findEventsToStarted(EventStatus status) {
         return eventRepository.findStartedEventsWithStatus(status);
     }
 
     @Override
-    public List<Long> findEndedEventsWithStatus(EventStatus status) {
+    public List<Long> findEventsToEnded(EventStatus status) {
         return eventRepository.findEndedEventsWithStatus(status);
     }
 
     @Override
-    public void changeEventStatuses(List<Long> eventIds, EventStatus status) {
+    public void saveChangeEventStatuses(List<Long> eventIds, EventStatus status) {
         eventRepository.changeEventStatuses(eventIds, status);
     }
 }

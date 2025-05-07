@@ -2,9 +2,6 @@ package org.das.event_manager.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.*;
-import org.das.event_manager.domain.entity.EventEntity;
-import org.das.event_manager.domain.entity.EventRegistrationEntity;
-import org.das.event_manager.repository.EventRepository;
 import org.das.event_manager.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

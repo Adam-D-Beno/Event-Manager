@@ -23,7 +23,6 @@ public class SchedulerService {
     private final EventKafkaProducerService eventKafkaProducerService;
 
     @Scheduled(cron = "${event.stats.cron}")
-    @Transactional
     public void updateEventStatuses() {
         log.info("EventStatus Scheduled Updater started");
         List<Long> startedEventIds = updateEventsToStarted();

@@ -32,12 +32,12 @@ public class SchedulerService {
                 eventService.findEndedEventsWithStatus(EventStatus.STARTED);
         log.info("Events to start = {}, to end = {}", waitStartEventsIds, startedEventsIds);
         if (!waitStartEventsIds.isEmpty()) {
-            log.info("Change Events = {} fron WAIT_START to STARTED", waitStartEventsIds);
+            log.info("Change Events = {} from WAIT_START to STARTED", waitStartEventsIds);
             eventService.changeEventStatuses(waitStartEventsIds, EventStatus.STARTED);
             sendEventStatusUpdatesToKafka(waitStartEventsIds, EventStatus.WAIT_START);
         }
         if (!startedEventsIds.isEmpty()) {
-            log.info("Change Events = {} fron STARTED to FINISHED", startedEventsIds);
+            log.info("Change Events = {} from STARTED to FINISHED", startedEventsIds);
             eventService.changeEventStatuses(startedEventsIds, EventStatus.FINISHED);
             sendEventStatusUpdatesToKafka(waitStartEventsIds, EventStatus.STARTED);
         }

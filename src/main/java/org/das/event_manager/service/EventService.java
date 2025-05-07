@@ -13,4 +13,7 @@ public interface EventService {
      Event update(Long eventId, Event eventToUpdate);
      List<Event> search(EventSearchRequestDto eventSearchRequestDto);
      List<Event> findAllEventsCreationByOwner();
+     List<Long>findStartedEventsWithStatus(EventStatus status);
+     List<Long>findEndedEventsWithStatus(EventStatus status);
+     void changeEventStatuses(List<Long> eventIds, EventStatus status);
 }

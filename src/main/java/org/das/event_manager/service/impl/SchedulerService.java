@@ -26,20 +26,21 @@ public class SchedulerService {
     @Transactional
     public void updateEventStatuses() {
         log.info("EventStatus Scheduled Updater started");
-        List<Long> EventsToStartedIds = eventService.findEventsToStarted(EventStatus.WAIT_START);
-        if (!EventsToStartedIds.isEmpty()) {
-            log.info("Change Events = {} from WAIT_START to STARTED", EventsToStartedIds);
-            eventService.saveChangeEventStatuses(EventsToStartedIds, EventStatus.STARTED);
-            sendEventStatusUpdatesToKafka(EventsToStartedIds, EventStatus.WAIT_START);
-        }
-        List<Long> EventsToFinishedIds =
-                eventService.findEventsToEnded(EventStatus.STARTED);
-        if (!EventsToFinishedIds.isEmpty()) {
-            log.info("Change Events = {} from STARTED to FINISHED", EventsToFinishedIds);
-            eventService.saveChangeEventStatuses(EventsToFinishedIds, EventStatus.FINISHED);
-            sendEventStatusUpdatesToKafka(EventsToFinishedIds, EventStatus.STARTED);
-        }
+        List<Long> startedEventIds = updateEventsToStarted();
+        sendEventStatusUpdatesToKafka(startedEventIds, EventStatus.WAIT_START);
+        List<Long> finishedEventIds = updateEventsToFinished();
+        sendEventStatusUpdatesToKafka(finishedEventIds, EventStatus.STARTED);
     }
+
+    private List<Long> updateEventsToStarted() {
+            log.info("Change Events from WAIT_START to STARTED");
+            return eventService.changeEventStatuses(EventStatus.STARTED);
+        }
+
+    private List<Long> updateEventsToFinished() {
+            log.info("Change Events from STARTED to FINISHED");
+           return eventService.changeEventStatuses(EventStatus.FINISHED);
+        }
 
     private void sendEventStatusUpdatesToKafka(
             List<Long> Events,

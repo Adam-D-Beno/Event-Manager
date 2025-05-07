@@ -15,5 +15,5 @@ public interface EventService {
      List<Event> findAllEventsCreationByOwner();
      List<Long> findEventsToStarted(EventStatus status);
      List<Long> findEventsToEnded(EventStatus status);
-     void saveChangeEventStatuses(List<Long> eventIds, EventStatus status);
+     List<Long> changeEventStatuses(EventStatus status);
 }

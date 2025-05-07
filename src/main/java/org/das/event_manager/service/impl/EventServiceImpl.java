@@ -13,6 +13,7 @@ import org.das.event_manager.service.LocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -187,8 +188,23 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findEndedEventsWithStatus(status);
     }
 
+    @Transactional
     @Override
-    public void saveChangeEventStatuses(List<Long> eventIds, EventStatus status) {
-        eventRepository.changeEventStatuses(eventIds, status);
+    public List<Long> changeEventStatuses(EventStatus status) {
+        if (status == EventStatus.WAIT_START) {
+            List<Long> eventsToStarted = findEventsToStarted(EventStatus.WAIT_START);
+            if (!eventsToStarted.isEmpty()) {
+                eventRepository.changeEventStatuses(eventsToStarted, status);
+            }
+            return eventsToStarted;
+        }
+        if (status == EventStatus.STARTED) {
+            List<Long> eventsToEnded = findEventsToEnded(EventStatus.STARTED);
+            if (!eventsToEnded.isEmpty()) {
+                eventRepository.changeEventStatuses(eventsToEnded, status);
+            }
+            return eventsToEnded;
+        }
+        return List.of();
     }
 }

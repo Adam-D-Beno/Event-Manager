@@ -26,42 +26,37 @@ public class SchedulerService {
     @Scheduled(cron = "${event.stats.cron}")
     public void updateEventStatuses() {
         log.info("EventStatus Scheduled Updater started");
-        List<Long> waitStartEvents =
+        List<Long> waitStartEventsIds =
                 eventService.findStartedEventsWithStatus(EventStatus.WAIT_START);
-        List<Long> endedEventsWithStatus =
+        List<Long> startedEventsIds =
                 eventService.findEndedEventsWithStatus(EventStatus.STARTED);
-        log.info("Events for start = {}, end = {}", waitStartEvents, endedEventsWithStatus);
-        if (!waitStartEvents.isEmpty()) {
-            eventService.changeEventStatuses(waitStartEvents, EventStatus.STARTED);
-            waitStartEvents.forEach(eventId -> {
-                Event eventFound = eventService.findById(eventId);
-                eventKafkaProducerService.sendEvent(
-                        EventChangeKafkaMessage.builder()
-                                .eventId(eventFound.id())
-                                .ownerEventId(eventFound.ownerId())
-                                .status(new EventFieldChange<>(EventStatus.WAIT_START, eventFound.status()))
-                                .userRegistrationsOnEvent(eventFound.registrations()
-                                        .stream()
-                                        .map(EventRegistration::id).toList())
-                                .build()
-                );
-            });
+        log.info("Events for start = {}, end = {}", waitStartEventsIds, startedEventsIds);
+        if (!waitStartEventsIds.isEmpty()) {
+            eventService.changeEventStatuses(waitStartEventsIds, EventStatus.STARTED);
+            sendEventStatusUpdatesToKafka(waitStartEventsIds, EventStatus.WAIT_START);
         }
-        if (!endedEventsWithStatus.isEmpty()) {
-            eventService.changeEventStatuses(endedEventsWithStatus, EventStatus.FINISHED);
-            endedEventsWithStatus.forEach(eventId -> {
-                Event eventFound = eventService.findById(eventId);
-                eventKafkaProducerService.sendEvent(
-                        EventChangeKafkaMessage.builder()
-                                .eventId(eventFound.id())
-                                .ownerEventId(eventFound.ownerId())
-                                .status(new EventFieldChange<>(EventStatus.FINISHED, eventFound.status()))
-                                .userRegistrationsOnEvent(eventFound.registrations()
-                                        .stream()
-                                        .map(EventRegistration::id).toList())
-                                .build()
-                );
-            });
+        if (!startedEventsIds.isEmpty()) {
+            eventService.changeEventStatuses(startedEventsIds, EventStatus.FINISHED);
+            sendEventStatusUpdatesToKafka(waitStartEventsIds, EventStatus.STARTED);
         }
+    }
+
+    private void sendEventStatusUpdatesToKafka(
+            List<Long> Events,
+            EventStatus OldStatus
+    ) {
+        Events.forEach(eventId -> {
+            Event eventFound = eventService.findById(eventId);
+            eventKafkaProducerService.sendEvent(
+                    EventChangeKafkaMessage.builder()
+                            .eventId(eventFound.id())
+                            .ownerEventId(eventFound.ownerId())
+                            .status(new EventFieldChange<>(OldStatus, eventFound.status()))
+                            .userRegistrationsOnEvent(eventFound.registrations()
+                                    .stream()
+                                    .map(EventRegistration::id).toList())
+                            .build()
+            );
+        });
     }
 }

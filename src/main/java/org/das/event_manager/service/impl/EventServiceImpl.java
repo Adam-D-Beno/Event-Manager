@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.*;
 import org.das.event_manager.domain.entity.EventEntity;
+import org.das.event_manager.domain.entity.EventRegistrationEntity;
 import org.das.event_manager.dto.EventSearchRequestDto;
 import org.das.event_manager.dto.mappers.EventMapper;
 import org.das.event_manager.repository.EventRepository;
@@ -26,6 +27,7 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
     private final LocationService locationService;
     private final AuthenticationService authenticationService;
+    private final EventKafkaProducerService eventKafkaProducerService;
 
     @Override
     public Event create(Event eventForCreate) {
@@ -120,6 +122,21 @@ public class EventServiceImpl implements EventService {
                     "Registration count than more maxPlaces = RegCount=%s, MaxPlaces=%s"
                             .formatted(eventEntity.getRegistrations().size(), eventForUpdate.maxPlaces()));
         }
+        EventChangeKafkaMessage changeKafkaMessage = EventChangeKafkaMessage.builder()
+                .eventId(eventEntity.getId())
+                .userEventChangedId(currentAuthUser.id())
+                .ownerEventId(eventEntity.getOwnerId())
+                .name(new EventFieldChange<>(eventEntity.getName(), eventForUpdate.name()))
+                .MaxPlaces(new EventFieldChange<>(eventEntity.getMaxPlaces(), eventForUpdate.maxPlaces()))
+                .date(new EventFieldChange<>(eventEntity.getDate(), eventForUpdate.date()))
+                .cost(new EventFieldChange<>(eventEntity.getCost(), eventForUpdate.cost()))
+                .duration(new EventFieldChange<>(eventEntity.getDuration(), eventForUpdate.duration()))
+                .locationId(new EventFieldChange<>(eventEntity.getLocationId(), eventForUpdate.locationId()))
+                .status(new EventFieldChange<>(eventEntity.getStatus(), eventForUpdate.status()))
+                .userRegistrationsOnEvent(eventEntity.getRegistrations().stream()
+                        .map(EventRegistrationEntity::getId).toList())
+                .build();
+
         Optional.ofNullable(eventForUpdate.name()).ifPresent(eventEntity::setName);
         Optional.ofNullable(eventForUpdate.maxPlaces()).ifPresent(eventEntity::setMaxPlaces);
         Optional.ofNullable(eventForUpdate.date()).ifPresent(eventEntity::setDate);
@@ -128,6 +145,7 @@ public class EventServiceImpl implements EventService {
         Optional.ofNullable(eventForUpdate.locationId()).ifPresent(eventEntity::setLocationId);
 
         eventRepository.save(eventEntity);
+        eventKafkaProducerService.sendEvent(changeKafkaMessage);
         return eventMapper.toDomain(eventEntity);
     }
 

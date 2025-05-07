@@ -1,8 +1,11 @@
 package org.das.event_manager.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.das.event_manager.domain.EventStatus;
+import org.das.event_manager.domain.*;
+import org.das.event_manager.domain.entity.EventEntity;
+import org.das.event_manager.domain.entity.EventRegistrationEntity;
 import org.das.event_manager.repository.EventRepository;
+import org.das.event_manager.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +24,7 @@ import java.util.List;
 public class SchedulerService {
 
     private final static Logger log = LoggerFactory.getLogger(SchedulerService.class);
-    private final EventRepository eventRepository;
+    private final EventService eventService;
     private final EventKafkaProducerService eventKafkaProducerService;
 
     @Transactional
@@ -28,16 +32,41 @@ public class SchedulerService {
     public void updateEventStatuses() {
         log.info("EventStatus Scheduled Updater started");
         List<Long> waitStartEvents =
-                eventRepository.findStartedEventsWithStatus(EventStatus.WAIT_START);
+                eventService.findStartedEventsWithStatus(EventStatus.WAIT_START);
         List<Long> endedEventsWithStatus =
-                eventRepository.findEndedEventsWithStatus(EventStatus.STARTED);
+                eventService.findEndedEventsWithStatus(EventStatus.STARTED);
         log.info("Events for start = {}, end = {}", waitStartEvents, endedEventsWithStatus);
         if (!waitStartEvents.isEmpty()) {
-            eventRepository.changeEventStatuses(waitStartEvents, EventStatus.STARTED);
+            eventService.changeEventStatuses(waitStartEvents, EventStatus.STARTED);
+            waitStartEvents.forEach(eventId -> {
+                Event eventFound = eventService.findById(eventId);
+                eventKafkaProducerService.sendEvent(
+                        EventChangeKafkaMessage.builder()
+                                .eventId(eventFound.id())
+                                .ownerEventId(eventFound.ownerId())
+                                .status(new EventFieldChange<>(EventStatus.WAIT_START, eventFound.status()))
+                                .userRegistrationsOnEvent(eventFound.registrations()
+                                        .stream()
+                                        .map(EventRegistration::id).toList())
+                                .build()
+                );
+            });
         }
-        if (!waitStartEvents.isEmpty()) {
-            eventRepository.changeEventStatuses(endedEventsWithStatus, EventStatus.FINISHED);
+        if (!endedEventsWithStatus.isEmpty()) {
+            eventService.changeEventStatuses(endedEventsWithStatus, EventStatus.FINISHED);
+            endedEventsWithStatus.forEach(eventId -> {
+                Event eventFound = eventService.findById(eventId);
+                eventKafkaProducerService.sendEvent(
+                        EventChangeKafkaMessage.builder()
+                                .eventId(eventFound.id())
+                                .ownerEventId(eventFound.ownerId())
+                                .status(new EventFieldChange<>(EventStatus.FINISHED, eventFound.status()))
+                                .userRegistrationsOnEvent(eventFound.registrations()
+                                        .stream()
+                                        .map(EventRegistration::id).toList())
+                                .build()
+                );
+            });
         }
-
     }
 }

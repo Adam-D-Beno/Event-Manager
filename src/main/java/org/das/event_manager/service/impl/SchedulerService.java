@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -19,21 +21,23 @@ public class SchedulerService {
 
     private final static Logger log = LoggerFactory.getLogger(SchedulerService.class);
     private final EventRepository eventRepository;
+    private final EventKafkaProducerService eventKafkaProducerService;
 
-
+    @Transactional
     @Scheduled(cron = "${event.stats.cron}")
-    public List<Long> updateEventStatuses() {
+    public void updateEventStatuses() {
         log.info("EventStatus Scheduled Updater started");
         List<Long> waitStartEvents =
                 eventRepository.findStartedEventsWithStatus(EventStatus.WAIT_START);
         List<Long> endedEventsWithStatus =
                 eventRepository.findEndedEventsWithStatus(EventStatus.STARTED);
-        log.warn("Events for start = {}, end = {}", waitStartEvents, endedEventsWithStatus);
+        log.info("Events for start = {}, end = {}", waitStartEvents, endedEventsWithStatus);
+        if (!waitStartEvents.isEmpty()) {
+            eventRepository.changeEventStatuses(waitStartEvents, EventStatus.STARTED);
+        }
+        if (!waitStartEvents.isEmpty()) {
+            eventRepository.changeEventStatuses(endedEventsWithStatus, EventStatus.FINISHED);
+        }
 
-        waitStartEvents
-                .forEach(eventId -> eventRepository.changeEventStatus(eventId, EventStatus.STARTED));
-        endedEventsWithStatus
-                .forEach(eventId -> eventRepository.changeEventStatus(eventId, EventStatus.FINISHED));
-        return endedEventsWithStatus;
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+
 public class EventKafkaProducerService {
 
     private static final Logger log = LoggerFactory.getLogger(EventKafkaProducerService.class);

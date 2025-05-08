@@ -178,16 +178,6 @@ public class EventServiceImpl implements EventService {
         return eventMapper.toDomain(eventRepository.findEventsByOwner_Id((currentAuthUser.id())));
     }
 
-    @Override
-    public List<Long> findEventsToStarted(EventStatus status) {
-        return eventRepository.findStartedEventsWithStatus(status);
-    }
-
-    @Override
-    public List<Long> findEventsToEnded(EventStatus status) {
-        return eventRepository.findEndedEventsWithStatus(status);
-    }
-
     @Transactional
     @Override
     public List<Long> changeEventStatuses(EventStatus status) {
@@ -207,4 +197,15 @@ public class EventServiceImpl implements EventService {
         }
         return List.of();
     }
+
+    @Override
+    public List<Long> findEventsToStarted(EventStatus status) {
+        return eventRepository.findStartedEventsWithStatus(status);
+    }
+
+    @Override
+    public List<Long> findEventsToEnded(EventStatus status) {
+        return eventRepository.findEndedEventsWithStatus(status);
+    }
+
 }

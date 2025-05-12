@@ -9,14 +9,14 @@ import java.util.List;
 @Builder
 public record EventChangeKafkaMessage(
       Long eventId,
-      Long userEventChangedId,
+      Long modifierById,
       Long ownerEventId,
-      EventFieldChange<String> name,
-      EventFieldChange<Integer> MaxPlaces,
-      EventFieldChange<LocalDateTime> date,
-      EventFieldChange<BigDecimal> cost,
-      EventFieldChange<Integer> duration,
-      EventFieldChange<Long> locationId,
-      EventFieldChange<EventStatus> status,
-      List<Long> userRegistrationsOnEvent
+      EventFieldGeneric<String> name,
+      EventFieldGeneric<Integer> maxPlaces,
+      EventFieldGeneric<LocalDateTime> date,
+      EventFieldGeneric<BigDecimal> cost,
+      EventFieldGeneric<Integer> duration,
+      EventFieldGeneric<Long> locationId,
+      EventFieldGeneric<EventStatus> status,
+      List<Long> registrationsOnEvent
 ) {}

@@ -28,6 +28,7 @@ public class SchedulerService {
         sendEventStatusUpdatesToKafka(startedEventIds, EventStatus.WAIT_START);
         List<Long> finishedEventIds = updateEventsToFinished();
         sendEventStatusUpdatesToKafka(finishedEventIds, EventStatus.STARTED);
+        log.info("EventStatus Scheduled Updater end");
     }
 
     private List<Long> updateEventsToStarted() {
@@ -52,8 +53,8 @@ public class SchedulerService {
                     EventChangeKafkaMessage.builder()
                             .eventId(eventFound.id())
                             .ownerEventId(eventFound.ownerId())
-                            .status(new EventFieldChange<>(OldStatus, eventFound.status()))
-                            .userRegistrationsOnEvent(eventFound.registrations()
+                            .status(new EventFieldGeneric<>(OldStatus, eventFound.status()))
+                            .registrationsOnEvent(eventFound.registrations()
                                     .stream()
                                     .map(EventRegistration::id).toList())
                             .build()

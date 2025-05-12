@@ -119,7 +119,6 @@ public class LocationServiceImpl implements LocationService {
                 , locationId);
         if (locationId != null) {
             LOGGER.info("Cannot creation Location with provided id. id = {} must be empty", locationId);
-
             throw new IllegalArgumentException("Cannot creation Location with provided id. id must be empty");
         }
     }

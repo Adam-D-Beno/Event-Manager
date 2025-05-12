@@ -37,6 +37,7 @@ public class EventServiceImpl implements EventService {
         Location location = locationService.findById(eventForCreate.locationId());
 
         if (location.capacity() < eventForCreate.maxPlaces()) {
+            LOGGER.error("location capacity < event maxPlaces");
             throw new IllegalArgumentException("Capacity of location is: %s, but maxPlaces is: %s"
                     .formatted(location.capacity(), eventForCreate.maxPlaces()));
         }
@@ -46,6 +47,7 @@ public class EventServiceImpl implements EventService {
                 startDateEvent, endDateEvent, eventForCreate.locationId()
         );
         if (isDateForCreateBusy) {
+            LOGGER.error("event on that already exist");
             throw new IllegalArgumentException(("Cannot create event=%s on that date=%s " +
                     "because event on that already exist")
                     .formatted(eventForCreate, eventForCreate.date()));
@@ -75,6 +77,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public Event findById(Long eventId) {
        LOGGER.info("Execute method findById in EventServiceImpl, event id = {}", eventId);
        return eventRepository.findById(eventId)
@@ -117,27 +120,14 @@ public class EventServiceImpl implements EventService {
                         .formatted(location.capacity(), maxPlaces));
             }
         }
-        if (eventForUpdate.maxPlaces() != null && eventEntity.getRegistrations().size() > eventForUpdate.maxPlaces()) {
+        if (eventForUpdate.maxPlaces() != null &&
+                eventEntity.getRegistrations().size() > eventForUpdate.maxPlaces()) {
             LOGGER.error("Registration count than more maxPlaces");
             throw new IllegalArgumentException(
                     "Registration count than more maxPlaces = RegCount=%s, MaxPlaces=%s"
                             .formatted(eventEntity.getRegistrations().size(), eventForUpdate.maxPlaces()));
         }
-        EventChangeKafkaMessage changeKafkaMessage = EventChangeKafkaMessage.builder()
-                .eventId(eventEntity.getId())
-                .userEventChangedId(currentAuthUser.id())
-                .ownerEventId(eventEntity.getOwnerId())
-                .name(new EventFieldChange<>(eventEntity.getName(), eventForUpdate.name()))
-                .MaxPlaces(new EventFieldChange<>(eventEntity.getMaxPlaces(), eventForUpdate.maxPlaces()))
-                .date(new EventFieldChange<>(eventEntity.getDate(), eventForUpdate.date()))
-                .cost(new EventFieldChange<>(eventEntity.getCost(), eventForUpdate.cost()))
-                .duration(new EventFieldChange<>(eventEntity.getDuration(), eventForUpdate.duration()))
-                .locationId(new EventFieldChange<>(eventEntity.getLocationId(), eventForUpdate.locationId()))
-                .status(new EventFieldChange<>(eventEntity.getStatus(), eventForUpdate.status()))
-                .userRegistrationsOnEvent(eventEntity.getRegistrations()
-                        .stream()
-                        .map(EventRegistrationEntity::getId).toList())
-                .build();
+        EventChangeKafkaMessage changeKafkaMessage = getBuildKafkaMessage(eventForUpdate, eventEntity, currentAuthUser);
 
         Optional.ofNullable(eventForUpdate.name()).ifPresent(eventEntity::setName);
         Optional.ofNullable(eventForUpdate.maxPlaces()).ifPresent(eventEntity::setMaxPlaces);
@@ -150,6 +140,8 @@ public class EventServiceImpl implements EventService {
         eventKafkaProducerService.sendEvent(changeKafkaMessage);
         return eventMapper.toDomain(eventEntity);
     }
+
+
 
     @Override
     public List<Event> search(EventSearchRequestDto eventSearchRequestDto) {
@@ -208,4 +200,23 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findEndedEventsWithStatus(status);
     }
 
+    private EventChangeKafkaMessage getBuildKafkaMessage(
+            Event eventForUpdate, EventEntity eventEntity, User currentAuthUser
+    ) {
+        return EventChangeKafkaMessage.builder()
+                .eventId(eventEntity.getId())
+                .modifierById(currentAuthUser.id())
+                .ownerEventId(eventEntity.getOwnerId())
+                .name(new EventFieldGeneric<>(eventEntity.getName(), eventForUpdate.name()))
+                .maxPlaces(new EventFieldGeneric<>(eventEntity.getMaxPlaces(), eventForUpdate.maxPlaces()))
+                .date(new EventFieldGeneric<>(eventEntity.getDate(), eventForUpdate.date()))
+                .cost(new EventFieldGeneric<>(eventEntity.getCost(), eventForUpdate.cost()))
+                .duration(new EventFieldGeneric<>(eventEntity.getDuration(), eventForUpdate.duration()))
+                .locationId(new EventFieldGeneric<>(eventEntity.getLocationId(), eventForUpdate.locationId()))
+                .status(new EventFieldGeneric<>(eventEntity.getStatus(), eventForUpdate.status()))
+                .registrationsOnEvent(eventEntity.getRegistrations()
+                        .stream()
+                        .map(EventRegistrationEntity::getId).toList())
+                .build();
+    }
 }

@@ -27,6 +27,4 @@ public class EventRegistrationEntity {
 
     @Column(name = "date_registration")
     private LocalDateTime dateRegistration;
-
-
 }

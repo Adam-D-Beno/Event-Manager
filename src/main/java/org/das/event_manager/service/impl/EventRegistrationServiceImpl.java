@@ -35,11 +35,13 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
         var event = eventService.findById(eventId);
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
         if (currentAuthUser.id().equals(event.ownerId())) {
+            LOGGER.error("current Auth User not equals event owner");
             throw new IllegalArgumentException("Owner cannot register own event=%s".formatted(event));
         }
         Optional<EventRegistrationEntity> registration =
                 registrationRepository.findRegistration(event.id(), currentAuthUser.id());
         if (registration.isPresent()) {
+            LOGGER.error("User already registered");
             throw new IllegalArgumentException("User with id=%s already registered".formatted(currentAuthUser.id()));
         }
         if (event.status() != EventStatus.WAIT_START) {
@@ -59,7 +61,6 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
     @Override
     public void cancelOnRegistration(Long eventId) {
         LOGGER.info("Execute method cancelOnRegistration event id = {}", eventId);
-
         User currentAuthUser = authenticationService.getCurrentAuthenticatedUser();
         EventRegistrationEntity registrationEntity = registrationRepository
                 .findRegistration(eventId, currentAuthUser.id())

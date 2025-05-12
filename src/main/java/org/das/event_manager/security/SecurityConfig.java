@@ -64,8 +64,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-                    authorizationManagerRequestMatcherRegistry
+                .authorizeHttpRequests(matcherRegistry -> {
+                    matcherRegistry
                             .requestMatchers(HttpMethod.GET, "/locations/**")
                             .hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
                             .requestMatchers(HttpMethod.POST, "/locations")

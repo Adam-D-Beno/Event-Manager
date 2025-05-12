@@ -1,6 +1,5 @@
 package org.das.event_manager.domain;
 
-import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventFieldChange<T> {
+public class EventFieldGeneric<T> {
     T oldValue;
     T newValue;
 }

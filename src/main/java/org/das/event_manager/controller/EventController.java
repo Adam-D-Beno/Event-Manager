@@ -3,7 +3,6 @@ package org.das.event_manager.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.*;
-import org.das.event_manager.domain.entity.EventRegistrationEntity;
 import org.das.event_manager.dto.EventCreateRequestDto;
 import org.das.event_manager.dto.EventResponseDto;
 import org.das.event_manager.dto.EventSearchRequestDto;
@@ -90,16 +89,16 @@ public class EventController {
         LOGGER.info("Get request for find events creation by user");
         EventChangeKafkaMessage changeKafkaMessage = EventChangeKafkaMessage.builder()
                 .eventId(1L)
-                .userEventChangedId(1L)
+                .modifierById(1L)
                 .ownerEventId(1L)
-                .name(new EventFieldChange<>("oldName", "newName"))
-                .MaxPlaces(new EventFieldChange<>(0, 1))
-                .date(new EventFieldChange<>(LocalDateTime.now(), LocalDateTime.now()))
-                .cost(new EventFieldChange<>(BigDecimal.ZERO, BigDecimal.ONE))
-                .duration(new EventFieldChange<>(0, 60))
-                .locationId(new EventFieldChange<>(8L, 10L))
-                .status(new EventFieldChange<>(EventStatus.WAIT_START, EventStatus.STARTED))
-                .userRegistrationsOnEvent(List.of(1L))
+                .name(new EventFieldGeneric<>("oldName", "newName"))
+                .maxPlaces(new EventFieldGeneric<>(10, 20))
+                .date(new EventFieldGeneric<>(LocalDateTime.now(), LocalDateTime.now()))
+                .cost(new EventFieldGeneric<>(BigDecimal.ONE, BigDecimal.TEN))
+                .duration(new EventFieldGeneric<>(10, 60))
+                .locationId(new EventFieldGeneric<>(8L, 10L))
+                .status(new EventFieldGeneric<>(EventStatus.WAIT_START, EventStatus.STARTED))
+                .registrationsOnEvent(List.of(1L, 2L, 3L))
                 .build();
         eventKafkaProducerService.sendEvent(changeKafkaMessage);
         return ResponseEntity.ok().build();

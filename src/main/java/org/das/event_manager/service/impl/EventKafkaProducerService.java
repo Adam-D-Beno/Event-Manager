@@ -17,7 +17,11 @@ public class EventKafkaProducerService {
 
     public void sendEvent(EventChangeKafkaMessage kafkaEventMessage) {
         log.info("Send kafka event message: event = {}", kafkaEventMessage);
-        var res = kafkaTemplate.send("change-event-topic", kafkaEventMessage.ownerEventId(), kafkaEventMessage);
+        var res = kafkaTemplate.send(
+                "change-event-topic",
+                kafkaEventMessage.ownerEventId(),
+                kafkaEventMessage
+        );
         res.thenAccept(sendRes ->  log.info("Send successful"));
     }
 }

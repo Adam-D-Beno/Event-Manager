@@ -1,5 +1,6 @@
 package org.das.event_manager.repository;
 
+import org.das.event_manager.domain.Event;
 import org.das.event_manager.domain.EventStatus;
 import org.das.event_manager.domain.entity.EventEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -120,4 +121,10 @@ public  interface EventRepository extends JpaRepository<EventEntity, Long> {
             @Param("duration") Integer duration,
             @Param("locationId") Long locationId
     );
+
+    @Query("""
+        select ev from EventEntity ev
+            where ev.id IN :eventIds
+    """)
+    List<EventEntity> findAllEventsByIds(@Param("eventIds") List<Long> eventIds);
 }

@@ -59,6 +59,7 @@ public class EventServiceImpl implements EventService {
         return eventMapper.toDomain(saved);
     }
 
+    @Transactional
     @Override
     public void deleteById(Long eventId) {
         LOGGER.info("Execute method create in EventServiceImpl, event id = {}", eventId);

@@ -10,6 +10,7 @@ public interface EventService {
      Event create(Event eventForCreate);
      void deleteById(Long eventId);
      Event findById(Long eventId);
+     List<Event> findAllByIds(List<Long> eventIds);
      Event update(Long eventId, Event eventToUpdate);
      List<Event> search(EventSearchRequestDto eventSearchRequestDto);
      List<Event> findAllEventsCreationByOwner();

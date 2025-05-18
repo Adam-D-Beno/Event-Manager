@@ -47,18 +47,18 @@ public class SchedulerService {
     ) {
         log.info("Begin send kafka event message for change events statuses to STARTED or FINISHED: events = {}",
                 Events);
-        Events.forEach(eventId -> {
-            Event eventFound = eventService.findById(eventId);
-            eventKafkaProducerService.sendEvent(
-                    EventChangeKafkaMessage.builder()
-                            .eventId(eventFound.id())
-                            .ownerEventId(eventFound.ownerId())
-                            .status(new EventFieldGeneric<>(OldStatus, eventFound.status()))
-                            .registrationsOnEvent(eventFound.registrations()
-                                    .stream()
-                                    .map(EventRegistration::id).toList())
-                            .build()
-            );
+        eventService.findAllByIds(Events)
+                .forEach(eventFound -> {
+                    eventKafkaProducerService.sendEvent(
+                            EventChangeKafkaMessage.builder()
+                                    .eventId(eventFound.id())
+                                    .ownerEventId(eventFound.ownerId())
+                                    .status(new EventFieldGeneric<>(OldStatus, eventFound.status()))
+                                    .registrationsOnEvent(eventFound.registrations()
+                                            .stream()
+                                            .map(EventRegistration::id).toList())
+                                    .build()
+                    );
         });
     }
 }

@@ -86,6 +86,13 @@ public class EventServiceImpl implements EventService {
                         .formatted(eventId)));
     }
 
+    @Transactional
+    @Override
+    public List<Event> findAllByIds(List<Long> eventIds) {
+        return eventMapper.toDomain(eventRepository.findAllEventsByIds(eventIds));
+
+    }
+
     @Override
     public Event update(Long eventId, Event eventForUpdate) {
         LOGGER.info("Execute method update in EventServiceImpl, event = {}", eventForUpdate);
@@ -191,13 +198,13 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Long> findEventsToStarted(EventStatus status) {
-        return eventRepository.findStartedEventsWithStatus(status);
+    public List<Long> findEventsToStarted(EventStatus statusStarted) {
+        return eventRepository.findStartedEventsWithStatus(statusStarted);
     }
 
     @Override
-    public List<Long> findEventsToEnded(EventStatus status) {
-        return eventRepository.findEndedEventsWithStatus(status);
+    public List<Long> findEventsToEnded(EventStatus statusEnded) {
+        return eventRepository.findEndedEventsWithStatus(statusEnded);
     }
 
     private EventChangeKafkaMessage getBuildKafkaMessage(

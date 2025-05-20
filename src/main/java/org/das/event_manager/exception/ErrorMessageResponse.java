@@ -1,4 +1,4 @@
-package org.das.event_manager.exeption;
+package org.das.event_manager.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

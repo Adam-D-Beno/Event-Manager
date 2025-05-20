@@ -3,8 +3,8 @@ package org.das.event_manager.security;
 
 import lombok.RequiredArgsConstructor;
 import org.das.event_manager.domain.UserRole;
-import org.das.event_manager.exeption.CustomAccessDeniedHandler;
-import org.das.event_manager.exeption.CustomAuthenticationEntryPoint;
+import org.das.event_manager.exception.CustomAccessDeniedHandler;
+import org.das.event_manager.exception.CustomAuthenticationEntryPoint;
 import org.das.event_manager.security.jwt.JwtTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

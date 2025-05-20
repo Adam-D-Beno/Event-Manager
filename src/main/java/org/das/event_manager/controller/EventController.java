@@ -15,9 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -28,7 +25,6 @@ public class EventController {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventController.class);
     private final EventService eventService;
     private final EventMapper eventMapper;
-    private final EventKafkaProducerService eventKafkaProducerService;
 
 
     @PostMapping
@@ -82,25 +78,5 @@ public class EventController {
     public ResponseEntity<List<EventResponseDto>> findEventsByUserCreation() {
         LOGGER.info("Get request for find events creation by user");
         return ResponseEntity.ok().body(eventMapper.toDto(eventService.findAllEventsCreationByOwner()));
-    }
-
-    @GetMapping("/test")
-    public ResponseEntity<Void> test() {
-        LOGGER.info("Get request for find events creation by user");
-        EventChangeKafkaMessage changeKafkaMessage = EventChangeKafkaMessage.builder()
-                .eventId(1L)
-                .modifierById(1L)
-                .ownerEventId(1L)
-                .name(new EventFieldGeneric<>("oldName", "newName"))
-                .maxPlaces(new EventFieldGeneric<>(10, 20))
-                .date(new EventFieldGeneric<>(LocalDateTime.now(), LocalDateTime.now()))
-                .cost(new EventFieldGeneric<>(BigDecimal.ONE, BigDecimal.TEN))
-                .duration(new EventFieldGeneric<>(10, 60))
-                .locationId(new EventFieldGeneric<>(8L, 10L))
-                .status(new EventFieldGeneric<>(EventStatus.WAIT_START, EventStatus.STARTED))
-                .registrationsOnEvent(List.of(1L, 2L, 3L))
-                .build();
-        eventKafkaProducerService.sendEvent(changeKafkaMessage);
-        return ResponseEntity.ok().build();
     }
 }

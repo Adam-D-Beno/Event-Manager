@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 public class DefaultUserListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultUserListener.class);
-    public static final String defaultAdmin = "admin";
-    public static final String defaultUser = "user";
+    public static final String DEFAULT_ADMIN = "admin";
+    public static final String DEFAULT_USER = "user";
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -28,11 +28,11 @@ public class DefaultUserListener {
     public void initialiseDefaultUsers(ApplicationStartedEvent applicationStartedEvent) {
         LOGGER.info("Execute method initialiseDefaultUsers");
 
-        if (!userRepository.existsByLogin(defaultAdmin)) {
-            userRepository.save(createDefaultUser(defaultAdmin, UserRole.ADMIN));
+        if (!userRepository.existsByLogin(DEFAULT_ADMIN)) {
+            userRepository.save(createDefaultUser(DEFAULT_ADMIN, UserRole.ADMIN));
         }
-        if (!userRepository.existsByLogin(defaultUser)) {
-            userRepository.save(createDefaultUser(defaultUser, UserRole.USER));
+        if (!userRepository.existsByLogin(DEFAULT_USER)) {
+            userRepository.save(createDefaultUser(DEFAULT_USER, UserRole.USER));
         }
     }
 

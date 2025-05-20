@@ -1,4 +1,4 @@
-package org.das.event_manager.exeption;
+package org.das.event_manager.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -87,7 +87,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorMessageResponse> HandlerHttpMessageNotReadableException(
+    public ResponseEntity<ErrorMessageResponse> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException e) {
         LOGGER.error("Handle Bad request exception: HttpMessageNotReadableException  = {}", e.getMessage());
         String detailMessage = e.getMessage();

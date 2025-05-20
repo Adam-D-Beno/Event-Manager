@@ -17,7 +17,7 @@ import java.util.List;
 @ConditionalOnProperty(name = "scheduler.enabled", matchIfMissing = true)
 public class SchedulerService {
 
-    private final static Logger log = LoggerFactory.getLogger(SchedulerService.class);
+    private static final Logger log = LoggerFactory.getLogger(SchedulerService.class);
     private final EventService eventService;
     private final EventKafkaProducerService eventKafkaProducerService;
 
@@ -44,12 +44,12 @@ public class SchedulerService {
         }
 
     private void sendEventStatusUpdatesToKafka(
-            List<Long> Events,
+            List<Long> events,
             EventStatus OldStatus
     ) {
         log.info("Begin send kafka event message for change events statuses to STARTED or FINISHED: events = {}",
-                Events);
-        eventService.findAllByIds(Events)
+                events);
+        eventService.findAllByIds(events)
                 .forEach(eventFound -> eventKafkaProducerService.sendEvent(
                         EventChangeKafkaMessage.builder()
                                 .eventId(eventFound.id())

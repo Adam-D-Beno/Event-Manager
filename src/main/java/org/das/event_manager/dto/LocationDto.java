@@ -13,9 +13,9 @@ public record LocationDto(
         String address,
 
         @NotNull
-        @Min(value = 5, message = "Minimum location capacity of is 5 ")
-        @Positive()
-        @Digits(integer = Integer.MAX_VALUE, fraction = 0)
+        @Min(value = 5, message = "Minimum location capacity is 5")
+        @Positive(message = "capacity should be positive")
+        @Digits(integer = Integer.MAX_VALUE, fraction = 0, message = "capacity should be digits")
         Integer capacity,
 
         String description

@@ -1,4 +1,4 @@
-package org.das.event_manager.exeption;
+package org.das.event_manager.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -86,19 +87,33 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorMessageResponse> HandlerHttpMessageNotReadableException(
+    public ResponseEntity<ErrorMessageResponse> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException e) {
         LOGGER.error("Handle Bad request exception: HttpMessageNotReadableException  = {}", e.getMessage());
-        String detailMessage = "Body must not be is null";
-        var errorDto = new ErrorMessageResponse(
+        String detailMessage = e.getMessage();
+        var error = new ErrorMessageResponse(
                 "Bad request",
                 detailMessage,
                 LocalDateTime.now()
         );
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(errorDto);
+                .body(error);
     }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorMessageResponse> handleBadCredentialsException(BadCredentialsException e) {
+        LOGGER.error("Handle BadCredentialsException = {}", e.getMessage());
+        var error = new ErrorMessageResponse(
+                "Failed to authenticate",
+                e.getMessage(),
+                LocalDateTime.now()
+        );
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(error);
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorMessageResponse> handleGenericException(Exception e) {

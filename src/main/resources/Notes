@@ -1,0 +1,65 @@
+1. Как нужно удалить ивент, софт или хард методом
+//     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+
+2. Нужно сделать проверку при создании мероприятия что оно еще есть
+3. В локации можно создать еще мероприятия в другое время
+
+
+update EventEntity ev
+                set ev.name = COALESCE(:name, ev.name)
+                where ev.id = :eventId
+
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+
+@Deprecated
+    public void checkMaxPlacesMoreCurrentMaxPlaces(Event event, Event eventToUpdate) {
+        LOGGER.info("Execute method checkMaxPlacesMoreCurrentMaxPlaces event id = {}, cost = {}",
+                event.id(), event.cost());
+
+        Integer maxPlacesToUpdate = eventToUpdate.maxPlaces();
+        Integer currentMaxPlaces = event.maxPlaces();
+        if (maxPlacesToUpdate == null || currentMaxPlaces == null) {
+            return;
+        }
+        if (maxPlacesToUpdate < currentMaxPlaces) {
+            LOGGER.error("Max places for update = {}, cannot be then max places already exist = {}",
+                    maxPlacesToUpdate, currentMaxPlaces);
+            throw new IllegalArgumentException("Max places for update = %s must be more then current max places = %s"
+                    .formatted(maxPlacesToUpdate, currentMaxPlaces));
+        }
+    }
+
+    @Deprecated
+    public void checkDurationLessThenThirty(Integer eventDuration) {
+        LOGGER.info("Execute method checkDurationLessThenThirtyThrow, duration = {}",
+                eventDuration);
+
+        if (eventDuration != null && eventDuration < 30 ) {
+            LOGGER.error("Duration Less Then Thirty = {}", eventDuration);
+            throw new IllegalArgumentException("Duration = %s for update must be more 30"
+                    .formatted(eventDuration));
+        }
+    }
+
+    @Deprecated
+    public void checkMaxPlacesMoreThenOnLocation(Integer eventMaxPlaces, Integer locationCapacity) {
+        LOGGER.info("Execute method checkMaxPlacesMoreThenOnLocation, max places = {}, locationCapacity = {}",
+                eventMaxPlaces, locationCapacity);
+
+        if (eventMaxPlaces == null || locationCapacity == null) {
+            return;
+        }
+        if (eventMaxPlaces > locationCapacity) {
+            LOGGER.error("Max places = {} at the event more then location capacity = {} ",
+                    eventMaxPlaces, locationCapacity);
+            throw new IllegalArgumentException("maxPlaces = %s cannot be more then location capacity = %s"
+                    .formatted(eventMaxPlaces, locationCapacity));
+        }
+    }
+
+    @Deprecated
+    public void checkExistUser(User currentAuthenticatedUser) {
+        LOGGER.info("Execute method checkExistUser, user = {}", currentAuthenticatedUser);
+        userService.findById(currentAuthenticatedUser.id());
+    }

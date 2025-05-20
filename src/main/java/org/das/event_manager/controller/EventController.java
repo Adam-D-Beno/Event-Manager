@@ -64,8 +64,8 @@ public class EventController {
             @PathVariable("eventId") Long eventId,
             @Valid @RequestBody EventUpdateRequestDto eventUpdateRequestDto
             ) {
-        LOGGER.info("Put request for update event By Id = {}, eventUpdateRequestDto = {}"
-                , eventId, eventUpdateRequestDto);
+        LOGGER.info("Put request for update event By Id = {}, eventUpdateRequestDto = {}",
+                eventId, eventUpdateRequestDto);
         Event eventToUpdate = eventMapper.toDomain(eventUpdateRequestDto);
         return ResponseEntity.ok().body(eventMapper.toDto(eventService.update(eventId, eventToUpdate)));
     }

@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorMessageResponse> HandlerHttpMessageNotReadableException(
             HttpMessageNotReadableException e) {
         LOGGER.error("Handle Bad request exception: HttpMessageNotReadableException  = {}", e.getMessage());
-        String detailMessage = "Body must not be is null";
+        String detailMessage = e.getMessage();
         var error = new ErrorMessageResponse(
                 "Bad request",
                 detailMessage,

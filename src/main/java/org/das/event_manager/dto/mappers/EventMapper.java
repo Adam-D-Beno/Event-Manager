@@ -113,7 +113,7 @@ public class EventMapper {
                 eventEntity.getDate(),
                 eventEntity.getCost(),
                 eventEntity.getDuration(),
-                eventEntity.getId(),
+                eventEntity.getLocationId(),
                 eventEntity.getStatus()
         );
     }

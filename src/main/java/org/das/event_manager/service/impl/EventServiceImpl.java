@@ -135,7 +135,8 @@ public class EventServiceImpl implements EventService {
                     "Registration count than more maxPlaces = RegCount=%s, MaxPlaces=%s"
                             .formatted(eventEntity.getRegistrations().size(), eventForUpdate.maxPlaces()));
         }
-        EventChangeKafkaMessage changeKafkaMessage = getBuildKafkaMessage(eventForUpdate, eventEntity, currentAuthUser);
+        EventChangeKafkaMessage changeKafkaMessage =
+                getBuildKafkaMessage(eventForUpdate, eventEntity, currentAuthUser);
 
         Optional.ofNullable(eventForUpdate.name()).ifPresent(eventEntity::setName);
         Optional.ofNullable(eventForUpdate.maxPlaces()).ifPresent(eventEntity::setMaxPlaces);

@@ -25,8 +25,10 @@ public class SchedulerService {
     public void updateEventStatuses() {
         log.info("EventStatus Scheduled Updater started");
         List<Long> startedEventIds = updateEventsToStarted();
+        log.info("EventStatus for WAIT_START Updated on STARTED eventIds={}",startedEventIds);
         sendEventStatusUpdatesToKafka(startedEventIds, EventStatus.WAIT_START);
         List<Long> finishedEventIds = updateEventsToFinished();
+        log.info("EventStatus for STARTED Updated FINISHED eventIds={}",finishedEventIds);
         sendEventStatusUpdatesToKafka(finishedEventIds, EventStatus.STARTED);
         log.info("EventStatus Scheduled Updater end");
     }

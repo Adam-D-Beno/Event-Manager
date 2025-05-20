@@ -1,10 +1,9 @@
 package org.das.event_manager.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 public record EventUpdateRequestDto(
 
@@ -16,7 +15,7 @@ public record EventUpdateRequestDto(
         Integer maxPlaces,
 
         @Future
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         LocalDateTime date,
 
         @Positive(message = "cost should be positive")

@@ -23,3 +23,6 @@
 Swagger и OpenAPI для документации REST API.
 Postman для отправки запросов
 Docker для поднятия PostgreSQL и Kafka локально у себя на машине
+
+
+![Архитектрура](https://github.com/user-attachments/assets/7e83ab1f-d080-4f71-bcd5-eb798dd9886b)
